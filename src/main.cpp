@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/14 11:53:55 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/14 17:51:04 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,14 @@ int main(int ac, char **av) {
 		FD_ZERO(&fdset);
 		FD_SET(server.getSocket(), &fdset);
 
-		//dfbfklnbfklblbmdv J'ai pas appris les vecteurs moi bon sang jvnfjinvejnvjkd jkd
-		for (int client_fd : server.getClientsList())
+		std::vector<int> client_fd = server.getClientsList();
+		std::vector<int>::iterator	it;
+		for (it = std::begin(client_fd); it < std::end(client_fd); it++)
 		{
 			FD_SET(client_fd, &fdset);
 			if (client_fd > max_sd)
 				max_sd = client_fd;
 		}
-
 		int activity = select(max_sd + 1, &fdset, NULL, NULL, NULL);
 
 		if (activity < 0 && errno != EINTR) {

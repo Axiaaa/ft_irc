@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/14 11:47:35 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/14 16:33:40 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <vector>
+#include <cerrno>
 #include <algorithm>
 #include <sys/wait.h>
 #include <iterator>
@@ -38,7 +39,7 @@ class Server {
 		int socket_;
 
 	public :
-
+		Server::Server();
 		Server(char *port, string password);
 		~Server();
 		void createSocket();

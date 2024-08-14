@@ -6,11 +6,16 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/14 11:44:47 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/14 16:35:53 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+
+/*
+###########----BASIC MEMBER FUNCTIONS
+*/
+
 
 Server::Server(char* port, string password)
 {
@@ -22,6 +27,19 @@ Server::Server(char* port, string password)
 	this->createSocket();
 }
 
+Server::~Server()
+{
+	for (vector<int>::iterator it = this->clientsList_.begin(); it != this->clientsList_.end(); ++it) {
+		close(*it);
+		}
+	close(this->socket_);
+}
+
+/*
+###########----SPECIFICS MEMBER FUNCTIONS
+*/
+
+// Create and init Socket
 void Server::createSocket()
 {
 	this->socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -32,14 +50,7 @@ void Server::createSocket()
 		close(this->socket_), throw SocketCreationException();
 }
 
-Server::~Server()
-{
-	for (vector<int>::iterator it = this->clientsList_.begin(); it != this->clientsList_.end(); ++it) {
-		close(*it);
-		}
-	close(this->socket_);
-}
-
+// Configure Socket
 void Server::bindSocket()
 {
 	if (bind(this->socket_, (struct sockaddr*)&this->addr_, sizeof(this->addr_)) < 0)
