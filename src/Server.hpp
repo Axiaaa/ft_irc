@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
+/*   Updated: 2024/08/14 11:47:35 by ocyn             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 
 #include <iostream>
@@ -19,23 +31,23 @@ using std::vector;
 class Server {
 
 
-    private :
-        sockaddr_in addr_;
-        vector<int> clientsList_;
-        fd_set fdSet_;
-        int socket_;
+	private :
+		sockaddr_in addr_;
+		vector<int> clientsList_;
+		fd_set fdSet_;
+		int socket_;
 
-    public :
+	public :
 
-        Server(char *port, string password);
-        ~Server();
-        void createSocket();
-        void bindSocket();
-        void listenSocket();
+		Server(char *port, string password);
+		~Server();
+		void createSocket();
+		void bindSocket();
+		void listenSocket();
 
-        int& getSocket();
-        sockaddr getAddr();
-        fd_set& getFdSet();
-        vector<int>& getClientsList();
+		int& getSocket();
+		sockaddr getAddr();
+		fd_set& getFdSet();
+		vector<int>& getClientsList();
 
 };

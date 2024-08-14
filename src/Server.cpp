@@ -1,39 +1,55 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
+/*   Updated: 2024/08/14 11:44:47 by ocyn             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "Server.hpp"
 
-Server::Server(char* port, string password) {
-
-    (void)password;
-    memset(&this->addr_, 0, sizeof(this->addr_));
-    this->addr_.sin_port = htons(std::strtol(port, NULL, 10));
-    this->addr_.sin_family = AF_INET;
-    this->addr_.sin_addr.s_addr = INADDR_ANY;
-    this->createSocket();
+Server::Server(char* port, string password)
+{
+	(void)password;
+	memset(&this->addr_, 0, sizeof(this->addr_));
+	this->addr_.sin_port = htons(std::strtol(port, NULL, 10));
+	this->addr_.sin_family = AF_INET;
+	this->addr_.sin_addr.s_addr = INADDR_ANY;
+	this->createSocket();
 }
 
-void Server::createSocket() {
-    this->socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (socket_ < 0)
-        throw SocketCreationException();
-    int optval = 1;
-    if (setsockopt(this->socket_, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval)) < 0)
-        close(this->socket_), throw SocketCreationException();
+void Server::createSocket()
+{
+	this->socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (socket_ < 0)
+		throw SocketCreationException();
+	int optval = 1;
+	if (setsockopt(this->socket_, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval)) < 0)
+		close(this->socket_), throw SocketCreationException();
 }
 
-Server::~Server() {
-    for (vector<int>::iterator it = this->clientsList_.begin(); it != this->clientsList_.end(); ++it) {
-        close(*it);
-        }
-    close(this->socket_);    
+Server::~Server()
+{
+	for (vector<int>::iterator it = this->clientsList_.begin(); it != this->clientsList_.end(); ++it) {
+		close(*it);
+		}
+	close(this->socket_);
 }
 
-void Server::bindSocket() {
-    if (bind(this->socket_, (struct sockaddr*)&this->addr_, sizeof(this->addr_)) < 0)
-        close(this->socket_), throw SocketBindException();
+void Server::bindSocket()
+{
+	if (bind(this->socket_, (struct sockaddr*)&this->addr_, sizeof(this->addr_)) < 0)
+		close(this->socket_), throw SocketBindException();
 }
 
-void Server::listenSocket() {
-    if (listen(this->socket_, 5) < 0)
-        close(this->socket_), throw SocketListenException();
+void Server::listenSocket()
+{
+	if (listen(this->socket_, 5) < 0)
+		close(this->socket_), throw SocketListenException();
 }
 
 int& Server::getSocket() { return this->socket_; }
