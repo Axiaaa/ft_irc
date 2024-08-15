@@ -31,6 +31,7 @@ OBJ_DIR				= $(SRC_DIR)OBJ/
 #____________FILES
 ALL_SRC				= main.cpp \
 					Server.cpp \
+					Client.cpp \
 					Exceptions.cpp
 
 ALL_HEADERS			= $(ALL_SRC:.cpp=.hpp)

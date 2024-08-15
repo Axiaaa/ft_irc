@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/15 14:45:28 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/15 15:47:57 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,11 @@ int main(int ac, char **av)
 {
 	if (ac < 2)
 		return (1);
-	Server server(av[1], "password"); // Init server
-	server.startServer(av[1]); // Start the server
+
+	// Initializating server
+	Server server(av[1], "password");
+	// Starting server
+	server.startServer(av[1]);
 
 	fd_set &fdset = server.getFdSet();
 	int max_sd = server.getSocket();
