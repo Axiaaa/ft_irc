@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/15 13:08:51 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/15 14:45:28 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,48 +50,50 @@ Loop for each clients to check received messages
 */
 void	_receivingServ(Server &server)
 {
-		std::vector<int> clients = server.getClientsList();
-		for (std::vector<int>::iterator it = clients.begin(); it != clients.end(); )
+	std::vector<int> clients = server.getClientsList();
+	for (std::vector<int>::iterator it = clients.begin(); it != clients.end(); )
+	{
+		int client_fd = *it;
+		// Check new incoming datas
+		if (FD_ISSET(client_fd, &server.getFdSet()))
 		{
-			int client_fd = *it;
+			// Get datas in buffer
+			char buffer[1024];
+			int valread = recv(client_fd, buffer, 1024, 0);
+			buffer[valread] = '\0';
 
-			// Check new incoming datas
-			if (FD_ISSET(client_fd, &server.getFdSet()))
+			// If no data received, error and delete client from list
+			if (valread <= 0)
 			{
-				char buffer[1024];
-				int valread = recv(client_fd, buffer, 1024, 0);
-				buffer[valread] = '\0';
-
-				// If no data received, error and delete client from list
-				if (valread <= 0)
-				{
-					if (valread == 0)
-						std::cout << "Client déconnecté, socket fd: " << client_fd << std::endl;
-					else
-						std::cerr << "Erreur lors de la réception des données du client, socket fd: " << client_fd << std::endl;
-					close(client_fd);
-					it = clients.erase(it);
-				}
+				if (valread == 0)
+					std::cout << "Client déconnecté, socket fd: " << client_fd << std::endl;
 				else
-				{
-					// Affiche le message reçu du client
-					std::cout << "Message reçu du client, socket fd: " << client_fd << std::endl;
-					std::cout << "Contenu: [ " << buffer << " ]" << std::endl;
-					std::cout << "Size: " << valread << std::endl;
-					++it;
-				}
-			} 
+					std::cerr << "Erreur lors de la réception des données du client, socket fd: " << client_fd << std::endl;
+				close(client_fd);
+				it = clients.erase(it);
+			}
 			else
+			{
+				// Affiche le message reçu du client
+				std::cout << "Message reçu du client, socket fd: " << client_fd << std::endl;
+				std::cout << "Contenu: [ " << buffer << " ]" << std::endl;
+				std::cout << "Size: " << valread << std::endl;
 				++it;
-		}
+			}
+		} 
+		else
+			++it;
+	}
 }
 
 void	_addFdClient(Server &server, int &max_sd)
 {
-	vector<int> clients = server.getClientsList();
+	vector<int>	clients = server.getClientsList();
+
 	for (vector<int>::iterator it = clients.begin(); it != clients.end(); ++it)
 	{
 		int client_fd = *it;
+
 		FD_SET(client_fd, &server.getFdSet());
 		if (client_fd > max_sd)
 			max_sd = client_fd;
