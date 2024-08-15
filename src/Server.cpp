@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/14 16:35:53 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/15 12:27:15 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,15 @@ void Server::listenSocket()
 		close(this->socket_), throw SocketListenException();
 }
 
+void	Server::startServer(char *port)
+{
+	this->createSocket();
+	this->bindSocket();
+	this->listenSocket();
+	std::cout << "Serveur démarré sur le port " << port << std::endl;
+}
+
+// GETTERS (for Server's attributes)
 int& Server::getSocket() { return this->socket_; }
 sockaddr Server::getAddr() { return *(sockaddr*)&this->addr_; }
 fd_set& Server::getFdSet() { return this->fdSet_; }
