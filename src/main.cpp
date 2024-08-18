@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/15 15:47:57 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/18 09:57:59 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,11 @@ int main(int ac, char **av)
 	// Starting server
 	server.startServer(av[1]);
 
-	fd_set &fdset = server.getFdSet();
 	int max_sd = server.getSocket();
 	while (true)
 	{
-		FD_ZERO(&fdset);
-		FD_SET(server.getSocket(), &fdset);
+		FD_ZERO(&server.getFdSet());
+		FD_SET(server.getSocket(), &server.getFdSet());
 
 		// Adding new Clients to list
 		_addFdClient(server, max_sd);
@@ -72,8 +71,15 @@ void	_receivingServ(Server &server)
 					std::cout << "Client déconnecté, socket fd: " << client_fd << std::endl;
 				else
 					std::cerr << "Erreur lors de la réception des données du client, socket fd: " << client_fd << std::endl;
-				close(client_fd);
-				it = clients.erase(it);
+				try
+				{
+					close(client_fd);
+					it = clients.erase(it);
+				}
+				catch(const std::exception& e)
+				{
+					std::cerr << "Erreur de fermeture du client: " << e.what() << '\n';
+				}
 			}
 			else
 			{
