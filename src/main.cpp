@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/19 12:30:28 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/19 12:41:47 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ void	_receivingServ(Server &server)
 				std::cout << "Size: " << valread << std::endl;
 				++it;
 
+				// Split the buffer into commands and execute them one by one
 				string commands = buffer;
 				while (commands.find("\r\n") != string::npos)
 				{

@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/19 12:33:05 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/19 12:41:15 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,16 +74,18 @@ void	Server::startServer(char *port)
 
 void Server::handleClientMessage(int client_fd, string command, string arg)
 {
-	
+	//Create a map of commands and their corresponding functions to avoid a long list of if/else
 	map<string, void(*)(Server&, int, const char*)> commands;
 	commands["CAP"] = cap;
 	commands["NICK"] = nick;
 	commands["USER"] = user;
 
+	//If the command is in the map, execute the corresponding function
 	if (commands.find(command) != commands.end())
 		commands[command](*this, client_fd, arg.c_str());
 	else
 	{
+		//If the command is not in the map, send an error message to the client
 		std::string error = "ERROR : Unknown command ";
 		error += command;
 		error += "\r\n";
