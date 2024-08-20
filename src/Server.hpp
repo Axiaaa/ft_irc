@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/20 11:10:25 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/20 13:41:59 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ class Server {
 		void		bindSocket();
 		void		listenSocket();
 		void		startServer(char *port);
-		void 		handleClientMessage(int client_fd, string command, string arg);
+		void 		handleClientMessage(Client &client, string command, string arg);
 		void		sendData(int client_fd, string data);
 
 		int&			getSocket();

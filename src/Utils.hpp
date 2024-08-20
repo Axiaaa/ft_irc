@@ -4,6 +4,8 @@
 #include <cstring>
 #include <sstream>
 
+
+std::vector<std::string> split(const std::string &s, char delim);
 std::string intToString(int value);
 
 #define BLUE "\033[1;34m"

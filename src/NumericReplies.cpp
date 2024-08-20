@@ -162,41 +162,55 @@ string ERR_UNKNOWNCOMMAND(const string &command) {
     return "421 " + command + " :Unknown command";
 }
 
-string getNumericReply(int code, string arg1, string arg2, string arg3, string arg4) 
+// 462: ERR_ALREADYREGISTERED - Vous êtes déjà enregistré
+string ERR_ALREADYREGISTERED(const string &nick) {
+    return "462 " + nick + " :You may not reregister";
+}
+
+// 461: ERR_NEEDMOREPARAMS - Pas assez de paramètres
+string ERR_NEEDMOREPARAMS(const string &command, const string &nick) {
+    return "461 " + nick + " " + command + " :Not enough parameters";
+}
+
+string getNumericReply(Client& client, int code, string arg1, string arg2, string arg3, string arg4) 
 {
+    string s = client.getHostname();
+
     switch (code) {
-        case 1: return RPL_WELCOME(arg1);
-        case 2: return RPL_YOURHOST(arg1, arg2);
-        case 3: return RPL_CREATED(arg1);
-        case 4: return RPL_MYINFO(arg1, arg2, arg3, arg4);
-        case 5: return RPL_ISUPPORT(arg1);
-        case 301: return RPL_AWAY(arg1, arg2);
-        case 305: return RPL_UNAWAY();
-        case 306: return RPL_NOWAWAY();
-        case 311: return RPL_WHOISUSER(arg1, arg2, arg3, arg4);
-        case 312: return RPL_WHOISSERVER(arg1, arg2, arg3);
-        case 313: return RPL_WHOISOPERATOR(arg1);
-        case 317: return RPL_WHOISIDLE(arg1, arg2, arg3);
-        case 318: return RPL_ENDOFWHOIS(arg1);
-        case 319: return RPL_WHOISCHANNELS(arg1, arg2);
-        case 322: return RPL_LIST(arg1, arg2, arg3);
-        case 323: return RPL_LISTEND();
-        case 324: return RPL_CHANNELMODEIS(arg1, arg2);
-        case 331: return RPL_NOTOPIC(arg1);
-        case 332: return RPL_TOPIC(arg1, arg2);
-        case 341: return RPL_INVITING(arg1, arg2);
-        case 353: return RPL_NAMREPLY(arg1, arg2, arg3);
-        case 366: return RPL_ENDOFNAMES(arg1);
-        case 372: return RPL_MOTD(arg1);
-        case 375: return RPL_MOTDSTART(arg1);
-        case 376: return RPL_ENDOFMOTD();
-        case 433: return ERR_NICKNAMEINUSE(arg1);
-        case 451: return ERR_NOTREGISTERED();
-        case 482: return ERR_CHANOPRIVSNEEDED(arg1);
-        case 401: return ERR_NOSUCHNICK(arg1);
-        case 403: return ERR_NOSUCHCHANNEL(arg1);
-        case 404: return ERR_CANNOTSENDTOCHAN(arg1);
-        case 421: return ERR_UNKNOWNCOMMAND(arg1);
+        case 1: return s + RPL_WELCOME(arg1);
+        case 2: return s + RPL_YOURHOST(arg1, arg2);
+        case 3: return s + RPL_CREATED(arg1);
+        case 4: return s + RPL_MYINFO(arg1, arg2, arg3, arg4);
+        case 5: return s + RPL_ISUPPORT(arg1);
+        case 301: return s + RPL_AWAY(arg1, arg2);
+        case 305: return s + RPL_UNAWAY();
+        case 306: return s + RPL_NOWAWAY();
+        case 311: return s + RPL_WHOISUSER(arg1, arg2, arg3, arg4);
+        case 312: return s + RPL_WHOISSERVER(arg1, arg2, arg3);
+        case 313: return s + RPL_WHOISOPERATOR(arg1);
+        case 317: return s + RPL_WHOISIDLE(arg1, arg2, arg3);
+        case 318: return s + RPL_ENDOFWHOIS(arg1);
+        case 319: return s + RPL_WHOISCHANNELS(arg1, arg2);
+        case 322: return s + RPL_LIST(arg1, arg2, arg3);
+        case 323: return s + RPL_LISTEND();
+        case 324: return s + RPL_CHANNELMODEIS(arg1, arg2);
+        case 331: return s + RPL_NOTOPIC(arg1);
+        case 332: return s + RPL_TOPIC(arg1, arg2);
+        case 341: return s + RPL_INVITING(arg1, arg2);
+        case 353: return s + RPL_NAMREPLY(arg1, arg2, arg3);
+        case 366: return s + RPL_ENDOFNAMES(arg1);
+        case 372: return s + RPL_MOTD(arg1);
+        case 375: return s + RPL_MOTDSTART(arg1);
+        case 376: return s + RPL_ENDOFMOTD();
+        case 433: return s + ERR_NICKNAMEINUSE(arg1);
+        case 451: return s + ERR_NOTREGISTERED();
+        case 482: return s + ERR_CHANOPRIVSNEEDED(arg1);
+        case 401: return s + ERR_NOSUCHNICK(arg1);
+        case 403: return s + ERR_NOSUCHCHANNEL(arg1);
+        case 404: return s + ERR_CANNOTSENDTOCHAN(arg1);
+        case 421: return s + ERR_UNKNOWNCOMMAND(arg1);
+        case 462: return s + ERR_ALREADYREGISTERED(arg1);
+        case 461: return s + ERR_NEEDMOREPARAMS(arg1, arg2);
         default: return "";   
     }
 }

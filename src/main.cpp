@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/20 11:26:39 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/20 17:57:11 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	_receivingServ(Server &server)
 					commands = commands.substr(commands.find("\r\n") + 2);
 					string arg = command.substr(command.find(" ") + 1);
 					command = command.substr(0, command.find(" "));
-					server.handleClientMessage(client_fd, command, arg);
+					server.handleClientMessage(*it, command, arg);
 				}
 				++it;
 			}
@@ -135,8 +135,8 @@ int		_newConnections(Server &server)
 			}
 			std::cout << MAGENTA << "Nouvelle connexion acceptée, socket fd: " << newsockfd << RESET << std::endl;
 			Client newClient(newsockfd, client_addr, time(NULL));
+			newClient.setRegistrationStatus(true);
 			server.getClientsList().push_back(newClient);
-
-		}
+	}
 	return (0);
 }

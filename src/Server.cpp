@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/20 11:28:37 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/20 18:05:42 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,31 +72,30 @@ void	Server::startServer(char *port)
 	std::cout << CYAN << "Serveur démarré sur le port " << port << RESET << std::endl;
 }
 
-void Server::handleClientMessage(int client_fd, string command, string arg)
+void Server::handleClientMessage(Client &client, string command, string arg)
 {
 	//Create a map of commands and their corresponding functions to avoid a long list of if/else
-	map<string, void(*)(Server&, int, const char*)> commands;
+	map<string, void(*)(Server&, Client&, const char *)> commands;
 	commands["NICK"] = nick;
 	commands["USER"] = user;
 
 	//If the command is in the map, execute the corresponding function
-	if (commands.find(command) != commands.end()) {
-		std::cout << YELLOW << "Sending command: " << command << " Arg: " << arg << RESET << std::endl,
-		commands[command](*this, client_fd, arg.c_str());
-	}
-	else
+	if (commands.find(command) != commands.end()) 
+		commands[command](*this, client, arg.c_str());
+	else if (command != "CAP" && command != "QUIT")
 	{
 		//If the command is not in the map, send an error message to the client
 		std::string error = "ERROR : Unknown command ";
 		error += command;
 		error += "\r\n";
-		this->sendData(client_fd, error);
+		this->sendData(client.getClientFd(), error);
 	}
 }
 
 // Send data to a client
 void	Server::sendData(int client_fd, string data)
 {
+	std::cout << "Sending data to client " << client_fd << ": " << data << std::endl;
 	if (send(client_fd, data.c_str(), data.size(), 0) == -1)
 		throw SendFailedException();
 }
