@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/19 12:41:47 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/20 11:26:39 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,10 @@ Loop for each clients to check received messages
 */
 void	_receivingServ(Server &server)
 {
-	std::vector<int> clients = server.getClientsList();
-	for (std::vector<int>::iterator it = clients.begin(); it != clients.end(); )
+	std::vector<Client> clients = server.getClientsList();
+	for (std::vector<Client>::iterator it = clients.begin(); it != clients.end(); )
 	{
-		int client_fd = *it;
+		int client_fd = it->getClientFd();
 		// Check new incoming datas
 		if (FD_ISSET(client_fd, &server.getFdSet()))
 		{
@@ -68,7 +68,7 @@ void	_receivingServ(Server &server)
 			if (valread <= 0)
 			{
 				if (valread == 0)
-					std::cout << "Client déconnecté, socket fd: " << client_fd << std::endl;
+					std::cout << RED << "Client déconnecté, socket fd: " << client_fd << RESET << std::endl;
 				else
 					std::cerr << "Erreur lors de la réception des données du client, socket fd: " << client_fd << std::endl;
 				close(client_fd);
@@ -77,10 +77,7 @@ void	_receivingServ(Server &server)
 			else
 			{
 				// Affiche le message reçu du client
-				std::cout << "Message reçu du client, socket fd: " << client_fd << std::endl;
-				std::cout << "Contenu: [ " << buffer << " ]" << std::endl;
-				std::cout << "Size: " << valread << std::endl;
-				++it;
+				std::cout << GREEN << "Message reçu du client " << client_fd << ":\n" << buffer << RESET <<std::endl;
 
 				// Split the buffer into commands and execute them one by one
 				string commands = buffer;
@@ -92,6 +89,7 @@ void	_receivingServ(Server &server)
 					command = command.substr(0, command.find(" "));
 					server.handleClientMessage(client_fd, command, arg);
 				}
+				++it;
 			}
 		}
 		else
@@ -101,11 +99,11 @@ void	_receivingServ(Server &server)
 
 void	_addFdClient(Server &server, int &max_sd)
 {
-	vector<int>	clients = server.getClientsList();
+	vector<Client>	clients = server.getClientsList();
 
-	for (vector<int>::iterator it = clients.begin(); it != clients.end(); ++it)
+	for (vector<Client>::iterator it = clients.begin(); it != clients.end(); ++it)
 	{
-		int client_fd = *it;
+		int client_fd = it->getClientFd();
 
 		FD_SET(client_fd, &server.getFdSet());
 		if (client_fd > max_sd)
@@ -135,8 +133,9 @@ int		_newConnections(Server &server)
 				std::cerr << "Erreur lors de l'acceptation de la connexion" << std::endl;
 				return (1);
 			}
-			std::cout << "Nouvelle connexion acceptée, socket fd: " << newsockfd << std::endl;
-			server.getClientsList().push_back(newsockfd);
+			std::cout << MAGENTA << "Nouvelle connexion acceptée, socket fd: " << newsockfd << RESET << std::endl;
+			Client newClient(newsockfd, client_addr, time(NULL));
+			server.getClientsList().push_back(newClient);
 
 		}
 	return (0);
