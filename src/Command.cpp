@@ -11,38 +11,37 @@ void nick(Server &server, Client &client, const char *buffer)
 {
     std::string nick = "NICK :";
     nick += buffer;
-    nick += "\r\n";
     client.setNickname(buffer);
-    server.sendData(client.getClientFd(), nick);
+    server.sendData(client.getClientFd(), ":locahost " + nick);
 }
 
+
 /*
-    @brief Send a USER command to the server
+    @brief Store the username of the client
     @param server The server object
-    @param client The client object
+    @param client_fd The client file descriptor
     @param buffer The buffer containing the username
 
-    Example: 
-    nickname!username@localhost USER username 0 * :realname
+    If the client is already registered, the server will send a 462 error message.
+    If the buffer is less than 4, the server will send a 461 error message.
+    Otherwise, the server will send a 001 message.
+    Ex : "001 :Welcome to the Internet Relay Network <username>!<hostname>@<servername>" 
 */
-void user(Server &server, Client &client, const char *buffer)
+
+void user(Server& server, Client& client, const char *buffer)
 {   
-    std::string user = "USER ";
-    std::cout << "Buffer: " << client.getRegistrationStatus() << std::endl;
-    // if (client.getRegistrationStatus()) {
-    //     server.sendData(client.getClientFd(), getNumericReply(client, 462, "USER", "", "", "")); 
-    //     return
-    // }
-    string space = " ";
     vector<string> buff_split = split(string(buffer), ' ');
-    std::cout << "Buffer split size: " << buff_split.size() << std::endl;
-    client.init(buffer, server);
     if (buff_split.size() < 4) {
-        server.sendData(client.getClientFd(), getNumericReply(client, 461, "USER", "", "", ""));
+        std::cout << client.getNickname() << std::endl;
+        server.sendData(client.getClientFd(), getNumericReply(client, 461, client.getNickname(), "USER", "", ""));
         return ;
     }
-    user += buffer;
-    user += "\r\n";
-    std::cout << YELLOW << "Sending command: " << user << RESET << std::endl;
-    server.sendData(client.getClientFd(), client.getHostname() + user);
+    if (client.getRegistrationStatus() == 1) {
+        server.sendData(client.getClientFd(), getNumericReply(client, 462, "USER", "", "", "")); 
+        return ;
+    }
+    if (client.getUsername() == "")
+        client.setUsername(string(buff_split[0]));
+    server.sendData(client.getClientFd(), getNumericReply(client, 001, client.getNickname(), "", "", ""));
+    client.setRegistrationStatus(1);
 }

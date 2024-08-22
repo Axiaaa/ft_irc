@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/20 17:57:11 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/22 10:52:32 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ Loop for each clients to check received messages
 */
 void	_receivingServ(Server &server)
 {
-	std::vector<Client> clients = server.getClientsList();
-	for (std::vector<Client>::iterator it = clients.begin(); it != clients.end(); )
+	std::vector<Client>* clients = &server.getClientsList();
+	for (std::vector<Client>::iterator it = clients->begin(); it != clients->end(); )
 	{
 		int client_fd = it->getClientFd();
 		// Check new incoming datas
@@ -72,7 +72,7 @@ void	_receivingServ(Server &server)
 				else
 					std::cerr << "Erreur lors de la réception des données du client, socket fd: " << client_fd << std::endl;
 				close(client_fd);
-				it = clients.erase(it);
+				it = clients->erase(it);
 			}
 			else
 			{
@@ -99,7 +99,7 @@ void	_receivingServ(Server &server)
 
 void	_addFdClient(Server &server, int &max_sd)
 {
-	vector<Client>	clients = server.getClientsList();
+	vector<Client> clients = server.getClientsList();
 
 	for (vector<Client>::iterator it = clients.begin(); it != clients.end(); ++it)
 	{
@@ -135,7 +135,8 @@ int		_newConnections(Server &server)
 			}
 			std::cout << MAGENTA << "Nouvelle connexion acceptée, socket fd: " << newsockfd << RESET << std::endl;
 			Client newClient(newsockfd, client_addr, time(NULL));
-			newClient.setRegistrationStatus(true);
+			newClient.setId(newsockfd);
+			newClient.setRegistrationStatus(false);
 			server.getClientsList().push_back(newClient);
 	}
 	return (0);

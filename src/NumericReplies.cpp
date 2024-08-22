@@ -2,8 +2,8 @@
 #include "Exceptions.hpp"
 
 // 001: RPL_WELCOME - Bienvenue sur le serveur IRC
-string RPL_WELCOME(const string &nick) {
-    return "001 " + nick + " :Welcome to the Internet Relay Network " + nick;
+string RPL_WELCOME(const string &nick, const string &hostname) {
+    return "001 " + nick + " :Welcome to the Internet Relay Network, " + hostname;
 }
 
 // 002: RPL_YOURHOST - Informations sur l'hôte
@@ -164,11 +164,11 @@ string ERR_UNKNOWNCOMMAND(const string &command) {
 
 // 462: ERR_ALREADYREGISTERED - Vous êtes déjà enregistré
 string ERR_ALREADYREGISTERED(const string &nick) {
-    return "462 " + nick + " :You may not reregister";
+    return "462 " + nick + ":You may not reregister";
 }
 
 // 461: ERR_NEEDMOREPARAMS - Pas assez de paramètres
-string ERR_NEEDMOREPARAMS(const string &command, const string &nick) {
+string ERR_NEEDMOREPARAMS(const string &nick, const string &command) {
     return "461 " + nick + " " + command + " :Not enough parameters";
 }
 
@@ -177,7 +177,7 @@ string getNumericReply(Client& client, int code, string arg1, string arg2, strin
     string s = client.getHostname();
 
     switch (code) {
-        case 1: return s + RPL_WELCOME(arg1);
+        case 1: return s + RPL_WELCOME(arg1, client.getHostname());
         case 2: return s + RPL_YOURHOST(arg1, arg2);
         case 3: return s + RPL_CREATED(arg1);
         case 4: return s + RPL_MYINFO(arg1, arg2, arg3, arg4);

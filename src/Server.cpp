@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/20 18:05:42 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/22 10:35:38 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ void Server::handleClientMessage(Client &client, string command, string arg)
 void	Server::sendData(int client_fd, string data)
 {
 	std::cout << "Sending data to client " << client_fd << ": " << data << std::endl;
+	data += "\r\n";
 	if (send(client_fd, data.c_str(), data.size(), 0) == -1)
 		throw SendFailedException();
 }
