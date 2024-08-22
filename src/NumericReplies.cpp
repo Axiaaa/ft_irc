@@ -172,45 +172,24 @@ string ERR_NEEDMOREPARAMS(const string &nick, const string &command) {
     return "461 " + nick + " " + command + " :Not enough parameters";
 }
 
-string getNumericReply(Client& client, int code, string arg1, string arg2, string arg3, string arg4) 
+
+/* 
+ *  @brief Get the numeric reply corresponding to the code
+ *  @example Ex : "<username>!<hostname>@<servername> 001 :Welcome to the Internet Relay Network"
+ *  @param client The client object
+ *  @param code The numeric reply code
+ *  @param arg The argument of the numeric reply (if multiple arguments, separate them with a '_')
+ *  @return string : The numeric reply.
+ */
+string getNumericReply(Client& client, int code, string arg) 
 {
     string s = client.getHostname();
-
+    if (arg != "" && arg.find('_') != string::npos) 
+        vector<string> arg_split = split(arg, '_');
     switch (code) {
-        case 1: return s + RPL_WELCOME(arg1, client.getHostname());
-        case 2: return s + RPL_YOURHOST(arg1, arg2);
-        case 3: return s + RPL_CREATED(arg1);
-        case 4: return s + RPL_MYINFO(arg1, arg2, arg3, arg4);
-        case 5: return s + RPL_ISUPPORT(arg1);
-        case 301: return s + RPL_AWAY(arg1, arg2);
-        case 305: return s + RPL_UNAWAY();
-        case 306: return s + RPL_NOWAWAY();
-        case 311: return s + RPL_WHOISUSER(arg1, arg2, arg3, arg4);
-        case 312: return s + RPL_WHOISSERVER(arg1, arg2, arg3);
-        case 313: return s + RPL_WHOISOPERATOR(arg1);
-        case 317: return s + RPL_WHOISIDLE(arg1, arg2, arg3);
-        case 318: return s + RPL_ENDOFWHOIS(arg1);
-        case 319: return s + RPL_WHOISCHANNELS(arg1, arg2);
-        case 322: return s + RPL_LIST(arg1, arg2, arg3);
-        case 323: return s + RPL_LISTEND();
-        case 324: return s + RPL_CHANNELMODEIS(arg1, arg2);
-        case 331: return s + RPL_NOTOPIC(arg1);
-        case 332: return s + RPL_TOPIC(arg1, arg2);
-        case 341: return s + RPL_INVITING(arg1, arg2);
-        case 353: return s + RPL_NAMREPLY(arg1, arg2, arg3);
-        case 366: return s + RPL_ENDOFNAMES(arg1);
-        case 372: return s + RPL_MOTD(arg1);
-        case 375: return s + RPL_MOTDSTART(arg1);
-        case 376: return s + RPL_ENDOFMOTD();
-        case 433: return s + ERR_NICKNAMEINUSE(arg1);
-        case 451: return s + ERR_NOTREGISTERED();
-        case 482: return s + ERR_CHANOPRIVSNEEDED(arg1);
-        case 401: return s + ERR_NOSUCHNICK(arg1);
-        case 403: return s + ERR_NOSUCHCHANNEL(arg1);
-        case 404: return s + ERR_CANNOTSENDTOCHAN(arg1);
-        case 421: return s + ERR_UNKNOWNCOMMAND(arg1);
-        case 462: return s + ERR_ALREADYREGISTERED(arg1);
-        case 461: return s + ERR_NEEDMOREPARAMS(arg1, arg2);
-        default: return "";   
+        case 1: return s + RPL_WELCOME(client.getNickname(), client.getNickname());
+        case 462: return s + ERR_ALREADYREGISTERED(client.getNickname());
+        case 461: return s + ERR_NEEDMOREPARAMS(client.getNickname(), arg);
+        default: return "";
     }
 }
