@@ -127,8 +127,8 @@ string RPL_ENDOFMOTD() {
 }
 
 // 433: ERR_NICKNAMEINUSE - Pseudonyme déjà utilisé
-string ERR_NICKNAMEINUSE(const string &nick) {
-    return "433 * " + nick + " :Nickname is already in use";
+string ERR_NICKNAMEINUSE(const string &nick, const string &command) {
+    return "433 " + nick + " " + command +" :Nickname is already in use";
 }
 
 //451: ERR_NOTREGISTERED - Vous devez être enregistré pour effectuer cette action
@@ -172,6 +172,15 @@ string ERR_NEEDMOREPARAMS(const string &nick, const string &command) {
     return "461 " + nick + " " + command + " :Not enough parameters";
 }
 
+// 432: ERR_ERRONEUSNICKNAME - Pseudonyme incorrect
+string ERR_ERRONEUSNICKNAME(const string &nick, const string &command) {
+    return "432 " + nick + " " + command + " :Erroneus nickname";
+}
+
+// 431: ERR_NONICKNAMEGIVEN - Aucun pseudonyme donné
+string ERR_NONICKNAMEGIVEN(const string &nick) {
+    return "431 " + nick + " :No nickname given";
+}
 
 /* 
  *  @brief Get the numeric reply corresponding to the code
@@ -190,6 +199,9 @@ string getNumericReply(Client& client, int code, string arg)
         case 1: return s + RPL_WELCOME(client.getNickname(), client.getNickname());
         case 462: return s + ERR_ALREADYREGISTERED(client.getNickname());
         case 461: return s + ERR_NEEDMOREPARAMS(client.getNickname(), arg);
+        case 433: return s + ERR_NICKNAMEINUSE(client.getNickname() , arg);
+        case 432: return s + ERR_ERRONEUSNICKNAME(client.getNickname(), arg);
+        case 431: return s + ERR_NONICKNAMEGIVEN(client.getNickname());
         default: return "";
     }
 }

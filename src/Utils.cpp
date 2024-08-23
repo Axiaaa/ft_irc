@@ -17,3 +17,9 @@ std::vector<std::string> split(const std::string &s, char delim) {
 
     return result;
 }
+
+bool isAuthorized(char c) {
+    if (std::isalpha(c) && !std::isspace(c) && c != '#' && c != '&' && c != ':') 
+        return true;
+    return false;
+}
