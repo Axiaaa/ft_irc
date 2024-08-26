@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/22 10:36:18 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/24 22:29:59 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@
 #include <set>
 #include <string>
 
-
 #include "Client.hpp"
 #include "Exceptions.hpp"
 #include "Utils.hpp"
@@ -47,7 +46,7 @@ class Server {
 	private :
 		sockaddr_in		addr_;
 		vector<Client>		clientsList_;
-		map<std::string, set<int> >channels; 
+		map<std::string, set<int> >channels;
 		fd_set			fdSet_;
 		int				socket_;
 
@@ -66,5 +65,4 @@ class Server {
 		sockaddr		getAddr();
 		fd_set&			getFdSet();
 		vector<Client>&	getClientsList();
-
 };

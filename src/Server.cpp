@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/23 11:24:59 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/24 22:03:55 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 /*
 ###########----BASIC MEMBER FUNCTIONS
 */
-
 
 Server::Server(char* port, string password)
 {
@@ -78,6 +77,7 @@ void Server::handleClientMessage(Client &client, string command, string arg)
 	map<string, void(*)(Server&, Client&, const char *)> commands;
 	commands["NICK"] = nick;
 	commands["USER"] = user;
+	commands["PRIVMSG"] = privmsg;
 
 	//If the command is in the map, execute the corresponding function
 	if (commands.find(command) != commands.end()) 
@@ -102,7 +102,7 @@ void	Server::sendData(int client_fd, string data)
 }
 
 // GETTERS 
-int& 		Server::getSocket() { return this->socket_; }
-sockaddr 	Server::getAddr() 	{ return *(sockaddr*)&this->addr_; }
-fd_set& 	Server::getFdSet() 	{ return this->fdSet_; }
-vector<Client>& Server::getClientsList() { return this->clientsList_; }
+int& 		Server::getSocket() 			{ return this->socket_; }
+sockaddr 	Server::getAddr() 				{ return *(sockaddr*)&this->addr_; }
+fd_set& 	Server::getFdSet() 				{ return this->fdSet_; }
+vector<Client>& Server::getClientsList() 	{ return this->clientsList_; }

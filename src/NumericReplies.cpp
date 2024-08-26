@@ -141,23 +141,18 @@ string ERR_CHANOPRIVSNEEDED(const string &channel) {
     return "482 " + channel + " :You're not channel operator";
 }
 
-//  ERR_NOSUCHNICK: Aucun utilisateur avec ce pseudonyme
-string ERR_NOSUCHNICK(const string &nick) {
-    return "401 " + nick + " :No such nick/channel";
-}
-
-//  ERR_NOSUCHCHANNEL: Aucun canal avec ce nom
+//  430: ERR_NOSUCHCHANNEL: Aucun canal avec ce nom
 string ERR_NOSUCHCHANNEL(const string &channel) {
     return "403 " + channel + " :No such channel";
 }
 
-//  ERR_CANNOTSENDTOCHAN: Ne peut pas envoyer de message dans ce canal
+// 404: ERR_CANNOTSENDTOCHAN: Ne peut pas envoyer de message dans ce canal
 string ERR_CANNOTSENDTOCHAN(const string &channel) {
     return "404 " + channel + " :Cannot send to channel";
 }
 
 
-//  ERR_UNKNOWNCOMMAND: Commande inconnue
+// 421: ERR_UNKNOWNCOMMAND: Commande inconnue
 string ERR_UNKNOWNCOMMAND(const string &command) {
     return "421 " + command + " :Unknown command";
 }
@@ -182,6 +177,21 @@ string ERR_NONICKNAMEGIVEN(const string &nick) {
     return "431 " + nick + " :No nickname given";
 }
 
+// 412: ERR_NOTEXTTOSEND - Aucun texte donné
+string ERR_NOTEXTTOSEND(const string &nick) {
+    return "412 " + nick + " :No text to send";
+}
+
+// 401: ERR_NOSUCHNICK - Pseudonyme invalide
+string ERR_NOSUCHNICK(const string &command, const string &nick) {
+    return "401 " + command + " " + nick + " :No such nick";
+}
+
+// 407: TOOMANYTARGETS - Trop de destinataires
+string ERR_TOOMANYTARGETS(const string &nick, const string &command) {
+    return "407 " + nick + " " + command + " :Too many recipients";
+}
+
 /* 
  *  @brief Get the numeric reply corresponding to the code
  *  @example Ex : "<username>!<hostname>@<servername> 001 :Welcome to the Internet Relay Network"
@@ -197,11 +207,14 @@ string getNumericReply(Client& client, int code, string arg)
         vector<string> arg_split = split(arg, '_');
     switch (code) {
         case 1: return s + RPL_WELCOME(client.getNickname(), client.getNickname());
+        case 401: return s + ERR_NOSUCHNICK(client.getNickname(), arg);
+        case 407: return s + ERR_TOOMANYTARGETS(client.getNickname(), arg);
+        case 412: return s + ERR_NOTEXTTOSEND(client.getNickname());
+        case 433: return s + ERR_NICKNAMEINUSE(client.getNickname() , arg);
+        case 431: return s + ERR_NONICKNAMEGIVEN(client.getNickname());
+        case 432: return s + ERR_ERRONEUSNICKNAME(client.getNickname(), arg);
         case 462: return s + ERR_ALREADYREGISTERED(client.getNickname());
         case 461: return s + ERR_NEEDMOREPARAMS(client.getNickname(), arg);
-        case 433: return s + ERR_NICKNAMEINUSE(client.getNickname() , arg);
-        case 432: return s + ERR_ERRONEUSNICKNAME(client.getNickname(), arg);
-        case 431: return s + ERR_NONICKNAMEGIVEN(client.getNickname());
         default: return "";
     }
 }
