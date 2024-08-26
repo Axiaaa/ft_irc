@@ -90,13 +90,14 @@ void privmsg(Server& server, Client& client, const char *buffer) {
 
     std::cout << buffer << std::endl;
     string target = string(buffer).substr(0, string(buffer).find(' '));
-    string message = string(buffer).substr(string(buffer).find(' '));
     if (string(buffer) == target) {
         server.sendData(client.getClientFd(), getNumericReply(client ,412, ""));
         return ;
     }
+    string message = string(buffer).substr(string(buffer).find(' '));
     if (message.find("#*") != string::npos || message.find("$*") != string::npos) {
         server.sendData(client.getClientFd(), getNumericReply(client, 407, "PRIVMSG")); 
+        return ;
     }
     for (vector<Client>::iterator it = server.getClientsList().begin(); it != server.getClientsList().end(); it++) {
         if (target == it->getNickname() && it->getRegistrationStatus() == true) {
