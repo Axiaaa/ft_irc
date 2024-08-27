@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/18 09:57:59 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/27 15:11:56 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,12 @@ int main(int ac, char **av)
 	// Starting server
 	server.startServer(av[1]);
 
+	fd_set &fdset = server.getFdSet();
 	int max_sd = server.getSocket();
 	while (true)
 	{
-		FD_ZERO(&server.getFdSet());
-		FD_SET(server.getSocket(), &server.getFdSet());
+		FD_ZERO(&fdset);
+		FD_SET(server.getSocket(), &fdset);
 
 		// Adding new Clients to list
 		_addFdClient(server, max_sd);
@@ -41,7 +42,6 @@ int main(int ac, char **av)
 		// New coming connections handling
 		if (_newConnections(server))
 			break ;
-		// Receiving clients datas
 		_receivingServ(server);
 	}
 	return 0;
@@ -52,10 +52,10 @@ Loop for each clients to check received messages
 */
 void	_receivingServ(Server &server)
 {
-	std::vector<int> clients = server.getClientsList();
-	for (std::vector<int>::iterator it = clients.begin(); it != clients.end(); )
+	std::vector<Client>* clients = &server.getClientsList();
+	for (std::vector<Client>::iterator it = clients->begin(); it != clients->end(); )
 	{
-		int client_fd = *it;
+		int client_fd = it->getClientFd();
 		// Check new incoming datas
 		if (FD_ISSET(client_fd, &server.getFdSet()))
 		{
@@ -68,28 +68,30 @@ void	_receivingServ(Server &server)
 			if (valread <= 0)
 			{
 				if (valread == 0)
-					std::cout << "Client déconnecté, socket fd: " << client_fd << std::endl;
+					std::cout << RED << "Client déconnecté, socket fd: " << client_fd << RESET << std::endl;
 				else
 					std::cerr << "Erreur lors de la réception des données du client, socket fd: " << client_fd << std::endl;
-				try
-				{
-					close(client_fd);
-					it = clients.erase(it);
-				}
-				catch(const std::exception& e)
-				{
-					std::cerr << "Erreur de fermeture du client: " << e.what() << '\n';
-				}
+				close(client_fd);
+				it = clients->erase(it);
 			}
 			else
 			{
 				// Affiche le message reçu du client
-				std::cout << "Message reçu du client, socket fd: " << client_fd << std::endl;
-				std::cout << "Contenu: [ " << buffer << " ]" << std::endl;
-				std::cout << "Size: " << valread << std::endl;
+				std::cout << GREEN << "Message reçu du client " << client_fd << ":\n" << buffer << RESET <<std::endl;
+
+				// Split the buffer into commands and execute them one by one
+				string commands = buffer;
+				while (commands.find("\r\n") != string::npos)
+				{
+					string command = commands.substr(0, commands.find("\r\n"));
+					commands = commands.substr(commands.find("\r\n") + 2);
+					string arg = command.substr(command.find(" ") + 1);
+					command = command.substr(0, command.find(" "));
+					server.handleClientMessage(*it, command, arg);
+				}
 				++it;
 			}
-		} 
+		}
 		else
 			++it;
 	}
@@ -97,11 +99,11 @@ void	_receivingServ(Server &server)
 
 void	_addFdClient(Server &server, int &max_sd)
 {
-	vector<int>	clients = server.getClientsList();
+	vector<Client> clients = server.getClientsList();
 
-	for (vector<int>::iterator it = clients.begin(); it != clients.end(); ++it)
+	for (vector<Client>::iterator it = clients.begin(); it != clients.end(); ++it)
 	{
-		int client_fd = *it;
+		int client_fd = it->getClientFd();
 
 		FD_SET(client_fd, &server.getFdSet());
 		if (client_fd > max_sd)
@@ -131,9 +133,10 @@ int		_newConnections(Server &server)
 				std::cerr << "Erreur lors de l'acceptation de la connexion" << std::endl;
 				return (1);
 			}
-			std::cout << "Nouvelle connexion acceptée, socket fd: " << newsockfd << std::endl;
-			server.getClientsList().push_back(newsockfd);
-
-		}
+			std::cout << MAGENTA << "Nouvelle connexion acceptée, socket fd: " << newsockfd << RESET << std::endl;
+			Client newClient(newsockfd, client_addr, time(NULL));
+			newClient.setRegistrationStatus(false);
+			server.getClientsList().push_back(newClient);
+	}
 	return (0);
 }

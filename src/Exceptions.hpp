@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Exceptions.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:45:03 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/14 11:47:15 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/22 21:44:06 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 # include "Server.hpp"
 
-class SocketCreationException : public std::exception { public : const char * what() const throw();};
-class SocketBindException : public std::exception { public : const char * what() const throw();};
-class SocketListenException : public std::exception { public : const char * what() const throw();};
+class SocketCreationException   :   public std::exception { public : const char * what() const throw();};
+class SocketBindException       :   public std::exception { public : const char * what() const throw();};
+class SocketListenException     :   public std::exception { public : const char * what() const throw();};
+class SendFailedException       :   public std::exception { public : const char * what() const throw();};

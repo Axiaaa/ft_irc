@@ -26,13 +26,15 @@ LOG__ALLSUCCESS		= @printf "\033[1;92m\n\rALL DONE $(RESET)\n\n"
 SRC_DIR				= src/
 HEAD_DIR			= src/
 LIB_DIR				= lib/
-OBJ_DIR				= $(SRC_DIR)OBJ/
+OBJ_DIR				= $(SRC_DIR).build/
 
 #____________FILES
 ALL_SRC				= main.cpp \
 					Server.cpp \
 					Client.cpp \
-					Exceptions.cpp
+					Exceptions.cpp \
+					Utils.cpp \
+					Command.cpp \
 
 ALL_HEADERS			= $(ALL_SRC:.cpp=.hpp)
 
@@ -47,7 +49,7 @@ LIB					= $(wildcard $(PREFIX_LIB))
 OBJ					= $(patsubst %.cpp, $(OBJ_DIR)%.o, $(notdir $(ALL_SRC)))
 DEP					= $(OBJ:.o=.d)
 
-DIRS				= $(dir $(OBJ))
+DIRS				= $(OBJ_DIR)
 
 #____________UTILITIES
 CC					= c++

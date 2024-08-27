@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Exceptions.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:16 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/14 11:43:16 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/20 11:12:48 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,12 @@ const char * SocketListenException::what() const throw() {
 	return error.c_str();
 }
 
+const char * SendFailedException::what() const throw() {
 
+    string error = "Error while sending data with send()";
+    if (errno != 0) {
+        error += ": ";
+        error += strerror(errno);
+    }
+    return error.c_str();
+}
