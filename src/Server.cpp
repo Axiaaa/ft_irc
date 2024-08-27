@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/24 22:03:55 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/27 14:48:05 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ void Server::handleClientMessage(Client &client, string command, string arg)
 	commands["NICK"] = nick;
 	commands["USER"] = user;
 	commands["PRIVMSG"] = privmsg;
+	
 
 	//If the command is in the map, execute the corresponding function
 	if (commands.find(command) != commands.end()) 
@@ -85,7 +86,7 @@ void Server::handleClientMessage(Client &client, string command, string arg)
 	else if (command != "CAP" && command != "QUIT")
 	{
 		//If the command is not in the map, send an error message to the client
-		std::string error = "ERROR : Unknown command ";
+		std::string error = "ERROR :Unknown command ";
 		error += command;
 		error += "\r\n";
 		this->sendData(client.getClientFd(), error);

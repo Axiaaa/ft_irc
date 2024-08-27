@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/24 12:02:55 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/27 15:11:18 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ bool Client::operator==(const Client& rhs) const {
 string Client::getNickname() const  			{ return this->nickname_; }
 string Client::getUsername() const  			{ return this->username_; }
 string Client::getRealname() const  			{ return this->realname_; }
-int long long Client::getId() const 			{ return this->id_; }
 int Client::getClientFd() const     			{ return this->clientFd_; }
 bool Client::getRegistrationStatus() const 		{ return this->isRegistered_; }
 
@@ -49,7 +48,6 @@ bool Client::getRegistrationStatus() const 		{ return this->isRegistered_; }
 void Client::setNickname(string nickname)		{ this->nickname_ = nickname; }
 void Client::setUsername(string username)   	{ this->username_ = username; }
 void Client::setRealname(string realname)   	{ this->realname_ = realname; }
-void Client::setId(int long long id)        	{ this->id_ = id; }
 void Client::setRegistrationStatus(bool status) { this->isRegistered_ = status; }
 
 

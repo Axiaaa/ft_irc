@@ -22,6 +22,7 @@ void nick(Server &server, Client &client, const char *buffer)
     }
     for (vector<Client>::iterator it = server.getClientsList().begin(); it != server.getClientsList().end(); it++) {
         if (it->getNickname() == string(buffer)) {
+            client.setNickname("default" + intToString(client.getClientFd()));
             server.sendData(client.getClientFd(), getNumericReply(client, 433, buffer));
             return ;
             }

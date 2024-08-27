@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/22 10:28:09 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/27 15:11:44 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ class Client {
         string  realname_;
         time_t  creationTime_;
         string  password_;
-        int     id_;
         int     clientFd_;
         bool    isRegistered_;
         sockaddr_in addr_;
@@ -46,9 +45,7 @@ class Client {
         void    setNickname(string nickname);
         void    setUsername(string username);
         void    setRealname(string realname);
-        void    setId(int long long id);
         int     getClientFd() const;
-        int long long getId() const;
         bool    operator==(const Client& rhs) const;
 
 };
