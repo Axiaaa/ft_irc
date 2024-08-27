@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Exceptions.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:16 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/14 11:43:16 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/27 14:33:01 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,14 @@
 
 const char * SocketCreationException::what() const throw() {
 
-	string error = "Error while creating socket";
+	string  error = "Error while creating socket";
+	const char * ret;
 	if (errno != 0) {
 		error += ": ";
 		error += strerror(errno);
 	}
-	return error.c_str();
+	ret = error.c_str();
+	return ret;
 }
 
 const char * SocketBindException::what() const throw() {
@@ -29,12 +31,13 @@ const char * SocketBindException::what() const throw() {
 
 const char * SocketListenException::what() const throw() {
 
-	string error = "Error while listening on the socket";
+	string  error = "Error while listening on the socket";
+	const char * ret;
 	if (errno != 0) {
 		error += ": ";
 		error += strerror(errno);
 	}
-	return error.c_str();
+	ret = error.c_str();
+	return ret;
 }
-
 

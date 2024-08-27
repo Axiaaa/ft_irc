@@ -6,7 +6,7 @@
 /*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/17 17:41:34 by aammirat         ###   ########.fr       */
+/*   Updated: 2024/08/27 14:13:58 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,6 +161,7 @@ int		_newConnections(Server &server, char *password)
 				std::cerr << "Erreur lors de l'acceptation de la connexion" << std::endl;
 				return (1);
 			}
+			(void)password;
 			//if (_IsPassWordCorrect(server, newsockfd, password) != 0)
 			//{
 			//	std::cerr << "Erreur, mauvais mot de passe" << std::endl;
