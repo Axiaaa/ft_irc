@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/15 15:47:57 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/17 17:41:34 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,51 @@
 void	_receivingServ(Server &server);
 void	_addFdClient(Server &server, int &max_sd);
 int		_watchFds(Server &server, int &max_sd);
-int		_newConnections(Server &server);
+int		_newConnections(Server &server, char *password);
+/*
+int ft_strcmp(char *str, char *dest)
+{
+	int i;
+	
+	i = 0;
+	while (str[i] && dest[i])
+	{
+		if (str[i] != dest[i])
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int _IsPassWordCorrect(Server &server, int client_fd, char *password)
+{
+	if (FD_ISSET(client_fd, &server.getFdSet()))
+	{
+		char buffer[1024];
+		int valread = recv(client_fd, buffer, 1024, 0);
+		buffer[valread] = '\0';
+		if (valread <= 0)
+			return (1);
+		else
+		{
+			char *tre = buffer;
+			char pass[5] = "PASS";
+			while (ft_strcmp(tre, pass) == 1)
+				tre++;
+			if (ft_strcmp(tre, password) != 0)
+				return (1);
+		}
+	}
+	return (0);
+}*/
 
 int main(int ac, char **av)
 {
-	if (ac < 2)
+	if (ac < 3)
 		return (1);
 
 	// Initializating server
-	Server server(av[1], "password");
+	Server server(av[1], av[2]);
 	// Starting server
 	server.startServer(av[1]);
 
@@ -40,7 +76,7 @@ int main(int ac, char **av)
 		if (_watchFds(server, max_sd))
 			break;
 		// New coming connections handling
-		if (_newConnections(server))
+		if (_newConnections(server, av[2]))
 			break ;
 		// Receiving clients datas
 		_receivingServ(server);
@@ -114,7 +150,7 @@ int	_watchFds(Server &server, int &max_sd)
 	return (0);
 }
 
-int		_newConnections(Server &server)
+int		_newConnections(Server &server, char *password)
 {
 	if (FD_ISSET(server.getSocket(), &server.getFdSet()))
 	{
@@ -125,9 +161,13 @@ int		_newConnections(Server &server)
 				std::cerr << "Erreur lors de l'acceptation de la connexion" << std::endl;
 				return (1);
 			}
+			//if (_IsPassWordCorrect(server, newsockfd, password) != 0)
+			//{
+			//	std::cerr << "Erreur, mauvais mot de passe" << std::endl;
+			//	return (1); 
+			//}
 			std::cout << "Nouvelle connexion acceptée, socket fd: " << newsockfd << std::endl;
 			server.getClientsList().push_back(newsockfd);
-
 		}
 	return (0);
 }
