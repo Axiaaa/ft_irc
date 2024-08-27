@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/24 22:29:59 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/27 17:15:28 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@
 #include <set>
 #include <string>
 
-#include "Client.hpp"
+#include "Client.hpp
+#include "Channel.hpp"
 #include "Exceptions.hpp"
 #include "Utils.hpp"
 
@@ -44,11 +45,11 @@ class Client;
 class Server {
 
 	private :
-		sockaddr_in		addr_;
-		vector<Client>		clientsList_;
-		map<std::string, set<int> >channels;
-		fd_set			fdSet_;
-		int				socket_;
+		sockaddr_in					addr_;
+		vector<Client>				clientsList_;
+		map<std::string, set<int> >	channels;
+		fd_set						fdSet_;
+		int							socket_;
 
 	public :
 		Server(char *port, string password);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Exceptions.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:16 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/20 11:12:48 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/27 17:30:25 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,19 @@ const char * SendFailedException::what() const throw() {
         error += strerror(errno);
     }
     return error.c_str();
+}
+
+const char * ChannelNotExistingException::what() const throw() {
+
+	return "Error while creating / finding the channel, specified channel not exist\n";
+}
+
+const char * AlreadyInChannelException::what() const throw() {
+
+	return "Error while joining the specified channel, the client is already in the channel\n";
+}
+
+const char * InvalidChannelName::what() const throw() {
+
+	return "Error while creating / finding the channel, specified name not valid\n";
 }
