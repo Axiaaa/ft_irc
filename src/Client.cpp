@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 15:11:18 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/27 15:57:19 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 ###########----BASIC MEMBER FUNCTIONS
 */
 
-Client::Client(int fd, sockaddr_in addr, time_t t) :
+Client::Client(int fd) :
 nickname_(""), username_(""), realname_(""),
-creationTime_(t), clientFd_(fd), addr_(addr)
+ clientFd_(fd)
 {
 	
 }

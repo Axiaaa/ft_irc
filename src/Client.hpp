@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 15:11:44 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/27 15:57:31 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,12 @@ class Client {
         string  nickname_;
         string  username_;
         string  realname_;
-        time_t  creationTime_;
         string  password_;
         int     clientFd_;
         bool    isRegistered_;
-        sockaddr_in addr_;
         
 	public :
-		Client(int fd, sockaddr_in addr, time_t t);
+		Client(int fd);
 		~Client();
         string  getNickname() const;
         string  getUsername() const;
