@@ -167,6 +167,11 @@ string ERR_NEEDMOREPARAMS(const string &nick, const string &command) {
     return "461 " + nick + " " + command + " :Not enough parameters";
 }
 
+// 464: ERR_PASSWDMISMATCH - Mot de passe incorrect
+string ERR_NEEDMOREPARAMS(const string &nick) {
+    return "464 " + nick + " :Password incorrect";
+}
+
 // 432: ERR_ERRONEUSNICKNAME - Pseudonyme incorrect
 string ERR_ERRONEUSNICKNAME(const string &nick, const string &command) {
     return "432 " + nick + " " + command + " :Erroneus nickname";
