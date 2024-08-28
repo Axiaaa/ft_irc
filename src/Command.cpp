@@ -10,10 +10,8 @@
 */
 void nick(Server &server, Client &client, const char *buffer)
 {
-    if (!client.getRegistrationStatus()) {
-        server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
+    if (client.getIspassgiven() == false)
         return ;
-    }
     if (!buffer) {
         server.sendData(client.getClientFd(), getNumericReply(client, 431, client.getNickname()));
         return ;
@@ -49,11 +47,6 @@ void nick(Server &server, Client &client, const char *buffer)
 */
 void user(Server& server, Client& client, const char *buffer)
 {   
-
-    if (client.getRegistrationStatus() == false) {
-        server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
-        return ;
-    }
     vector<string> buff_split = split(string(buffer), ' ');
     if (buff_split.size() < 4) {
         server.sendData(client.getClientFd(), getNumericReply(client, 461, "USER"));
@@ -65,9 +58,12 @@ void user(Server& server, Client& client, const char *buffer)
     }
     if (client.getUsername() == "")
         client.setUsername(buff_split[0]);
-    server.sendData(client.getClientFd(), getNumericReply(client, 001, ""));
-    if (client.getIspassgiven())
+    if (client.getIspassgiven() == true) {
         client.setRegistrationStatus(true);
+        server.sendData(client.getClientFd(), getNumericReply(client, 001, ""));
+        return ;
+    }
+        server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
 }
 
 
