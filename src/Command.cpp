@@ -10,6 +10,8 @@
 */
 void nick(Server &server, Client &client, const char *buffer)
 {
+    if (client.getIspassgiven() == false)
+        return ;
     if (!buffer) {
         server.sendData(client.getClientFd(), getNumericReply(client, 431, client.getNickname()));
         return ;
@@ -45,6 +47,8 @@ void nick(Server &server, Client &client, const char *buffer)
 */
 void user(Server& server, Client& client, const char *buffer)
 {   
+    if (client.getIspassgiven() == false)
+        return ;
     vector<string> buff_split = split(string(buffer), ' ');
     if (buff_split.size() < 4) {
         server.sendData(client.getClientFd(), getNumericReply(client, 461, "USER"));
@@ -109,4 +113,26 @@ void privmsg(Server& server, Client& client, const char *buffer) {
         }
     }
     server.sendData(client.getClientFd(), getNumericReply(client, 401, target));
+}
+
+void pass(Server& server, Client& client, const char *buffer)
+{
+    if (client.getPassword() != "")
+    {
+        server.sendData(client.getClientFd(), getNumericReply(client, 462, "PASS"));
+        return ;
+    }
+    client.setPassword(buffer);
+    if (client.getPassword() == "")
+    {
+        server.sendData(client.getClientFd(), getNumericReply(client, 461, "PASS"));
+        return ;
+    }
+    if (client.getPassword() != server.getPassword())
+    {
+        std::cout << getNumericReply(client, 464, "PASS") << std::endl;
+        server.sendData(client.getClientFd(), getNumericReply(client, 464, "PASS"));
+        return ;
+    }
+    client.setIspassgiven(true);
 }
