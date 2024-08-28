@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 14:48:05 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:50:29 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 ###########----BASIC MEMBER FUNCTIONS
 */
 
-Server::Server(char* port, string password)
+Server::Server(char* port, string pass)
 {
-	(void)password;
+	password_ = pass;
 	memset(&this->addr_, 0, sizeof(this->addr_));
 	this->addr_.sin_port = htons(std::strtol(port, NULL, 10));
 	this->addr_.sin_family = AF_INET;
@@ -78,6 +78,7 @@ void Server::handleClientMessage(Client &client, string command, string arg)
 	commands["NICK"] = nick;
 	commands["USER"] = user;
 	commands["PRIVMSG"] = privmsg;
+	commands["PASS"] = pass;
 	
 
 	//If the command is in the map, execute the corresponding function
@@ -107,3 +108,4 @@ int& 		Server::getSocket() 			{ return this->socket_; }
 sockaddr 	Server::getAddr() 				{ return *(sockaddr*)&this->addr_; }
 fd_set& 	Server::getFdSet() 				{ return this->fdSet_; }
 vector<Client>& Server::getClientsList() 	{ return this->clientsList_; }
+std::string Server::getPassword()			{return this->password_;     }

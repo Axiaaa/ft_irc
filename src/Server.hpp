@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/24 22:29:59 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:46:26 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,10 @@ class Server {
 		map<std::string, set<int> >channels;
 		fd_set			fdSet_;
 		int				socket_;
+		std::string			password_;
 
 	public :
-		Server(char *port, string password);
+		Server(char *port, string pass);
 		~Server();
 
 		void		createSocket();
@@ -65,4 +66,5 @@ class Server {
 		sockaddr		getAddr();
 		fd_set&			getFdSet();
 		vector<Client>&	getClientsList();
+		std::string		getPassword();
 };

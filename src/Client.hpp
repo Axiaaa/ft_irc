@@ -6,7 +6,7 @@
 /*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 15:57:31 by aammirat         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:47:48 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class Client {
         string  password_;
         int     clientFd_;
         bool    isRegistered_;
+        bool    ispassgiven_;
         
 	public :
 		Client(int fd);
@@ -38,11 +39,15 @@ class Client {
         string  getUsername() const;
         string  getRealname() const;
         string  getHostname() const;
+        string  getPassword() const;
+        bool    getIspassgiven() const;
         bool    getRegistrationStatus() const;
         void    setRegistrationStatus(bool status);
         void    setNickname(string nickname);
         void    setUsername(string username);
         void    setRealname(string realname);
+        void    setPassword(string password);
+        void    setIspassgiven(bool a);
         int     getClientFd() const;
         bool    operator==(const Client& rhs) const;
 

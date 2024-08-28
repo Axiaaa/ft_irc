@@ -6,7 +6,7 @@
 /*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 15:57:37 by aammirat         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:43:51 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ int		_newConnections(Server &server);
 
 int main(int ac, char **av)
 {
-	if (ac < 2)
+	if (ac < 3)
 		return (1);
 
 	// Initializating server
-	Server server(av[1], "password");
+	Server server(av[1], av[2]);
 	// Starting server
 	server.startServer(av[1]);
 

@@ -168,8 +168,8 @@ string ERR_NEEDMOREPARAMS(const string &nick, const string &command) {
 }
 
 // 464: ERR_PASSWDMISMATCH - Mot de passe incorrect
-string ERR_NEEDMOREPARAMS(const string &nick) {
-    return "464 " + nick + " :Password incorrect";
+string ERR_PASSWDMISMATCH(int i) {
+    return "464 " + intToString(i) + " :Password incorrect";
 }
 
 // 432: ERR_ERRONEUSNICKNAME - Pseudonyme incorrect
@@ -220,6 +220,7 @@ string getNumericReply(Client& client, int code, string arg)
         case 432: return s + ERR_ERRONEUSNICKNAME(client.getNickname(), arg);
         case 462: return s + ERR_ALREADYREGISTERED(client.getNickname());
         case 461: return s + ERR_NEEDMOREPARAMS(client.getNickname(), arg);
+        case 464: return s + ERR_PASSWDMISMATCH(client.getClientFd());
         default: return "";
     }
 }
