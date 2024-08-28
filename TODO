@@ -1,5 +1,6 @@
 - JOIN Command
 - Stop le serveur avec ctrl-c et/ou ctrl-D
-- mot de passe 
+- mot de passe
 - bot
 - Gérer les permissions (admin, mods)
+- Vérifier si un user qui a mit un mauvais MDP peut /JOIN ou /PRIVMSG

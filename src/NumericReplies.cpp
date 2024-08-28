@@ -133,7 +133,7 @@ string ERR_NICKNAMEINUSE(const string &nick, const string &command) {
 
 //451: ERR_NOTREGISTERED - Vous devez être enregistré pour effectuer cette action
 string ERR_NOTREGISTERED() {
-    return "451 :You have not registered";
+    return "451 NoNickname :You have not registered";
 }
 
 // 482: ERR_CHANOPRIVSNEEDED - Droits d'opérateur nécessaires pour effectuer une action sur un canal
@@ -218,6 +218,7 @@ string getNumericReply(Client& client, int code, string arg)
         case 433: return s + ERR_NICKNAMEINUSE(client.getNickname() , arg);
         case 431: return s + ERR_NONICKNAMEGIVEN(client.getNickname());
         case 432: return s + ERR_ERRONEUSNICKNAME(client.getNickname(), arg);
+        case 451: return s + ERR_NOTREGISTERED();
         case 462: return s + ERR_ALREADYREGISTERED(client.getNickname());
         case 461: return s + ERR_NEEDMOREPARAMS(client.getNickname(), arg);
         case 464: return s + ERR_PASSWDMISMATCH(client.getClientFd());

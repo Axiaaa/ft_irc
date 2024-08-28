@@ -10,8 +10,10 @@
 */
 void nick(Server &server, Client &client, const char *buffer)
 {
-    if (client.getIspassgiven() == false)
+    if (!client.getRegistrationStatus()) {
+        server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
         return ;
+    }
     if (!buffer) {
         server.sendData(client.getClientFd(), getNumericReply(client, 431, client.getNickname()));
         return ;
@@ -47,8 +49,11 @@ void nick(Server &server, Client &client, const char *buffer)
 */
 void user(Server& server, Client& client, const char *buffer)
 {   
-    if (client.getIspassgiven() == false)
+
+    if (client.getRegistrationStatus() == false) {
+        server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
         return ;
+    }
     vector<string> buff_split = split(string(buffer), ' ');
     if (buff_split.size() < 4) {
         server.sendData(client.getClientFd(), getNumericReply(client, 461, "USER"));
@@ -61,7 +66,8 @@ void user(Server& server, Client& client, const char *buffer)
     if (client.getUsername() == "")
         client.setUsername(buff_split[0]);
     server.sendData(client.getClientFd(), getNumericReply(client, 001, ""));
-    client.setRegistrationStatus(true);
+    if (client.getIspassgiven())
+        client.setRegistrationStatus(true);
 }
 
 
@@ -93,6 +99,10 @@ void user(Server& server, Client& client, const char *buffer)
 
 void privmsg(Server& server, Client& client, const char *buffer) {
 
+    if (client.getRegistrationStatus() == false) {
+        server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
+        return ;
+    }
     std::cout << buffer << std::endl;
     string target = string(buffer).substr(0, string(buffer).find(' '));
     if (string(buffer) == target) {
@@ -130,7 +140,6 @@ void pass(Server& server, Client& client, const char *buffer)
     }
     if (client.getPassword() != server.getPassword())
     {
-        std::cout << getNumericReply(client, 464, "PASS") << std::endl;
         server.sendData(client.getClientFd(), getNumericReply(client, 464, "PASS"));
         return ;
     }
