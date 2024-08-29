@@ -32,9 +32,11 @@ OBJ_DIR				= $(SRC_DIR).build/
 ALL_SRC				= main.cpp \
 					Server.cpp \
 					Client.cpp \
+					Channel.cpp \
 					Exceptions.cpp \
 					Utils.cpp \
 					Command.cpp \
+					NumericReplies.cpp
 
 ALL_HEADERS			= $(ALL_SRC:.cpp=.hpp)
 

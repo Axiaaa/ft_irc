@@ -1,9 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Utils.hpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/29 21:01:23 by ocyn              #+#    #+#             */
+/*   Updated: 2024/08/29 21:50:32 by ocyn             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 
 #include <iostream> 
 #include <cstring>
 #include <sstream>
-
 
 std::vector<std::string> split(const std::string &s, char delim);
 std::string intToString(int value);

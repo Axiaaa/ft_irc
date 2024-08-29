@@ -6,19 +6,11 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:10:40 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 17:14:01 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/29 17:56:52 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-
-Channel	&findOrCreateChannel(string Name)
-{
-	Channel	*Channel;
-
-	
-	return ();
-}
 
 std::string intToString(int value) {
 	std::ostringstream oss;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 15:11:18 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/29 19:56:59 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,29 +38,50 @@ bool Client::operator==(const Client& rhs) const {
 }
 
 // Getters
-string Client::getNickname() const  			{ return this->nickname_; }
-string Client::getUsername() const  			{ return this->username_; }
-string Client::getRealname() const  			{ return this->realname_; }
-int Client::getClientFd() const     			{ return this->clientFd_; }
-bool Client::getRegistrationStatus() const 		{ return this->isRegistered_; }
+string					Client::getNickname() const  			{ return this->nickname_; }
+string					Client::getUsername() const  			{ return this->username_; }
+string					Client::getRealname() const  			{ return this->realname_; }
+int						Client::getClientFd() const     			{ return this->clientFd_; }
+bool					Client::getRegistrationStatus() const 		{ return this->isRegistered_; }
+std::map<string, Channel *>	Client::getJoinedChannels()		{ return this->channels_; }
 
 //Setters
-void Client::setNickname(string nickname)		{ this->nickname_ = nickname; }
-void Client::setUsername(string username)   	{ this->username_ = username; }
-void Client::setRealname(string realname)   	{ this->realname_ = realname; }
-void Client::setRegistrationStatus(bool status) { this->isRegistered_ = status; }
+void	Client::setNickname(string nickname)		{ this->nickname_ = nickname; }
+void	Client::setUsername(string username)   	{ this->username_ = username; }
+void	Client::setRealname(string realname)   	{ this->realname_ = realname; }
+void	Client::setRegistrationStatus(bool status) { this->isRegistered_ = status; }
 
 
-string Client::getHostname() const {
+string	Client::getHostname() const
+{
 	std::string prefix = ":";
 	std::string name;
-	if (this->getNickname() != "" && this->getUsername() != ""){
+
+	if (this->getNickname() != "" && this->getUsername() != "")
+	{
 		prefix += this->getNickname() + "!" + this->getUsername() + "@localhost ";
 		name = this->getNickname() + " ";
 	}
-	else{
+	else
+	{
 		name = "* ";
 		prefix += "localhost ";
 	}
-    return prefix;
+	return prefix;
+}
+
+void	Client::joinChannel(Channel &target)
+{
+	std::map<string, Channel *>::iterator it = this->channels_.find(target.getName());
+
+	if (it == this->channels_.end())
+		this->channels_[target.getName()] = &target;
+}
+
+void	Client::leaveChannel(Channel &target)
+{
+	std::map<string, Channel *>::iterator it = this->channels_.find(target.getName());
+
+	if (it != this->channels_.end())
+		this->channels_.erase(it);
 }

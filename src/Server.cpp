@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 14:48:05 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/08/29 22:03:22 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-#include "Command.hpp"
 
 /*
 ###########----BASIC MEMBER FUNCTIONS
@@ -71,6 +70,8 @@ void	Server::startServer(char *port)
 	std::cout << CYAN << "Serveur démarré sur le port " << port << RESET << std::endl;
 }
 
+
+//Execute the specified commnand
 void Server::handleClientMessage(Client &client, string command, string arg)
 {
 	//Create a map of commands and their corresponding functions to avoid a long list of if/else
@@ -78,6 +79,7 @@ void Server::handleClientMessage(Client &client, string command, string arg)
 	commands["NICK"] = nick;
 	commands["USER"] = user;
 	commands["PRIVMSG"] = privmsg;
+	commands["JOIN"] = join;
 	
 
 	//If the command is in the map, execute the corresponding function
@@ -101,6 +103,31 @@ void	Server::sendData(int client_fd, string data)
 	if (send(client_fd, data.c_str(), data.size(), 0) == -1)
 		throw SendFailedException();
 }
+
+/*
+	@brief Search in existings channels list if 
+	the specified channel has already been created 
+	and attempts to join it. Otherwise the channel 
+	will automatically by created
+	@param	Name The name of the choosen channel
+	@return	The reference of the channel specified
+*/
+Channel	&Server::findOrCreateChannel(string Name)
+{
+	for (size_t i = 0; i < this->channelsList_.size(); i++)
+	{
+		if (this->channelsList_[i]->getName() == Name)
+		{
+			// Channel found
+			return (*this->channelsList_[i]);
+		}
+	}
+	// Channel not existing, creating new one
+	Channel	*NewChannel = new Channel(Name);
+	this->channelsList_.push_back(NewChannel);
+	return (*NewChannel);
+}
+
 
 // GETTERS 
 int& 		Server::getSocket() 			{ return this->socket_; }

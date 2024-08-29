@@ -6,14 +6,11 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 16:53:23 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 16:57:52 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/29 21:26:44 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
-#include "NumericReplies.cpp"
-#include "Utils.hpp"
-
+#include "Command.hpp"
 
 /*
 	@brief Send JOIN command
@@ -21,10 +18,14 @@
 	@param client The cient file descriptor
 	@param channel The channel name
 */
-void	join(Server &server, Client &client, const char *channel)
+void	join(Server &server, Client &client, const char *buffer)
 {
-	std::string join = "JOIN :";
-	join += channel;
+	string join = "JOIN :";
+	join += buffer;
+	// Getting specified channel (or creating it if doesn't exist)
+	Channel	&channel = server.findOrCreateChannel(buffer);
+	client.joinChannel(channel);
+	// Sending JOIN to client
 	server.sendData(client.getClientFd(), client.getHostname() + join);
 }
 
@@ -70,7 +71,7 @@ void nick(Server &server, Client &client, const char *buffer)
 	Otherwise, the server will send a 001 message.
 */
 void user(Server& server, Client& client, const char *buffer)
-{   
+{
 	vector<string> buff_split = split(string(buffer), ' ');
 	if (buff_split.size() < 4) {
 		server.sendData(client.getClientFd(), getNumericReply(client, 461, "USER"));
@@ -118,7 +119,7 @@ void privmsg(Server& server, Client& client, const char *buffer) {
 	std::cout << buffer << std::endl;
 	string target = string(buffer).substr(0, string(buffer).find(' '));
 	if (string(buffer) == target) {
-		server.sendData(client.getClientFd(), getNumericReply(client ,412, ""));
+		server.sendData(client.getClientFd(), getNumericReply(client, 412, ""));
 		return ;
 	}
 	string message = string(buffer).substr(string(buffer).find(' '));

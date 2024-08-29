@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 17:15:28 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/08/29 22:13:24 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,9 @@
 #include <set>
 #include <string>
 
-#include "Client.hpp
+#include "Client.hpp"
 #include "Channel.hpp"
+#include "Command.hpp"
 #include "Exceptions.hpp"
 #include "Utils.hpp"
 
@@ -40,6 +41,7 @@ using std::vector;
 using std::map;
 using std::set;
 
+class Channel;
 class Client;
 
 class Server {
@@ -47,7 +49,7 @@ class Server {
 	private :
 		sockaddr_in					addr_;
 		vector<Client>				clientsList_;
-		map<std::string, set<int> >	channels;
+		vector<Channel *>			channelsList_;
 		fd_set						fdSet_;
 		int							socket_;
 
@@ -61,9 +63,14 @@ class Server {
 		void		startServer(char *port);
 		void 		handleClientMessage(Client &client, string command, string arg);
 		void		sendData(int client_fd, string data);
+		Channel		&findOrCreateChannel(string Name);
 
 		int&			getSocket();
 		sockaddr		getAddr();
 		fd_set&			getFdSet();
 		vector<Client>&	getClientsList();
 };
+
+// Externals functions (Temporaire: A mettre dans une classe non instanciable)
+
+string getNumericReply(Client& client, int code, string arg);
