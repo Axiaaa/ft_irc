@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:02:00 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/29 22:18:27 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/02 19:07:37 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,7 @@ _topic(Topic)
 }
 
 Channel::Channel(string Name):
-_name(Name),
-_topic(NULL)
+_name(Name)
 {
 	std::cout << MAGENTA << "Creating New Channel !\n Name: " << Name << RESET << std::endl;
 }

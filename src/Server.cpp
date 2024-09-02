@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/29 22:03:22 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/02 20:05:16 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,11 @@ Server::Server(char* port, string password)
 
 Server::~Server()
 {
-	for (vector<Client>::iterator it = this->clientsList_.begin(); it != this->clientsList_.end(); ++it) {
+	for (vector<Client>::iterator it = this->clientsList_.begin(); it != this->clientsList_.end(); ++it)
+	{
 		close(it->getClientFd());
-		}
+	}
+	// Destruction des channels en attentes...
 	close(this->socket_);
 }
 
@@ -114,14 +116,15 @@ void	Server::sendData(int client_fd, string data)
 */
 Channel	&Server::findOrCreateChannel(string Name)
 {
-	for (size_t i = 0; i < this->channelsList_.size(); i++)
+	for (std::vector<Channel*>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
 	{
-		if (this->channelsList_[i]->getName() == Name)
+		if ((*i)->getName() == Name)
 		{
 			// Channel found
-			return (*this->channelsList_[i]);
+			return (**i);
 		}
 	}
+	ft_log("Le cheval");
 	// Channel not existing, creating new one
 	Channel	*NewChannel = new Channel(Name);
 	this->channelsList_.push_back(NewChannel);

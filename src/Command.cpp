@@ -6,11 +6,16 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 16:53:23 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/29 21:26:44 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/02 18:25:54 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
+
+void	ft_log(string content)
+{
+	std::cout << CYAN << content << RESET << std::endl;
+}
 
 /*
 	@brief Send JOIN command
@@ -23,7 +28,9 @@ void	join(Server &server, Client &client, const char *buffer)
 	string join = "JOIN :";
 	join += buffer;
 	// Getting specified channel (or creating it if doesn't exist)
+	ft_log("JOIN command detected");
 	Channel	&channel = server.findOrCreateChannel(buffer);
+	ft_log("Channel joinned");
 	client.joinChannel(channel);
 	// Sending JOIN to client
 	server.sendData(client.getClientFd(), client.getHostname() + join);
