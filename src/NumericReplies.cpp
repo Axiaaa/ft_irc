@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 20:54:08 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/29 21:57:40 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/04 18:20:05 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,8 @@ string RPL_LISTEND() {
 }
 
 // 324: RPL_CHANNELMODEIS - Modes du canal
-string RPL_CHANNELMODEIS(const string &channel, const string &modes) {
-	return "324 " + channel + " " + modes;
+string RPL_CHANNELMODEIS(const string &nick, const string &arg) {
+	return "324 " + nick + " " + arg;
 }
 
 // 331: RPL_NOTOPIC - Aucun sujet défini pour le canal
@@ -211,13 +211,14 @@ string ERR_TOOMANYTARGETS(const string &nick, const string &command) {
  *  @param arg The argument of the numeric reply (if multiple arguments, separate them with a '_')
  *  @return string : The numeric reply.
  */
-string getNumericReply(Client& client, int code, string arg) 
+string getNumericReply(Client& client, int code, string arg)
 {
 	string s = client.getHostname();
 	if (arg != "" && arg.find('_') != string::npos)
 		vector<string> arg_split = split(arg, '_');
 	switch (code) {
 		case 1: return s + RPL_WELCOME(client.getNickname(), client.getNickname());
+		case 324: return s + RPL_CHANNELMODEIS(client.getNickname(), arg);
 		case 401: return s + ERR_NOSUCHNICK(client.getNickname(), arg);
 		case 407: return s + ERR_TOOMANYTARGETS(client.getNickname(), arg);
 		case 412: return s + ERR_NOTEXTTOSEND(client.getNickname());

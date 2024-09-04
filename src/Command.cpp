@@ -6,15 +6,31 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 16:53:23 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/02 18:25:54 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/04 18:44:10 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 
+// DEBUG function, temporary
 void	ft_log(string content)
 {
 	std::cout << CYAN << content << RESET << std::endl;
+}
+
+void	mode(Server &server, Client &client, const string &buffer)
+{
+	string mode = getNumericReply(client, 324, buffer);
+	// Sending MODE to client
+	server.sendData(client.getClientFd(), mode);
+}
+
+void	who(Server &server, Client &client, const string &buffer)
+{
+	string who = "WHO :";
+	who += buffer;
+	// Sending WHO to client
+	server.sendData(client.getClientFd(), client.getHostname() + who);
 }
 
 /*
@@ -23,8 +39,13 @@ void	ft_log(string content)
 	@param client The cient file descriptor
 	@param channel The channel name
 */
-void	join(Server &server, Client &client, const char *buffer)
+void	join(Server &server, Client &client, const string &buffer)
 {
+	if (buffer[0] != '#')
+	{
+		std::cout << RED << "Channel name not valid" << std::endl;
+		return ;
+	}
 	string join = "JOIN :";
 	join += buffer;
 	// Getting specified channel (or creating it if doesn't exist)
@@ -42,9 +63,9 @@ void	join(Server &server, Client &client, const char *buffer)
 	@param client_fd The client file descriptor
 	@param buffer The buffer containing the nickname
 */
-void nick(Server &server, Client &client, const char *buffer)
+void nick(Server &server, Client &client, const string &buffer)
 {
-	if (!buffer) {
+	if (buffer.empty()) {
 		server.sendData(client.getClientFd(), getNumericReply(client, 431, client.getNickname()));
 		return ;
 	}
@@ -77,9 +98,9 @@ void nick(Server &server, Client &client, const char *buffer)
 	If the buffer is less than 4, the server will send a 461 error message.
 	Otherwise, the server will send a 001 message.
 */
-void user(Server& server, Client& client, const char *buffer)
+void user(Server& server, Client& client, const string &buffer)
 {
-	vector<string> buff_split = split(string(buffer), ' ');
+	vector<string> buff_split = split(buffer, ' ');
 	if (buff_split.size() < 4) {
 		server.sendData(client.getClientFd(), getNumericReply(client, 461, "USER"));
 		return ;
@@ -121,7 +142,7 @@ Numeric Replies:
 		RPL_AWAY
 */
 
-void privmsg(Server& server, Client& client, const char *buffer) {
+void privmsg(Server& server, Client& client, const string &buffer) {
 
 	std::cout << buffer << std::endl;
 	string target = string(buffer).substr(0, string(buffer).find(' '));

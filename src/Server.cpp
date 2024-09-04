@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/02 20:05:16 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/04 18:35:14 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,12 @@ Server::~Server()
 	{
 		close(it->getClientFd());
 	}
+	while (!this->channelsList_.empty())
+		this->channelsList_.erase(this->channelsList_.begin());
 	// Destruction des channels en attentes...
 	close(this->socket_);
 }
+
 
 /*
 ###########----SPECIFICS MEMBER FUNCTIONS
@@ -73,18 +76,20 @@ void	Server::startServer(char *port)
 }
 
 
-//Execute the specified commnand
+// Execute the specified commnand
 void Server::handleClientMessage(Client &client, string command, string arg)
 {
-	//Create a map of commands and their corresponding functions to avoid a long list of if/else
-	map<string, void(*)(Server&, Client&, const char *)> commands;
+	// Create a map of commands and their corresponding functions to avoid a long list of if/else
+	map<string, void(*)(Server&, Client&, const string &buffer)> commands;
 	commands["NICK"] = nick;
 	commands["USER"] = user;
 	commands["PRIVMSG"] = privmsg;
 	commands["JOIN"] = join;
+	commands["MODE"] = mode;
+	commands["WHO"] = who;
 	
 
-	//If the command is in the map, execute the corresponding function
+	// If the command is in the map, execute the corresponding function
 	if (commands.find(command) != commands.end()) 
 		commands[command](*this, client, arg.c_str());
 	else if (command != "CAP" && command != "QUIT")
