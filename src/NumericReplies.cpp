@@ -6,15 +6,27 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 20:54:08 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/04 18:20:05 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/23 16:02:58 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
+/*
+NOTE POUR PLUS TARD: Utiliser std::ostringstream plutot que faire des
+string + string + string ...
+
+C'est vraiment mais VRAIMENT plus rapide et opti.
+std::stringstream << string << string << string ne fait qu'une allocation
+la ou string + string etc... re-alloue a chaque ajout.
+*/
+
 // 001: RPL_WELCOME - Bienvenue sur le serveur IRC
 string RPL_WELCOME(const string &nick, const string &hostname) {
-	return "001 " + nick + " :Welcome to the Internet Relay Network, " + hostname;
+	std::stringstream	out;
+
+	out << "001 " << nick << " :Welcome to the Internet Relay Network, " << hostname;
+	return out.str();
 }
 
 // 002: RPL_YOURHOST - Informations sur l'hôte
@@ -67,9 +79,28 @@ string RPL_WHOISOPERATOR(const string &nick) {
 	return "313 " + nick + " :is an IRC operator";
 }
 
+// 352: RPL_WHOREPLY - Reponse de la commande WHO apres un JOIN
+string RPL_WHOREPLY(const string &nick, const string &channel, \
+const string &username, const string &hostname, \
+const string &servname, const string &nickname) 
+{
+	(void) hostname;
+	(void) servname;
+	(void) username;
+	return ("352 " + nick + " " \
+		+ channel + " " \
+		+ nickname + " "
+		);
+}
+
 // 317: RPL_WHOISIDLE - Information de l'inactivité de l'utilisateur WHOIS
 string RPL_WHOISIDLE(const string &nick, const string &idle, const string &signon) {
 	return "317 " + nick + " " + idle + " " + signon + " :seconds idle, signon time";
+}
+
+// 315: RPL_ENDOFWHO - Fin de la commande WHO
+string RPL_ENDOFWHO(const string &nick,const string &channel) {
+	return "315 " + nick +  " " + channel + " :End of WHO list";
 }
 
 // 318: RPL_ENDOFWHOIS - Fin de la commande WHOIS
@@ -113,13 +144,13 @@ string RPL_INVITING(const string &nick, const string &channel) {
 }
 
 // 353: RPL_NAMREPLY - Réponse à la commande NAMES (liste des utilisateurs)
-string RPL_NAMREPLY(const string &symbol, const string &channel, const string &users) {
-	return "353 " + symbol + " " + channel + " :" + users;
+string RPL_NAMREPLY(const string &nick, const string &channel, const string &symbol, const string &users) {
+	return "353 " + nick + " " + symbol + " " + channel + " :" + users;
 }
 
 // 366: RPL_ENDOFNAMES - Fin de la commande NAMES
-string RPL_ENDOFNAMES(const string &channel) {
-	return "366 " + channel + " :End of /NAMES list";
+string RPL_ENDOFNAMES(const string &nick, const string &channel) {
+	return "366 " + nick + " " + channel + " :End of /NAMES list";
 }
 
 // 372: RPL_MOTD - Message of the Day (MOTD)
@@ -161,7 +192,6 @@ string ERR_NOSUCHCHANNEL(const string &channel) {
 string ERR_CANNOTSENDTOCHAN(const string &channel) {
 	return "404 " + channel + " :Cannot send to channel";
 }
-
 
 // 421: ERR_UNKNOWNCOMMAND: Commande inconnue
 string ERR_UNKNOWNCOMMAND(const string &command) {
@@ -213,12 +243,20 @@ string ERR_TOOMANYTARGETS(const string &nick, const string &command) {
  */
 string getNumericReply(Client& client, int code, string arg)
 {
-	string s = client.getHostname();
+	vector<string> arg_split;
+	string s = ":ircserv ";
+
 	if (arg != "" && arg.find('_') != string::npos)
-		vector<string> arg_split = split(arg, '_');
+		arg_split = split(arg, '_');
+
 	switch (code) {
-		case 1: return s + RPL_WELCOME(client.getNickname(), client.getNickname());
+		case 1: return s + RPL_WELCOME(client.getNickname(), client.getHostname());
+		case 315: return s + RPL_ENDOFWHO(client.getNickname(), arg);
 		case 324: return s + RPL_CHANNELMODEIS(client.getNickname(), arg);
+		case 352: return s + RPL_WHOREPLY(client.getNickname(), \
+		arg_split[0], arg_split[1], arg_split[2], arg_split[3], arg_split[4]);
+		case 353: return s + RPL_NAMREPLY(client.getNickname(), arg_split[0], arg_split[1], arg_split[2]);
+		case 366: return  s + RPL_ENDOFNAMES(client.getNickname(), arg);
 		case 401: return s + ERR_NOSUCHNICK(client.getNickname(), arg);
 		case 407: return s + ERR_TOOMANYTARGETS(client.getNickname(), arg);
 		case 412: return s + ERR_NOTEXTTOSEND(client.getNickname());

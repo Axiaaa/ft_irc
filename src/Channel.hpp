@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:04:02 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/04 18:01:14 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/23 17:22:17 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ class Channel {
 		string					_name;
 		string					_topic;
 		std::vector<Client *>	_members;
+		string					_visibility;
 
 	public:
 		Channel();
@@ -33,10 +34,12 @@ class Channel {
 		~Channel();
 		string	getName();
 		string	getTopic();
-		std::vector<Client *> getMembers();
+		string	getVisibility();
+		std::vector<Client *> &getMembers();
 
 		void	setName();
 		void	setTopic();
+		void	setVisibility(string visibility);
 		void	addMember(Client &client);
 		void	removeMember(Client &client);
 		int		checkMember(Client &client);

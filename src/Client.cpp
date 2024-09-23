@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/29 19:56:59 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/23 16:51:39 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,10 @@ void	Client::joinChannel(Channel &target)
 	std::map<string, Channel *>::iterator it = this->channels_.find(target.getName());
 
 	if (it == this->channels_.end())
+	{
 		this->channels_[target.getName()] = &target;
+		target.addMember(*this);
+	}
 }
 
 void	Client::leaveChannel(Channel &target)

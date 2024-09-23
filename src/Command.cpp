@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 16:53:23 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/04 18:44:10 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/23 17:31:03 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,25 @@ void	mode(Server &server, Client &client, const string &buffer)
 
 void	who(Server &server, Client &client, const string &buffer)
 {
-	string who = "WHO :";
-	who += buffer;
-	// Sending WHO to client
-	server.sendData(client.getClientFd(), client.getHostname() + who);
+	Channel	*channel = server.findChannel(buffer);
+	if (!channel)
+		return ;
+	std::vector<Client *> List = channel->getMembers();
+	std::cout << List.size() << std::endl;
+	for (std::vector<Client *>::iterator it = List.begin(); it != List.end(); it++)
+	{
+		std::stringstream	arg;
+		string				channelVisibility;
+
+		// ft_log(channel->getName());
+		channelVisibility = (channel->getVisibility());
+		arg << buffer;
+		arg << "_" << channelVisibility;
+		arg << "_" << (*it)->getNickname();
+		server.sendData(client.getClientFd(), getNumericReply(client, 353, arg.str()));
+	}
+	// Sending ENDOFNAME RPL to indicate the end of the list
+	server.sendData(client.getClientFd(), getNumericReply(client, 366, buffer));
 }
 
 /*
@@ -49,7 +64,7 @@ void	join(Server &server, Client &client, const string &buffer)
 	string join = "JOIN :";
 	join += buffer;
 	// Getting specified channel (or creating it if doesn't exist)
-	ft_log("JOIN command detected");
+
 	Channel	&channel = server.findOrCreateChannel(buffer);
 	ft_log("Channel joinned");
 	client.joinChannel(channel);
@@ -163,5 +178,5 @@ void privmsg(Server& server, Client& client, const string &buffer) {
 		server.sendData(client.getClientFd(), client.getHostname() + msg);
 		}
 	}
-	server.sendData(client.getClientFd(), getNumericReply(client, 401, target));
+	// server.sendData(client.getClientFd(), getNumericReply(client, 401, target));
 }

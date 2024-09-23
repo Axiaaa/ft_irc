@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 15:11:56 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/23 14:08:20 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ int main(int ac, char **av)
 	{
 		FD_ZERO(&fdset);
 		FD_SET(server.getSocket(), &fdset);
-
 		// Adding new Clients to list
 		_addFdClient(server, max_sd);
 		// Watching file descriptors

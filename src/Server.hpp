@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/02 19:11:52 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/23 16:21:20 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ class Server {
 		void 		handleClientMessage(Client &client, string command, string arg);
 		void		sendData(int client_fd, string data);
 		Channel		&findOrCreateChannel(string Name);
+		Channel		*findChannel(string Name);
 
 		int&			getSocket();
 		sockaddr		getAddr();

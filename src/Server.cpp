@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/04 18:35:14 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/23 16:15:04 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,13 +129,30 @@ Channel	&Server::findOrCreateChannel(string Name)
 			return (**i);
 		}
 	}
-	ft_log("Le cheval");
 	// Channel not existing, creating new one
 	Channel	*NewChannel = new Channel(Name);
 	this->channelsList_.push_back(NewChannel);
 	return (*NewChannel);
 }
 
+/*
+	@brief Search in existings channels list if 
+	the specified channel has already been created 
+	and attempts to join it.
+	@param	Name The name of the choosen channel
+	@return	The reference of the channel specified
+*/
+Channel	*Server::findChannel(string Name)
+{
+	for (std::vector<Channel*>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
+	{
+		if ((*i)->getName() == Name)
+		{
+			return (*i);
+		}
+	}
+	return (NULL);
+}
 
 // GETTERS 
 int& 		Server::getSocket() 			{ return this->socket_; }
