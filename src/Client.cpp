@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 16:51:39 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/23 22:06:16 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,11 @@ creationTime_(t), clientFd_(fd), addr_(addr)
 
 Client::~Client()
 {
-	
+	for (std::vector<Channel *>::iterator it = this->channels_.begin(); it != this->channels_.end(); ++it)
+	{
+		(*it)->removeMember(*this);
+	}
+	this->getJoinedChannels().clear();
 }
 
 /*
@@ -38,12 +42,12 @@ bool Client::operator==(const Client& rhs) const {
 }
 
 // Getters
-string					Client::getNickname() const  			{ return this->nickname_; }
-string					Client::getUsername() const  			{ return this->username_; }
-string					Client::getRealname() const  			{ return this->realname_; }
+string					Client::getNickname() const						{ return this->nickname_; }
+string					Client::getUsername() const						{ return this->username_; }
+string					Client::getRealname() const						{ return this->realname_; }
 int						Client::getClientFd() const     			{ return this->clientFd_; }
 bool					Client::getRegistrationStatus() const 		{ return this->isRegistered_; }
-std::map<string, Channel *>	Client::getJoinedChannels()		{ return this->channels_; }
+std::vector<Channel *>	Client::getJoinedChannels()		{ return this->channels_; }
 
 //Setters
 void	Client::setNickname(string nickname)		{ this->nickname_ = nickname; }
@@ -72,19 +76,13 @@ string	Client::getHostname() const
 
 void	Client::joinChannel(Channel &target)
 {
-	std::map<string, Channel *>::iterator it = this->channels_.find(target.getName());
-
-	if (it == this->channels_.end())
-	{
-		this->channels_[target.getName()] = &target;
-		target.addMember(*this);
-	}
+	//std::cout << "Client " << this->getNickname() << " joined the channel " << target.getName() << std::endl;
+	this->channels_.push_back(&target);
 }
 
 void	Client::leaveChannel(Channel &target)
 {
-	std::map<string, Channel *>::iterator it = this->channels_.find(target.getName());
-
-	if (it != this->channels_.end())
+	std::vector<Channel *>::iterator it = std::find(this->getJoinedChannels().begin(), this->getJoinedChannels().end(), &target);
+	if (it != this->getJoinedChannels().end())
 		this->channels_.erase(it);
 }

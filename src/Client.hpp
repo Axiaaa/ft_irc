@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/29 22:15:38 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/23 20:48:59 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class Client {
 		int					clientFd_;
 		bool				isRegistered_;
 		sockaddr_in			addr_;
-		std::map<string, Channel *>	channels_;
+		std::vector<Channel *>	channels_;
 		
 	public :
 		Client(int fd, sockaddr_in addr, time_t t);
@@ -40,7 +40,7 @@ class Client {
 		string					getUsername() const;
 		string					getRealname() const;
 		string					getHostname() const;
-		std::map<string, Channel *>	getJoinedChannels();
+		std::vector<Channel *>	getJoinedChannels();
 
 		bool					getRegistrationStatus() const;
 		void					setRegistrationStatus(bool status);

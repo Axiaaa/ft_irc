@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 16:21:20 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/23 22:46:39 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,8 @@ class Server {
 
 	private :
 		sockaddr_in					addr_;
-		vector<Client>				clientsList_;
+		vector<Client *>			clientsList_;
 		vector<Channel *>			channelsList_;
-		fd_set						fdSet_;
 		int							socket_;
 
 	public :
@@ -68,8 +67,9 @@ class Server {
 
 		int&			getSocket();
 		sockaddr		getAddr();
-		fd_set&			getFdSet();
-		vector<Client>&	getClientsList();
+		vector<Client *>	&getClientsList();
+		vector<Channel *>	&getChannelList();
+
 };
 
 // Externals functions (Temporaire: A mettre dans une classe non instanciable)

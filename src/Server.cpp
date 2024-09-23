@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 17:49:14 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/23 22:50:48 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,13 @@ Server::Server(char* port, string password)
 
 Server::~Server()
 {
-	for (vector<Client>::iterator it = this->clientsList_.begin(); it != this->clientsList_.end(); ++it)
+	for (vector<Client *>::iterator it = this->clientsList_.begin(); it != this->clientsList_.end(); ++it)
 	{
-		close(it->getClientFd());
+		close((*it)->getClientFd());
+		// delete (*it);
 	}
 	while (!this->channelsList_.empty())
 		this->channelsList_.erase(this->channelsList_.begin());
-	// Destruction des channels en attentes...
 	close(this->socket_);
 }
 
@@ -121,7 +121,7 @@ void	Server::sendData(int client_fd, string data)
 */
 Channel	&Server::findOrCreateChannel(string Name)
 {
-	for (std::vector<Channel*>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
+	for (std::vector<Channel *>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
 	{
 		if ((*i)->getName() == Name)
 		{
@@ -144,7 +144,7 @@ Channel	&Server::findOrCreateChannel(string Name)
 */
 Channel	*Server::findChannel(string Name)
 {
-	for (std::vector<Channel*>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
+	for (std::vector<Channel *>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
 	{
 		if ((*i)->getName() == Name)
 		{
@@ -157,5 +157,5 @@ Channel	*Server::findChannel(string Name)
 // GETTERS 
 int& 		Server::getSocket() 			{ return this->socket_; }
 sockaddr 	Server::getAddr() 				{ return *(sockaddr*)&this->addr_; }
-fd_set& 	Server::getFdSet() 				{ return this->fdSet_; }
-vector<Client>& Server::getClientsList() 	{ return this->clientsList_; }
+vector<Client *>  &Server::getClientsList() 	{ return this->clientsList_; }
+vector<Channel *>  &Server::getChannelList() 	{ return this->channelsList_; }

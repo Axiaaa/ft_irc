@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 16:53:23 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 17:48:52 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/23 22:29:28 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,32 +25,39 @@ void	mode(Server &server, Client &client, const string &buffer)
 	server.sendData(client.getClientFd(), mode);
 }
 
-void	who(Server &server, Client &client, const string &buffer)
+void	whoReply(Server &server, Client &client, Channel &channel \
+, const int fd)
 {
-	Channel	*channel = server.findChannel(buffer);
-	if (!channel)
-		return ;
-	std::vector<Client *> List = channel->getMembers();
-	std::cout << List.size() << std::endl;
-	for (std::vector<Client *>::iterator it = List.begin(); it != List.end(); it++)
+	for (std::vector<Client *>::iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); it++)
 	{
 		std::stringstream	arg;
 		string				channelVisibility;
 
-		channelVisibility = (channel->getVisibility());
-		arg << buffer;
+		channelVisibility = (channel.getVisibility());
+		arg << channel.getName();
 		arg << "_" << channelVisibility;
 		arg << "_" << (*it)->getNickname();
-		server.sendData(client.getClientFd(), getNumericReply(client, 353, arg.str()));
+		server.sendData(fd, getNumericReply(client, 353, arg.str()));
 	}
 	// Sending ENDOFNAME RPL to indicate the end of the list
-	server.sendData(client.getClientFd(), getNumericReply(client, 366, buffer));
+	server.sendData(fd, getNumericReply(client, 366, channel.getName()));
+}
+
+void	who(Server &server, Client &client, const string &buffer)
+{
+	Channel	&channel = *server.findChannel(buffer);
+	// Send user list to all client in the channel
+	std::cout << channel.getMembers().size() << std::endl;
+	for (std::vector<Client *>::iterator member_it = channel.getMembers().begin(); member_it != channel.getMembers().end(); member_it++)
+	{
+		whoReply(server, client, channel, (*member_it)->getClientFd());
+	}
 }
 
 /*
 	@brief Send JOIN command
-	@param server The serverl object
-	@param client The cient file descriptor
+	@param server The server object
+	@param client The client file descriptor
 	@param channel The channel name
 */
 void	join(Server &server, Client &client, const string &buffer)
@@ -65,8 +72,9 @@ void	join(Server &server, Client &client, const string &buffer)
 	// Getting specified channel (or creating it if doesn't exist)
 
 	Channel	&channel = server.findOrCreateChannel(buffer);
-	ft_log("Channel joinned");
+	// ft_log("Channel joined");
 	client.joinChannel(channel);
+	channel.addMember(client);
 	// Sending JOIN to client
 	server.sendData(client.getClientFd(), client.getHostname() + join);
 }
@@ -89,8 +97,8 @@ void nick(Server &server, Client &client, const string &buffer)
 			return ;
 		}
 	}
-	for (vector<Client>::iterator it = server.getClientsList().begin(); it != server.getClientsList().end(); it++) {
-		if (it->getNickname() == string(buffer)) {
+	for (vector<Client *>::iterator it = server.getClientsList().begin(); it != server.getClientsList().end(); it++) {
+		if ((*it)->getNickname() == string(buffer)) {
 			client.setNickname("default" + intToString(client.getClientFd()));
 			server.sendData(client.getClientFd(), getNumericReply(client, 433, buffer));
 			return ;
@@ -169,8 +177,8 @@ void privmsg(Server& server, Client& client, const string &buffer) {
 		server.sendData(client.getClientFd(), getNumericReply(client, 407, "PRIVMSG")); 
 		return ;
 	}
-	for (vector<Client>::iterator it = server.getClientsList().begin(); it != server.getClientsList().end(); it++) {
-		if (target == it->getNickname() && it->getRegistrationStatus() == true) {
+	for (vector<Client *>::iterator it = server.getClientsList().begin(); it != server.getClientsList().end(); it++) {
+		if (target == (*it)->getNickname() && (*it)->getRegistrationStatus() == true) {
 		string msg; 
 		msg += "PRIVMSG ";
 		msg += buffer;

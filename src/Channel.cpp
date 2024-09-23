@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:02:00 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 17:22:37 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/23 22:19:20 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@ _topic(Topic),
 _visibility("=")
 {
 	std::cout << MAGENTA << "Creating New Channel !\n Name: " << Name << RESET << std::endl;
-	// Verifier le nom du channel
-	
 }
 
 Channel::Channel(string Name):
@@ -38,12 +36,21 @@ _visibility("=")
 
 Channel::~Channel()
 {
+	this->_members.clear();
 }
 
 
 void	Channel::addMember(Client &client)
 {
+	//std::cout << "Channel " << this->getName() << " add the member " << client.getNickname() << std::endl;
 	this->_members.push_back(&client);
+}
+
+void	Channel::removeMember(Client &client)
+{
+	std::vector<Client *>::iterator it = std::find(this->_members.begin(), this->_members.end(), &client);
+	if (it != this->_members.end())
+		this->_members.erase(it);
 }
 
 // Getters
