@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/28 15:46:26 by aammirat         ###   ########.fr       */
+/*   Updated: 2024/09/23 12:00:21 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@
 #include <string>
 
 #include "Client.hpp"
+#include "Channel.hpp"
+#include "Command.hpp"
 #include "Exceptions.hpp"
 #include "Utils.hpp"
 
@@ -40,19 +42,21 @@ using std::map;
 using std::set;
 
 class Client;
+class Channel;
 
 class Server {
 
 	private :
 		sockaddr_in		addr_;
-		vector<Client>		clientsList_;
+		vector<Client	*>		clientsList_;
+		vector<Channel	*>		channelsList_;
 		map<std::string, set<int> >channels;
 		fd_set			fdSet_;
 		int				socket_;
-		std::string			password_;
+		string			password_;
 
 	public :
-		Server(char *port, string pass);
+		Server(char *port, string password);
 		~Server();
 
 		void		createSocket();
@@ -62,9 +66,17 @@ class Server {
 		void 		handleClientMessage(Client &client, string command, string arg);
 		void		sendData(int client_fd, string data);
 
+		Channel		&findOrCreateChannel(string Name, Client& client);
+
 		int&			getSocket();
+
 		sockaddr		getAddr();
-		fd_set&			getFdSet();
-		vector<Client>&	getClientsList();
-		std::string		getPassword();
+		
+		string			getPassword();
+		
+		vector<Client *>&	getClientsList();
+		vector<Channel *>&	getChannelsList();
 };
+
+
+string getNumericReply(Client& client, int code, string arg);

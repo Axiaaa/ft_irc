@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/28 15:50:29 by aammirat         ###   ########.fr       */
+/*   Updated: 2024/09/23 11:57:30 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,18 @@ Server::Server(char* port, string pass)
 
 Server::~Server()
 {
-	for (vector<Client>::iterator it = this->clientsList_.begin(); it != this->clientsList_.end(); ++it) {
-		close(it->getClientFd());
-		}
+	for (vector<Client *>::iterator it = this->clientsList_.begin(); it != this->clientsList_.end(); ++it)
+	{
+		close((*it)->getClientFd());
+		delete *it;
+	}
+	this->clientsList_.clear();
+	while (!this->channelsList_.empty())
+		this->channelsList_.erase(this->channelsList_.begin());
+	// Destruction des channels en attentes...
 	close(this->socket_);
 }
+
 
 /*
 ###########----SPECIFICS MEMBER FUNCTIONS
@@ -71,17 +78,22 @@ void	Server::startServer(char *port)
 	std::cout << CYAN << "Serveur démarré sur le port " << port << RESET << std::endl;
 }
 
+
+// Execute the specified commnand
 void Server::handleClientMessage(Client &client, string command, string arg)
 {
-	//Create a map of commands and their corresponding functions to avoid a long list of if/else
-	map<string, void(*)(Server&, Client&, const char *)> commands;
+	// Create a map of commands and their corresponding functions to avoid a long list of if/else
+	map<string, void(*)(Server&, Client&, const string &buffer)> commands;
 	commands["NICK"] = nick;
 	commands["USER"] = user;
 	commands["PRIVMSG"] = privmsg;
+	commands["JOIN"] = join;
+	commands["MODE"] = mode;
+	commands["WHO"] = who;
 	commands["PASS"] = pass;
 	
 
-	//If the command is in the map, execute the corresponding function
+	// If the command is in the map, execute the corresponding function
 	if (commands.find(command) != commands.end()) 
 		commands[command](*this, client, arg.c_str());
 	else if (command != "CAP" && command != "QUIT")
@@ -103,9 +115,35 @@ void	Server::sendData(int client_fd, string data)
 		throw SendFailedException();
 }
 
+/*
+	@brief Search in existings channels list if 
+	the specified channel has already been created 
+	and attempts to join it. Otherwise the channel 
+	will automatically by created
+	@param	Name The name of the choosen channel
+	@return	The reference of the channel specified
+*/
+Channel	&Server::findOrCreateChannel(string Name, Client& client)
+{
+	for (std::vector<Channel*>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
+	{
+		if ((*i)->getName() == Name)
+		{
+			// Channel found
+			return (**i);
+		}
+	}
+	// Channel not existing, creating new one
+	Channel	*NewChannel = new Channel(Name);
+	NewChannel->addOperator(client);
+	this->channelsList_.push_back(NewChannel);
+	return (*NewChannel);
+}
+
+
 // GETTERS 
-int& 		Server::getSocket() 			{ return this->socket_; }
-sockaddr 	Server::getAddr() 				{ return *(sockaddr*)&this->addr_; }
-fd_set& 	Server::getFdSet() 				{ return this->fdSet_; }
-vector<Client>& Server::getClientsList() 	{ return this->clientsList_; }
-std::string Server::getPassword()			{return this->password_;     }
+int&				Server::getSocket() 		{ return this->socket_; }
+sockaddr			Server::getAddr() 			{ return *(sockaddr*)&this->addr_; }
+vector<Client *>& 	Server::getClientsList() 	{ return this->clientsList_; }
+vector<Channel *>& 	Server::getChannelsList() 	{ return this->channelsList_; }
+string				Server::getPassword()		{ return this->password_; }

@@ -1,6 +1,11 @@
-- JOIN Command
-- Stop le serveur avec ctrl-c et/ou ctrl-D
-- mot de passe
-- bot
-- Gérer les permissions (admin, mods)
-- Vérifier si un user qui a mit un mauvais MDP peut /JOIN ou /PRIVMSG
+- Handle CTRL-D
+- Fix IsAuthorized function (determine which char are allowed or not -> RFTM | Make Sure it doesn't break the split in getNumericReply)
+- Handle Channel topics
+- Handle Channel modes
+- Handle Channel commandes (invites, kicks, bans, etc)
+- Remove useless functions
+- Fix leaks (differents leaks with channels creations)
+- Create the bot 
+- Clean up NumericReplies (Mostly the arguments given to the function and arg names)
+- Add argv parsing to avoid non alphanumeric characters in the password and numbers only in the port
+- Do something with Exceptions (Create more or delete them because we're not using them)

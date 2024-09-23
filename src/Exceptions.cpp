@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Exceptions.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:16 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 16:00:13 by aammirat         ###   ########.fr       */
+/*   Updated: 2024/08/20 11:12:48 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,11 @@
 const char * SocketCreationException::what() const throw() {
 
 	string error = "Error while creating socket";
-	const char *ret;
 	if (errno != 0) {
 		error += ": ";
 		error += strerror(errno);
 	}
-	ret = error.c_str();
-	return (ret);
+	return error.c_str();
 }
 
 const char * SocketBindException::what() const throw() {
@@ -32,23 +30,19 @@ const char * SocketBindException::what() const throw() {
 const char * SocketListenException::what() const throw() {
 
 	string error = "Error while listening on the socket";
-	const char *ret;
 	if (errno != 0) {
 		error += ": ";
 		error += strerror(errno);
 	}
-	ret = error.c_str();
-	return (ret);
+	return error.c_str();
 }
 
 const char * SendFailedException::what() const throw() {
 
     string error = "Error while sending data with send()";
-	const char *ret;
     if (errno != 0) {
         error += ": ";
         error += strerror(errno);
     }
-    ret = error.c_str();
-	return (ret);
+    return error.c_str();
 }
