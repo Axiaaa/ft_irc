@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 16:53:23 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 17:31:03 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/23 17:48:52 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ void	who(Server &server, Client &client, const string &buffer)
 		std::stringstream	arg;
 		string				channelVisibility;
 
-		// ft_log(channel->getName());
 		channelVisibility = (channel->getVisibility());
 		arg << buffer;
 		arg << "_" << channelVisibility;
