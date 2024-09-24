@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 20:08:30 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 21:28:55 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/25 00:31:21 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,48 +42,82 @@ using std::string;
 #define RESET   "\033[0m"
 
 bool	isPortValid(const std::string &port);
-void	ft_log(const string &content);
+void	ft_log(const string &color, const string &content);
 int		ft_stoi(const string &str);
 int		errorlog(const string &content);
 void	startingTitle();
-void	shutdownBot();
+void	shutdownBot(int sock);
 int		sendMessage(int sock, const string &message);
 int		connectToServer(const string ip, const string port, const string password);
 string	getMessage(int sock);
+void	displayMessage(int sock);
+void	manualRemoteControl(int sock);
 
 
 
 
-
+#define NAME "Omegatron"
 
 
 // MAIN
 
 int	main(int ac, char **av)
 {
-	if (ac < 2 || ac > 3)
-		return (errorlog("Wrong usage !\nCorrect usage: ./Omegatron9000 <port> [password]"), 1);
-	if (isPortValid(av[1]) == false)
-		return (std::cerr << RED << "Invalid port\n" << RESET << std::endl, 1);
-	string	port = "12345";
+	if (ac < 3 || ac > 4)
+		return (errorlog("Wrong usage !\nCorrect usage: ./Omegatron9000 <ip> <port> [password]"));
+	if (isPortValid(av[2]) == false)
+		return (errorlog("Invalid port !"));
+
+	string	ip = av[1];
+	string	port = av[2];
 	string	password;
-	if (ac == 3)
-		password = av[2];
+	if (ac == 4)
+		password = av[3];
+
 	startingTitle();
-	int	sock = connectToServer(av[1], port, password);
-	if (sock == -1)
-		return (1);
-	ft_log("Connected to server !");
+	ft_log(RESET, "__Server infos:\n\tIP: " + ip + "\n\tPort: " + port + "\n\tPassword: " + password);
+
+	int	sock = connectToServer(ip, port, password);
+	if (sock == -1 || sock == 1)
+		return (errorlog("Connection failed"));
+	manualRemoteControl(sock);
+	ft_log(MAGENTA, "\nf*ck this sh*t imma out !\n");
+	shutdownBot(sock);
 	return (0);
 }
 
-
-
-
-
-void	shutdownBot()
+// Set the BOT to manual mode, allowing user to send datas to the server
+void	manualRemoteControl(int sock)
 {
-	ft_log("\nShutting down Omegatron 9000...");
+	ft_log(MAGENTA, "\n##_ManualRemoteControl ON\n");
+	ft_log(RESET, ".INFOS_____________\n\t_ENTER: Send\n\t_CTRL+D: Exit\n");
+	string	line;
+	string	response;
+	while (!std::cin.eof())
+	{
+		if	(std::cin.eof())
+			break;
+		std::cout << "   <Omegatron9000\\> ";
+		std::getline(std::cin, line);
+		if	(std::cin.eof())
+			break;
+		std::cout << std::endl;
+		if (!line.empty())
+			sendMessage(sock, line + "\r\n");
+		response = getMessage(sock);
+		if (!response.empty())
+			std::cout << "   <server\\> " << response;
+	}
+	ft_log(MAGENTA, "\n##_ManualRemoteControl OFF\n");
+}
+
+
+void	shutdownBot(int sock)
+{
+	ft_log(RED, "\nShutting down Omegatron 9000...");
+	sendMessage(sock, "QUIT :Omegatron out !\r\n");
+	close(sock);
+	sock = -1;
 	exit(0);
 }
 
@@ -110,48 +144,62 @@ string	getMessage(int sock)
 
 int	connectToServer(const string ip, const string port, const string password)
 {
-	int					sock;
-	struct sockaddr_in	addr;
-	std::map<string, string>	commands;
+	int							sock;
+	struct sockaddr_in			addr;
+	std::map<string, string>	command;
 
-	commands["CAP"] = "CAP LS 302\r\n";
-	commands["NICK"] = "NICK Omegatron9000\r\n";
+	command["CAP"] = "CAP LS 302\r\n";
+	command["NICK"] = "NICK Omegatron\r\n";
 	if (!password.empty())
-		commands["PASS"] = "PASS" + password + "\r\n";
-	commands["USER"] = "USER Omegatron9000 0 * :Omegatron9000\r\n";
+		command["PASS"] = "PASS" + password + "\r\n";
+	command["USER"] = "USER Omegatron 0 * :Omegatron\r\n";
 
-	ft_log("Init Socket...");
+	ft_log(YELLOW, "_Init Socket...");
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock < 0)
 		return (errorlog("Socket creation failed"));
-	ft_log("Socket created !");
+	ft_log(GREEN, "\tSocket created !");
+	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(ft_stoi(port));
 	addr.sin_addr.s_addr = inet_addr(ip.c_str());
-	ft_log("Connecting to server...");
-	// Not working for now
+	ft_log(YELLOW, "_Connecting to server...");
 	if (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
 		return (errorlog("Connection failed"));
-	ft_log("Connected to server !");
-	for (std::map<string, string>::iterator it = commands.begin(); it != commands.end(); ++it)
+	ft_log(GREEN, "\tConnected to server !");
+	ft_log(YELLOW, "_Authenticating...");
+	for (std::map<string, string>::iterator it = command.begin(); it != command.end(); ++it)
 	{
-		ft_log("\tSending command: " + it->first + " | " + it->second + "...");
+		ft_log(YELLOW, "\tSending " + it->first + " command |--> " + it->second);
 		if (sendMessage(sock, it->second))
 			return (1);
 	}
-	ft_log("Waiting for welcome message...");
-	while (getMessage(sock).find("001 Omegatron9000:") == string::npos)
+	ft_log(YELLOW, "Waiting for welcome message...");
+	while (42)
 	{
+		displayMessage(sock);
+		if (getMessage(sock).find("001") != string::npos)
+			break ;
+		if (getMessage(sock).find("432") != string::npos)
+			return (errorlog("Erroneous nickname"));
 		if (getMessage(sock).find("433") != string::npos)
 			return (errorlog("Nickname already in use"));
 	}
-	ft_log("Welcome message received !");
+	ft_log(GREEN, "Welcome message received !");
 	return (sock);
 }
 
-void	ft_log(const string &content)
+void	displayMessage(int sock)
 {
-	std::cout << CYAN << content << RESET << std::endl;
+	string 		message = getMessage(sock);
+	if (message.empty())
+		return ;
+	std::cout << "Message received |--> [ " << CYAN << message << RESET << " ]\n" << std::endl;
+}
+
+void	ft_log(const string &color, const string &content)
+{
+	std::cout << color << content << RESET << std::endl;
 }
 
 void	startingTitle()
