@@ -6,11 +6,21 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:16 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 17:30:25 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/24 18:49:07 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Exceptions.hpp"
+
+const char * SigInt::what() const throw()
+{
+	return "SIGINT received";
+}
+
+const char * SigEOF::what() const throw()
+{
+	return "EOF received";
+}
 
 const char * SocketCreationException::what() const throw() {
 
@@ -39,12 +49,12 @@ const char * SocketListenException::what() const throw() {
 
 const char * SendFailedException::what() const throw() {
 
-    string error = "Error while sending data with send()";
-    if (errno != 0) {
-        error += ": ";
-        error += strerror(errno);
-    }
-    return error.c_str();
+	string error = "Error while sending data with send()";
+	if (errno != 0) {
+		error += ": ";
+		error += strerror(errno);
+	}
+	return error.c_str();
 }
 
 const char * ChannelNotExistingException::what() const throw() {

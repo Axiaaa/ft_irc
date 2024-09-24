@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 23:13:23 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/24 19:18:49 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,31 +17,54 @@ void	_addFdClient(Server &server, int &max_sd, fd_set *fdset);
 int		_watchFds(int &max_sd, fd_set *fdset);
 int		_newConnections(Server &server, fd_set *fdset);
 
+void	_stopServer(int sig)
+{
+	(void)sig;
+	if (sig == EOF)
+		throw SigEOF();
+	else
+		throw SigInt();
+}
+
 int main(int ac, char **av)
 {
-	if (ac < 2)
-		return (1);
+	// Arguments checking (port and password)
+	if (ac < 2 || ac > 3)
+		return (std::cerr << "Usage: ./ircserv <port> [password]\n" << std::endl, 1);
+	if (isPortValid(av[1]) == false)
+		return (std::cerr << "Invalid port\n" << std::endl, 1);
 
 	// Initializating server
 	Server server(av[1], "password");
 	// Starting server
 	server.startServer(av[1]);
-
 	fd_set	fdset;
-	int max_sd = server.getSocket();
-	while (true)
+	int 	max_sd = server.getSocket();
+	signal(SIGINT, _stopServer);
+	try
 	{
-		FD_ZERO(&fdset);
-		FD_SET(server.getSocket(), &fdset);
-		// Adding new Clients to list
-		_addFdClient(server, max_sd, &fdset);
-		// Watching file descriptors
-		if (_watchFds(max_sd, &fdset))
-			break;
-		// New coming connections handling
-		if (_newConnections(server, &fdset))
-			break ;
-		_receivingServ(server, &fdset);
+		while (!std::cin.eof())
+		{
+			if (std::cin.eof() || std::cin.fail())
+				_stopServer(EOF);
+			FD_ZERO(&fdset);
+			FD_SET(server.getSocket(), &fdset);
+			// Adding new Clients to list
+			_addFdClient(server, max_sd, &fdset);
+			// Watching file descriptors
+			if (_watchFds(max_sd, &fdset))
+				break;
+			// New coming connections handling
+			if (_newConnections(server, &fdset))
+				break ;
+			_receivingServ(server, &fdset);
+		}
+	}
+	catch(SigInt &e) {
+		std::cerr << "Server stopped by: [ " << e.what() << " ]" << std::endl;
+	}
+	catch(SigEOF &e) {
+		std::cerr << "Server stopped by: [ " << e.what() << " ]" << std::endl;
 	}
 	return 0;
 }
@@ -51,7 +74,7 @@ Loop for each clients to check received messages
 */
 void	_receivingServ(Server &server, fd_set *fdset)
 {
-	std::vector<Client *> clients = server.getClientsList();
+	std::vector<Client *> &clients = server.getClientsList();
 	for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); )
 	{
 		int client_fd = (*it)->getClientFd();
@@ -70,7 +93,9 @@ void	_receivingServ(Server &server, fd_set *fdset)
 					std::cout << RED << "Client déconnecté, socket fd: " << client_fd << RESET << std::endl;
 				else
 					std::cerr << "Erreur lors de la réception des données du client, socket fd: " << client_fd << std::endl;
+				ft_log("Client fd closed and element removed from list");
 				close(client_fd);
+				delete *it;
 				it = clients.erase(it);
 			}
 			else
@@ -139,3 +164,5 @@ int		_newConnections(Server &server, fd_set *fdset)
 	}
 	return (0);
 }
+
+

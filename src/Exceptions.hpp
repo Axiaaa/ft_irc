@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:45:03 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 17:27:58 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/24 18:48:51 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,3 +21,5 @@ class SendFailedException			:   public std::exception { public : const char * wh
 class ChannelNotExistingException	:   public std::exception { public : const char * what() const throw();};
 class AlreadyInChannelException		:   public std::exception { public : const char * what() const throw();};
 class InvalidChannelName			:   public std::exception { public : const char * what() const throw();};
+class SigInt						:   public std::exception { public : const char * what() const throw();};
+class SigEOF						:   public std::exception { public : const char * what() const throw();};

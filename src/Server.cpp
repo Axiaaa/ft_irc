@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 22:50:48 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/24 19:40:51 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,17 @@ Server::~Server()
 	for (vector<Client *>::iterator it = this->clientsList_.begin(); it != this->clientsList_.end(); ++it)
 	{
 		close((*it)->getClientFd());
-		// delete (*it);
+		delete (*it);
 	}
+	this->clientsList_.clear();
 	while (!this->channelsList_.empty())
 		this->channelsList_.erase(this->channelsList_.begin());
-	close(this->socket_);
+	if (this->socket_ >= 0)
+	{
+		close(this->socket_);
+		this->socket_ = -1;
+	}
 }
-
 
 /*
 ###########----SPECIFICS MEMBER FUNCTIONS
