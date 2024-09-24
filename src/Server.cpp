@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 19:40:51 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/24 20:00:26 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,18 @@ Server::Server(char* port, string password)
 
 Server::~Server()
 {
-	for (vector<Client *>::iterator it = this->clientsList_.begin(); it != this->clientsList_.end(); ++it)
+	for (vector<Client *>::iterator it = this->clientsList_.begin(); \
+	it != this->clientsList_.end(); ++it)
 	{
 		close((*it)->getClientFd());
 		delete (*it);
 	}
 	this->clientsList_.clear();
-	while (!this->channelsList_.empty())
-		this->channelsList_.erase(this->channelsList_.begin());
+	for (vector<Channel *>::iterator it = this->channelsList_.begin(); \
+	it != this->channelsList_.end(); ++it) {
+		delete (*it);
+	}
+	this->channelsList_.clear();
 	if (this->socket_ >= 0)
 	{
 		close(this->socket_);
