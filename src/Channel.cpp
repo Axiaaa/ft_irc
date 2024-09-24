@@ -6,21 +6,21 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:02:00 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 11:55:30 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/24 01:23:55 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 
 Channel::Channel():
-_name("Default"),
-_topic("Default")
+name_("Default"),
+topic_("")
 {
 }
 
 Channel::Channel(string Name, string Topic):
-_name(Name),
-_topic(Topic)
+name_(Name),
+topic_(Topic)
 {
 	std::cout << MAGENTA << "Creating New Channel !\n Name: " << Name << RESET << std::endl;
 	// Verifier le nom du channel
@@ -28,48 +28,48 @@ _topic(Topic)
 }
 
 Channel::Channel(string Name):
-_name(Name)
+name_(Name)
 {
 	std::cout << MAGENTA << "Creating New Channel !\n Name: " << Name << RESET << std::endl;
 }
 
 Channel::~Channel()
 {
-    this->_members.clear();
+    
 }
 
 void Channel::addMember(Client &client)
 {
     // Add a member to the channel
-    this->_members.push_back(&client);
+    this->members_.push_back(&client);
 }
 void Channel::removeMember(Client &client)
 {
     // Remove a member from the channel
-    std::vector<Client *>::iterator it = std::find(this->_members.begin(), this->_members.end(), &client);
-    if (it != this->_members.end())
-        this->_members.erase(it);
+    std::vector<Client *>::iterator it = std::find(this->members_.begin(), this->members_.end(), &client);
+    if (it != this->members_.end())
+        this->members_.erase(it);
 }
 
 int Channel::checkMember(Client &client)
 {
     // Check if the client is a member of the channel
-    std::vector<Client *>::iterator it = std::find(this->_members.begin(), this->_members.end(), &client);
-    if (it != this->_members.end())
+    std::vector<Client *>::iterator it = std::find(this->members_.begin(), this->members_.end(), &client);
+    if (it != this->members_.end())
         return 1;
     return 0;
 }
 
 void Channel::addOperator(Client &client)
 {
-    this->_operators.push_back(&client);
+    this->operators_.push_back(&client);
 }
 
 void Channel::broadcastMessage(const std::string& message, Client* sender, Server *server)
 {
     (void)sender;
     //Loop over all FDs in the channel to send the message to all clients
-    for (std::vector<Client *>::iterator it = this->_members.begin(); it != this->_members.end(); ++it)
+    for (std::vector<Client *>::iterator it = this->members_.begin(); it != this->members_.end(); ++it)
     {
         if ((*it)->getClientFd() != sender->getClientFd())
         {
@@ -80,7 +80,7 @@ void Channel::broadcastMessage(const std::string& message, Client* sender, Serve
 bool Channel::isOperator(Client &client)
 {
     //Check if the client is an operator of the channel
-    for (std::vector<Client *>::iterator it = this->_operators.begin(); it != this->_operators.end(); ++it)
+    for (std::vector<Client *>::iterator it = this->operators_.begin(); it != this->operators_.end(); ++it)
     {
         if ((*it)->getClientFd() == client.getClientFd())
             return true;
@@ -89,6 +89,18 @@ bool Channel::isOperator(Client &client)
 }
 
 // Getters
-string	Channel::getName()                      { return this->_name; }
-string	Channel::getTopic()                     { return this->_topic; }    
-std::vector<Client *>& Channel::getMembers()    { return this->_members; }
+string	Channel::getName()                      { return this->name_; }
+string	Channel::getTopic()                     { return this->topic_; }    
+std::vector<Client *>& Channel::getMembers()    { return this->members_; }
+string	Channel::getTopicTime()                 { return this->topicTime_; }
+string	Channel::getTopicSetBy()                { return this->topicSetBy_; }
+
+
+// Setters 
+void Channel::setTopic(string &topic)			{ topic_ = topic; }
+void Channel::setTopicSetBy(string &topic)		{ topicSetBy_ = topic; }
+void Channel::setTopicTime()                    {
+	std::stringstream ss;
+    ss << time(NULL);
+	topicSetBy_ = ss.str();
+}

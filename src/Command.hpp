@@ -12,5 +12,4 @@ void	join(Server &server, Client &client, const string &buffer);
 void	who(Server &server, Client &client, const string &buffer);
 void	mode(Server &server, Client &client, const string &buffer);
 void    pass(Server& server, Client& client, const string &buffer);
-
-void	ft_log(string content);
+void    topic(Server& server, Client& client, const string &buffer);

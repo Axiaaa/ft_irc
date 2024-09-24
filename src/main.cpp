@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 11:46:19 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/24 01:26:55 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,9 @@ void	_receivingServ(Server &server, fd_set *fdset);
 void	_addFdClient(Server &server, int &max_sd, fd_set *fdset);
 int		_watchFds(Server &server, int &max_sd, fd_set *fdset);
 int		_newConnections(Server &server, fd_set *fdset);
-void	_stopServer(int sig)
-{
+void	_stopServer(int sig) { 
 	(void)sig;
-	std::cout << "\nServer stopped" << std::endl;
-	exit(0);
+	throw SigInt();
 }
 
 
@@ -33,26 +31,31 @@ int main(int ac, char **av)
 	Server server(av[1], av[2]);
 	// Starting server
 	server.startServer(av[1]);
-
+	
 	fd_set fdset;
 	int max_sd = server.getSocket();
 	signal(SIGINT, _stopServer);
-	while (true)
-	{
-		if (std::cin.eof())
-			_stopServer(0);
-		FD_ZERO(&fdset);
-		FD_SET(server.getSocket(), &fdset);
+	try {
+		while (42)
+		{
+			if (std::cin.eof())
+				break;
+			FD_ZERO(&fdset);
+			FD_SET(server.getSocket(), &fdset);
 
-		// Adding new Clients to list
-		_addFdClient(server, max_sd, &fdset);
-		// Watching file descriptors
-		if (_watchFds(server, max_sd, &fdset))
-			break;
-		// New coming connections handling
-		if (_newConnections(server, &fdset))
-			break ;
-		_receivingServ(server, &fdset);
+			// Adding new Clients to list
+			_addFdClient(server, max_sd, &fdset);
+			// Watching file descriptors
+			if (_watchFds(server, max_sd, &fdset))
+				break;
+			// New coming connections handling
+			if (_newConnections(server, &fdset))
+				break ;
+			_receivingServ(server, &fdset);
+		}
+	}
+	catch (SigInt &e) {
+		std::cerr << "SIGINT received, stopping server" << std::endl;
 	}
 	return 0;
 }
@@ -92,6 +95,13 @@ void	_receivingServ(Server &server, fd_set *fdset)
 
 				// Split the buffer into commands and execute them one by one
 				string commands = buffer;
+				//Check if the buffers > 500 bytes
+				if (commands.size() > 500)
+				{
+					server.sendData(client_fd, getNumericReply(*(*it), 417, ""));
+					return ;
+				}
+
 				while (commands.find("\r\n") != string::npos)
 				{
 					string command = commands.substr(0, commands.find("\r\n"));

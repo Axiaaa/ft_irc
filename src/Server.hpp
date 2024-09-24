@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 12:00:21 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/24 01:25:56 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,36 +47,32 @@ class Channel;
 class Server {
 
 	private :
-		sockaddr_in		addr_;
-		vector<Client	*>		clientsList_;
-		vector<Channel	*>		channelsList_;
-		map<std::string, set<int> >channels;
-		fd_set			fdSet_;
-		int				socket_;
-		string			password_;
+		sockaddr_in			addr_;
+		vector<Client*>		clientsList_;
+		vector<Channel*>	channelsList_;
+		fd_set				fdSet_;
+		string				password_;
+		int					socket_;
 
 	public :
 		Server(char *port, string password);
 		~Server();
 
-		void		createSocket();
-		void		bindSocket();
-		void		listenSocket();
-		void		startServer(char *port);
-		void 		handleClientMessage(Client &client, string command, string arg);
-		void		sendData(int client_fd, string data);
+		void				createSocket();
+		void				bindSocket();
+		void				listenSocket();
+		void				startServer(char *port);
+		void 				handleClientMessage(Client &client, string command, string arg);
+		void				sendData(int client_fd, string data);
+		int&				getSocket();
 
-		Channel		&findOrCreateChannel(string Name, Client& client);
-
-		int&			getSocket();
-
-		sockaddr		getAddr();
-		
-		string			getPassword();
-		
+		Channel				&findOrCreateChannel(string Name, Client& client);
+		Channel				*findChannel(string Name);
+		string				getPassword();
 		vector<Client *>&	getClientsList();
 		vector<Channel *>&	getChannelsList();
 };
 
 
-string getNumericReply(Client& client, int code, string arg);
+string 	getNumericReply(Client& client, int code, string arg);
+void	ft_log(string content);

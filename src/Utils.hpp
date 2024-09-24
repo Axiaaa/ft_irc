@@ -6,6 +6,7 @@
 
 
 std::vector<std::string> split(const std::string &s, char delim);
+std::pair<std::string, std::string> splitFirstSpace(const std::string &s);
 std::string intToString(int value);
 bool isAuthorized(char c);
 

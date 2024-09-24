@@ -22,7 +22,28 @@ std::vector<std::string> split(const std::string &s, char delim) {
 
 // Check if a char is authorized
 bool isAuthorized(char c) {
-    if (std::isalpha(c) && !std::isspace(c) && c != '#' && c != '&' && c != ':') 
+    if (c >= 'a' && c <= 'z')
+        return true;
+    if (c >= 'A' && c <= 'Z')
+        return true;
+    if (c >= '0' && c <= '9')
+        return true;
+    if (c == '[' || c == ']' || c == '\\' || c == '|' || c == '{' || c == '}')
         return true;
     return false;
+}
+
+//Split a string by the first space and retuns a pair of strings
+std::pair<std::string, std::string> splitFirstSpace(const std::string &s) {
+    std::string command;
+    std::string arg;
+    std::vector<std::string> split_buffer = split(s, ' ');
+
+    if (split_buffer.size() > 1) {
+        command = split_buffer[0];
+        arg = s.substr(s.find(' ') + 1);
+    } else {
+        command = s;
+    }
+    return std::make_pair(command, arg);
 }

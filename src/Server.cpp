@@ -6,12 +6,17 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 11:57:30 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/24 01:27:10 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "Command.hpp"
+
+void	ft_log(string content) {
+	std::cout << CYAN << content << RESET << std::endl;
+}
+
 
 /*
 ###########----BASIC MEMBER FUNCTIONS
@@ -29,19 +34,18 @@ Server::Server(char* port, string pass)
 
 Server::~Server()
 {
-	for (vector<Client *>::iterator it = this->clientsList_.begin(); it != this->clientsList_.end(); ++it)
+    close(this->socket_);
+    for (std::vector<Client *>::iterator i = this->clientsList_.begin(); i != this->clientsList_.end(); ++i)
+    {
+        delete *i; 
+    }
+	for (std::vector<Channel *>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
 	{
-		close((*it)->getClientFd());
-		delete *it;
+		delete *i;
 	}
-	this->clientsList_.clear();
-	while (!this->channelsList_.empty())
-		this->channelsList_.erase(this->channelsList_.begin());
-	// Destruction des channels en attentes...
-	close(this->socket_);
+    this->clientsList_.clear();
+    this->channelsList_.clear();
 }
-
-
 /*
 ###########----SPECIFICS MEMBER FUNCTIONS
 */
@@ -91,19 +95,14 @@ void Server::handleClientMessage(Client &client, string command, string arg)
 	commands["MODE"] = mode;
 	commands["WHO"] = who;
 	commands["PASS"] = pass;
+	commands["TOPIC"] = topic;
 	
 
 	// If the command is in the map, execute the corresponding function
 	if (commands.find(command) != commands.end()) 
 		commands[command](*this, client, arg.c_str());
 	else if (command != "CAP" && command != "QUIT")
-	{
-		//If the command is not in the map, send an error message to the client
-		std::string error = "ERROR :Unknown command ";
-		error += command;
-		error += "\r\n";
-		this->sendData(client.getClientFd(), error);
-	}
+		this->sendData(client.getClientFd(), getNumericReply(client, 421, command));
 }
 
 // Send data to a client
@@ -140,10 +139,29 @@ Channel	&Server::findOrCreateChannel(string Name, Client& client)
 	return (*NewChannel);
 }
 
+/*
+	@brief Search in existings channels list if 
+	the specified channel has already been created 
+	and attempts to join it.
+	@param	Name The name of the choosen channel
+	@return	The reference of the channel specified
+*/
+Channel	*Server::findChannel(string Name)
+{
+	for (std::vector<Channel*>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
+	{
+		if ((*i)->getName() == Name)
+		{
+			return (*i);
+		}
+	}
+	return (NULL);
+}
 
 // GETTERS 
 int&				Server::getSocket() 		{ return this->socket_; }
-sockaddr			Server::getAddr() 			{ return *(sockaddr*)&this->addr_; }
 vector<Client *>& 	Server::getClientsList() 	{ return this->clientsList_; }
 vector<Channel *>& 	Server::getChannelsList() 	{ return this->channelsList_; }
 string				Server::getPassword()		{ return this->password_; }
+
+// Setters 

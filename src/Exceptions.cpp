@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:16 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/20 11:12:48 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/24 00:24:50 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,9 @@ const char * SendFailedException::what() const throw() {
         error += strerror(errno);
     }
     return error.c_str();
+}
+
+const char * SigInt::what() const throw() {
+
+	return "SIGINT received";
 }

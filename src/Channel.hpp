@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:04:02 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 11:55:47 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/24 01:23:10 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,12 @@ class   Server;
 class Channel {
 
 	private:
-		string					_name;
-		string					_topic;
-		std::vector<Client *>	_members;
-        std::vector<Client *>	_operators;
+		string					name_;
+		string					topic_;
+		string					topicSetBy_;
+		string					topicTime_;
+		std::vector<Client *>	members_;
+        std::vector<Client *>	operators_;
 
 	public:
 		Channel();
@@ -34,19 +36,19 @@ class Channel {
 		Channel(string Name, string Topic);
 		~Channel();
 		
-		string	getName();
-		string	getTopic();
+		int						checkMember(Client &client);
+		void					setTopicTime();
+		void					setTopicSetBy(string &topic);
+		void					setTopic(string &topic);
+		void					addMember(Client &client);
+		void					removeMember(Client &client);
+        void    				addOperator(Client &client);
+		void					broadcastMessage(const std::string& message, Client* sender, Server *server);	
+        bool 					isOperator(Client &client);
 		
-		std::vector<Client *>& getMembers();
-		
-		int		checkMember(Client &client);
-
-		void	setName();
-		void	setTopic();
-		void	addMember(Client &client);
-		void	removeMember(Client &client);
-        void    addOperator(Client &client);
-		void	broadcastMessage(const std::string& message, Client* sender, Server *server);
-
-        bool isOperator(Client &client);
+		string					getName();
+		string					getTopic();
+		string					getTopicTime();
+		string					getTopicSetBy();
+		std::vector<Client *>&	getMembers();
 };

@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 11:56:49 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/23 23:46:46 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,6 @@ nickname_(""), username_(""), realname_(""), password_(""),
 
 Client::~Client()
 {
-	for (std::vector<Channel *>::iterator it = this->joinedChannels_.begin(); it != this->joinedChannels_.end(); ++it)
-	{
-		(*it)->removeMember(*this);
-	}
-	this->joinedChannels_.clear();
 }
 
 /*
