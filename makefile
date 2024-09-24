@@ -65,6 +65,9 @@ CFLAGS				= -Wextra -Wall -Werror -MMD -std=c++98 -g3
 all : $(NAME)
 	$(LOG__ALLSUCCESS)
 
+bot : Omegatron_9000.cpp
+	$(CC) -Wextra -Wall -Werror -std=c++98 -g3 Omegatron_9000.cpp -o Omegatron_9000
+
 $(NAME): $(DIRS) $(OBJ)
 	$(call logs, $(CYAN),"Compiling\ Executable")
 	$(CC) $(CFLAGS) $(OBJ) -I . -o $(NAME)
