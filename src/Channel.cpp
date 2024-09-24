@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:02:00 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 01:23:55 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/24 16:49:26 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,5 @@ string	Channel::getTopicSetBy()                { return this->topicSetBy_; }
 void Channel::setTopic(string &topic)			{ topic_ = topic; }
 void Channel::setTopicSetBy(string &topic)		{ topicSetBy_ = topic; }
 void Channel::setTopicTime()                    {
-	std::stringstream ss;
-    ss << time(NULL);
-	topicSetBy_ = ss.str();
-}
+        topicTime_ = intToString(time(0));
+    }

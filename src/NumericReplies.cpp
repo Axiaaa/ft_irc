@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 20:54:08 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 02:02:50 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/24 16:21:09 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,10 @@ string ERR_ALREADYREGISTERED(const string &nick) {
 
 // 461: ERR_NEEDMOREPARAMS - Pas assez de paramètres
 string ERR_NEEDMOREPARAMS(const string &nick, const string &command) {
-	return "461 " + nick + " " + command + " :Not enough parameters";
+	
+	if (nick.empty())
+		return "461 NotRegistered " + command + " :Not enough parameters";
+	return "461 " + nick  + " " + command + " :Not enough parameters";
 }
 
 // 464: ERR_PASSWDMISMATCH - Mot de passe incorrect

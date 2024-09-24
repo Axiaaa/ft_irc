@@ -13,6 +13,10 @@
 */
 void user(Server& server, Client& client, const string &buffer)
 {
+	if (client.getRegistrationStatus() != true && client.getIspassgiven() == false) {
+		server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
+		return ;
+	}
 	vector<string> buff_split = split(buffer, ' ');
 	if (!client.getIspassgiven())
 		return	;

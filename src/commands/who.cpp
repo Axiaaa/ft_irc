@@ -3,6 +3,10 @@
 
 void	who(Server &server, Client &client, const string &buffer)
 {	
+	if (client.getRegistrationStatus() != true) {
+		server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
+		return ;
+	}
 	// Getting specified channel (or creating it if doesn't exist)
 	Channel	&channel = server.findOrCreateChannel(buffer, client);
 

@@ -9,8 +9,17 @@
 */
 void nick(Server &server, Client &client, const string &buffer)
 {
-	if (!client.getIspassgiven())
-		return	;
+	if (client.getRegistrationStatus() != true && client.getIspassgiven() == false) {
+		if (client.getNickname().empty()) {
+			client.setNickname(buffer);
+			pass(server, client, "");
+		}
+		else {
+			server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
+			return ;
+		}
+		return ;
+	}
 	if (buffer.empty()) {
 		server.sendData(client.getClientFd(), getNumericReply(client, 431, client.getNickname()));
 		return ;

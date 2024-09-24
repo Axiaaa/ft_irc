@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 01:26:55 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/24 16:01:30 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,6 @@ int main(int ac, char **av)
 	try {
 		while (42)
 		{
-			if (std::cin.eof())
-				break;
 			FD_ZERO(&fdset);
 			FD_SET(server.getSocket(), &fdset);
 

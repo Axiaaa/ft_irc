@@ -29,7 +29,11 @@ Numeric Replies:
 */
 
 void privmsg(Server& server, Client& client, const string &buffer) {
-
+	
+	if (client.getRegistrationStatus() != true) {
+		server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
+		return ;
+	}
 	string target = string(buffer).substr(0, string(buffer).find(' '));
 	if (string(buffer) == target) {
 		server.sendData(client.getClientFd(), getNumericReply(client, 412, ""));

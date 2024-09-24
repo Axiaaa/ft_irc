@@ -9,6 +9,10 @@
 */
 void	join(Server &server, Client &client, const string &buffer)
 {
+	if (client.getRegistrationStatus() != true) {
+		server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
+		return ;
+	}
 	if (buffer[0] != '#')
 	{
 		std::cout << RED << "Channel name not valid" << std::endl;

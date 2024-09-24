@@ -3,6 +3,8 @@
 
 void topic(Server& server, Client& client, const string &buffer)
 {
+	if (client.getRegistrationStatus() != true) 
+		return ;
 	std::string nickname = client.getNickname();
 	if (split(buffer, ' ').size() < 2)
 	{	// Check if the command has enough arguments
