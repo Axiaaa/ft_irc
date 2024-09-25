@@ -5,10 +5,10 @@
 #include <sstream>
 
 
-std::vector<std::string> split(const std::string &s, char delim);
+std::vector<std::string>               split(const std::string &s, char delim);
 std::pair<std::string, std::string> splitFirstSpace(const std::string &s);
-std::string intToString(int value);
-bool isAuthorized(char c);
+std::string                         intToString(int value);
+bool                                isAuthorized(char c);
 
 #define BLUE    "\033[1;34m"
 #define RED     "\033[1;31m"

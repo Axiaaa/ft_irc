@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 01:25:56 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/25 10:31:11 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ class Server {
 		sockaddr_in			addr_;
 		vector<Client*>		clientsList_;
 		vector<Channel*>	channelsList_;
-		fd_set				fdSet_;
+		//fd_set				fdSet_;
 		string				password_;
 		int					socket_;
 

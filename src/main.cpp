@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 16:01:30 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/25 10:51:33 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ int		_newConnections(Server &server, fd_set *fdset)
 				return (1);
 			}
 			std::cout << MAGENTA << "Nouvelle connexion acceptée, socket fd: " << newsockfd << RESET << std::endl;
-			Client *newClient = new Client(newsockfd, time(NULL));
+			Client *newClient = new Client(newsockfd);
 			newClient->setRegistrationStatus(false);
 			server.getClientsList().push_back(newClient);
 	}

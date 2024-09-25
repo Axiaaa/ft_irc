@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 23:46:46 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/25 10:31:44 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 ###########----BASIC MEMBER FUNCTIONS
 */
 
-Client::Client(int fd , time_t t) : creationTime_(t),
+Client::Client(int fd) : 
 nickname_(""), username_(""), realname_(""), password_(""),
  clientFd_(fd), ispassgiven_(false)
 {

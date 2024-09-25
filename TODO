@@ -3,12 +3,12 @@
 - Handle Channel commandes (invites, kicks, password, leave, etc)
 - Create the bot
 - Clean up NumericReplies (Mostly the arguments given to the function and arg names)
-- Add argv parsing to avoid bad port
 - Do something with Exceptions (Create more or delete them because we're not using them)
-- Fix select() bug when a user disconnects
 
 
 FAIT : 
+- Add argv parsing to avoid bad port
+- Fix select() bug when a user disconnects
 - Fix Topic time
 - Fix no password joining
 - Remove useless functions
