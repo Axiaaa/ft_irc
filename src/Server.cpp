@@ -3,23 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/27 14:48:05 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/25 10:51:54 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "Command.hpp"
 
+void	ft_log(string content) {
+	std::cout << CYAN << content << RESET << std::endl;
+}
+
+
 /*
 ###########----BASIC MEMBER FUNCTIONS
 */
 
-Server::Server(char* port, string password)
+Server::Server(char* port, string pass)
 {
-	(void)password;
+	password_ = pass;
 	memset(&this->addr_, 0, sizeof(this->addr_));
 	this->addr_.sin_port = htons(std::strtol(port, NULL, 10));
 	this->addr_.sin_family = AF_INET;
@@ -29,12 +34,18 @@ Server::Server(char* port, string password)
 
 Server::~Server()
 {
-	for (vector<Client>::iterator it = this->clientsList_.begin(); it != this->clientsList_.end(); ++it) {
-		close(it->getClientFd());
-		}
-	close(this->socket_);
+    close(this->socket_);
+    for (std::vector<Client *>::iterator i = this->clientsList_.begin(); i != this->clientsList_.end(); ++i)
+    {
+        delete *i; 
+    }
+	for (std::vector<Channel *>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
+	{
+		delete *i;
+	}
+    this->clientsList_.clear();
+    this->channelsList_.clear();
 }
-
 /*
 ###########----SPECIFICS MEMBER FUNCTIONS
 */
@@ -71,26 +82,27 @@ void	Server::startServer(char *port)
 	std::cout << CYAN << "Serveur démarré sur le port " << port << RESET << std::endl;
 }
 
+
+// Execute the specified commnand
 void Server::handleClientMessage(Client &client, string command, string arg)
 {
-	//Create a map of commands and their corresponding functions to avoid a long list of if/else
-	map<string, void(*)(Server&, Client&, const char *)> commands;
+	// Create a map of commands and their corresponding functions to avoid a long list of if/else
+	map<string, void(*)(Server&, Client&, const string &buffer)> commands;
 	commands["NICK"] = nick;
 	commands["USER"] = user;
 	commands["PRIVMSG"] = privmsg;
+	commands["JOIN"] = join;
+	commands["MODE"] = mode;
+	commands["WHO"] = who;
+	commands["PASS"] = pass;
+	commands["TOPIC"] = topic;
 	
 
-	//If the command is in the map, execute the corresponding function
+	// If the command is in the map, execute the corresponding function
 	if (commands.find(command) != commands.end()) 
 		commands[command](*this, client, arg.c_str());
 	else if (command != "CAP" && command != "QUIT")
-	{
-		//If the command is not in the map, send an error message to the client
-		std::string error = "ERROR :Unknown command ";
-		error += command;
-		error += "\r\n";
-		this->sendData(client.getClientFd(), error);
-	}
+		this->sendData(client.getClientFd(), getNumericReply(client, 421, command));
 }
 
 // Send data to a client
@@ -102,8 +114,54 @@ void	Server::sendData(int client_fd, string data)
 		throw SendFailedException();
 }
 
+/*
+	@brief Search in existings channels list if 
+	the specified channel has already been created 
+	and attempts to join it. Otherwise the channel 
+	will automatically by created
+	@param	Name The name of the choosen channel
+	@return	The reference of the channel specified
+*/
+Channel	&Server::findOrCreateChannel(string Name, Client& client)
+{
+	for (std::vector<Channel*>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
+	{
+		if ((*i)->getName() == Name)
+		{
+			// Channel found
+			return (**i);
+		}
+	}
+	// Channel not existing, creating new one
+	Channel	*NewChannel = new Channel(Name);
+	NewChannel->addOperator(client);
+	this->channelsList_.push_back(NewChannel);
+	return (*NewChannel);
+}
+
+/*
+	@brief Search in existings channels list if 
+	the specified channel has already been created 
+	and attempts to join it.
+	@param	Name The name of the choosen channel
+	@return	The reference of the channel specified
+*/
+Channel	*Server::findChannel(string Name)
+{
+	for (std::vector<Channel*>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
+	{
+		if ((*i)->getName() == Name)
+		{
+			return (*i);
+		}
+	}
+	return (NULL);
+}
+
 // GETTERS 
-int& 		Server::getSocket() 			{ return this->socket_; }
-sockaddr 	Server::getAddr() 				{ return *(sockaddr*)&this->addr_; }
-fd_set& 	Server::getFdSet() 				{ return this->fdSet_; }
-vector<Client>& Server::getClientsList() 	{ return this->clientsList_; }
+int&				Server::getSocket() 		{ return this->socket_; }
+vector<Client *>& 	Server::getClientsList() 	{ return this->clientsList_; }
+vector<Channel *>& 	Server::getChannelsList() 	{ return this->channelsList_; }
+string				Server::getPassword()		{ return this->password_; }
+
+// Setters 

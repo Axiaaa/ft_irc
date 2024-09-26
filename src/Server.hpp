@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/08/24 22:29:59 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/09/25 10:31:11 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@
 #include <string>
 
 #include "Client.hpp"
+#include "Channel.hpp"
+#include "Command.hpp"
 #include "Exceptions.hpp"
 #include "Utils.hpp"
 
@@ -40,29 +42,37 @@ using std::map;
 using std::set;
 
 class Client;
+class Channel;
 
 class Server {
 
 	private :
-		sockaddr_in		addr_;
-		vector<Client>		clientsList_;
-		map<std::string, set<int> >channels;
-		fd_set			fdSet_;
-		int				socket_;
+		sockaddr_in			addr_;
+		vector<Client*>		clientsList_;
+		vector<Channel*>	channelsList_;
+		//fd_set				fdSet_;
+		string				password_;
+		int					socket_;
 
 	public :
 		Server(char *port, string password);
 		~Server();
 
-		void		createSocket();
-		void		bindSocket();
-		void		listenSocket();
-		void		startServer(char *port);
-		void 		handleClientMessage(Client &client, string command, string arg);
-		void		sendData(int client_fd, string data);
+		void				createSocket();
+		void				bindSocket();
+		void				listenSocket();
+		void				startServer(char *port);
+		void 				handleClientMessage(Client &client, string command, string arg);
+		void				sendData(int client_fd, string data);
+		int&				getSocket();
 
-		int&			getSocket();
-		sockaddr		getAddr();
-		fd_set&			getFdSet();
-		vector<Client>&	getClientsList();
+		Channel				&findOrCreateChannel(string Name, Client& client);
+		Channel				*findChannel(string Name);
+		string				getPassword();
+		vector<Client *>&	getClientsList();
+		vector<Channel *>&	getChannelsList();
 };
+
+
+string 	getNumericReply(Client& client, int code, string arg);
+void	ft_log(string content);

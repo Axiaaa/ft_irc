@@ -32,9 +32,18 @@ OBJ_DIR				= $(SRC_DIR).build/
 ALL_SRC				= main.cpp \
 					Server.cpp \
 					Client.cpp \
+					Channel.cpp \
 					Exceptions.cpp \
 					Utils.cpp \
-					Command.cpp \
+					NumericReplies.cpp \
+					commands/join.cpp \
+					commands/nick.cpp \
+					commands/user.cpp \
+					commands/privmsg.cpp \
+					commands/who.cpp \
+					commands/topic.cpp \
+					commands/pass.cpp \
+					commands/mode.cpp \
 
 ALL_HEADERS			= $(ALL_SRC:.cpp=.hpp)
 
@@ -46,17 +55,16 @@ PREFIX_HEADER		= $(addprefix $(HEAD_DIR), $(ALL_HEADERS))
 SRC					= $(wildcard $(PREFIX_SRC))
 HEADER				= $(wildcard $(PREFIX_HEADER))
 LIB					= $(wildcard $(PREFIX_LIB))
-OBJ					= $(patsubst %.cpp, $(OBJ_DIR)%.o, $(notdir $(ALL_SRC)))
+
+# Preserve subdirectory structure for object files
+OBJ					= $(patsubst $(SRC_DIR)%.cpp, $(OBJ_DIR)%.o, $(PREFIX_SRC))
 DEP					= $(OBJ:.o=.d)
 
-DIRS				= $(OBJ_DIR)
+DIRS				= $(OBJ_DIR) $(sort $(dir $(OBJ)))
 
 #____________UTILITIES
 CC					= c++
 CFLAGS				= -Wextra -Wall -Werror -MMD -std=c++98 -g3
-
-
-
 
 #________________________RULES
 
@@ -68,6 +76,7 @@ $(NAME): $(DIRS) $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -I . -o $(NAME)
 	$(LOG__SUCCESS)
 
+# Compile .o files, maintaining folder structure
 $(OBJ_DIR)%.o : $(SRC_DIR)%.cpp
 	$(call logs, $(CYAN),"Compiling\ OBJ\ files")
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -78,9 +87,9 @@ $(LIB) : force
 	@make -sC $(LIB_DIR)
 	$(LOG__SUCCESS)
 
-$(DIRS) :
+$(DIRS): 
 	$(call logs, $(CYAN),"Creating\ directories")
-	@mkdir -p $(DIRS)
+	@mkdir -p $@
 	$(LOG__SUCCESS)
 
 clean : 
@@ -96,8 +105,3 @@ fclean : clean
 re : fclean all
 
 #____________RESSOURCES
--include $(DEP)
-
-.SILENT:
-
-.PHONY: all clean re fclean force
