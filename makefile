@@ -58,15 +58,13 @@ CC					= c++
 CFLAGS				= -Wextra -Wall -Werror -MMD -std=c++98 -g3
 
 
-
-
 #________________________RULES
 
 all : $(NAME)
 	$(LOG__ALLSUCCESS)
 
-bot : Omegatron_9000.cpp
-	$(CC) -Wextra -Wall -Werror -std=c++98 -g3 Omegatron_9000.cpp -o Omegatron_9000
+bot : Bot/Omegatron_9000.cpp
+	$(CC) -Wextra -Wall -Werror -std=c++98 -g3 Bot/Omegatron_9000.cpp -o Omegatron_9000
 
 $(NAME): $(DIRS) $(OBJ)
 	$(call logs, $(CYAN),"Compiling\ Executable")
@@ -96,6 +94,7 @@ clean :
 fclean : clean
 	$(call logs, $(YELLOW),"Cleaning\ Executable")
 	rm -f $(NAME)
+	rm -rf Omegatron_9000
 	$(LOG__SUCCESS)
 
 re : fclean all
@@ -105,4 +104,4 @@ re : fclean all
 
 .SILENT:
 
-.PHONY: all clean re fclean force
+.PHONY: all clean re fclean force bot
