@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 20:08:30 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/30 18:30:51 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/30 18:40:11 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int		GPTMode(int sock);
 
 
 
-#define	OPENAI_API_KEY "APIKEY"
+#define	OPENAI_API_KEY "YOUR_KEY_HERE"
 
 #define OPENAI_API_CALL \
 "curl \"https://api.openai.com/v1/chat/completions\" \\\n" \
