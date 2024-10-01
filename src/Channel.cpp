@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:02:00 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 16:49:26 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/01 15:24:17 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ Channel::Channel():
 name_("Default"),
 topic_("")
 {
+    RequestOnly = 0;
 }
 
 Channel::Channel(string Name, string Topic):
@@ -94,9 +95,14 @@ string	Channel::getTopic()                     { return this->topic_; }
 std::vector<Client *>& Channel::getMembers()    { return this->members_; }
 string	Channel::getTopicTime()                 { return this->topicTime_; }
 string	Channel::getTopicSetBy()                { return this->topicSetBy_; }
+int     Channel::getRequestOnly()               { return this->RequestOnly; }
 
 
 // Setters 
+void Channel::setRequestOnly(int i)             { RequestOnly = i; }
+void Channel::setNeedPassword(int i)            { NeedPassword = i; }
+void Channel::setTopicOnyOperator(int i)        { TopicOnyOperator = i; }
+void Channel::setHasLimitUser(int i)            { HasLimitUser = i; }
 void Channel::setTopic(string &topic)			{ topic_ = topic; }
 void Channel::setTopicSetBy(string &topic)		{ topicSetBy_ = topic; }
 void Channel::setTopicTime()                    {

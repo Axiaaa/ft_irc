@@ -6,7 +6,7 @@
 /*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/25 10:31:44 by aammirat         ###   ########.fr       */
+/*   Updated: 2024/10/01 14:49:42 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,18 @@ void	Client::leaveChannel(Channel &target)
 
 	if (it != this->joinedChannels_.end())
 		this->joinedChannels_.erase(it);
+}
+
+Channel	*Client::findChannel(string Name)
+{
+	for (std::vector<Channel*>::iterator i = this->joinedChannels_.begin(); i != this->joinedChannels_.end(); ++i)
+	{
+		if ((*i)->getName() == Name)
+		{
+			return (*i);
+		}
+	}
+	return (NULL);
 }
 
 // Getters

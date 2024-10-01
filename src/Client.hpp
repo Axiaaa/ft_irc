@@ -58,5 +58,6 @@ class Client {
 		string				getHostname() const;
 		string				getPassword() const;
 		vector<Channel *>   getJoinedChannels();
+		Channel				*findChannel(string Name);
 
 		};

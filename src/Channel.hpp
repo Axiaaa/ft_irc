@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:04:02 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 01:23:10 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/01 15:25:07 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,10 @@ class Channel {
 		string					topicTime_;
 		std::vector<Client *>	members_;
         std::vector<Client *>	operators_;
+		int						RequestOnly;
+		int						TopicOnyOperator;
+		int						NeedPassword; //must change to definite a password
+		int						HasLimitUser; //must change the amount of limit user
 
 	public:
 		Channel();
@@ -45,10 +49,15 @@ class Channel {
         void    				addOperator(Client &client);
 		void					broadcastMessage(const std::string& message, Client* sender, Server *server);	
         bool 					isOperator(Client &client);
+		void					setRequestOnly(int i);
+		void					setTopicOnyOperator(int i);
+		void					setNeedPassword(int i);
+		void					setHasLimitUser(int i);
 		
 		string					getName();
 		string					getTopic();
 		string					getTopicTime();
 		string					getTopicSetBy();
+		int						getRequestOnly();
 		std::vector<Client *>&	getMembers();
 };
