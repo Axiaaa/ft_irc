@@ -6,7 +6,7 @@
 /*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:02:00 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/01 15:24:17 by aammirat         ###   ########.fr       */
+/*   Updated: 2024/10/02 15:00:26 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,21 @@ void Channel::addMember(Client &client)
     // Add a member to the channel
     this->members_.push_back(&client);
 }
+
 void Channel::removeMember(Client &client)
 {
     // Remove a member from the channel
     std::vector<Client *>::iterator it = std::find(this->members_.begin(), this->members_.end(), &client);
     if (it != this->members_.end())
         this->members_.erase(it);
+}
+
+void Channel::removeOperator(Client &client)
+{
+    // Remove operator right
+    std::vector<Client *>::iterator it = std::find(this->operators_.begin(), this->operators_.end(), &client);
+    if (it != this->operators_.end())
+        this->operators_.erase(it);
 }
 
 int Channel::checkMember(Client &client)
@@ -100,7 +109,7 @@ int     Channel::getRequestOnly()               { return this->RequestOnly; }
 
 // Setters 
 void Channel::setRequestOnly(int i)             { RequestOnly = i; }
-void Channel::setNeedPassword(int i)            { NeedPassword = i; }
+void Channel::setNeedPassword(int i, string pass)            { NeedPassword = i; password = pass;}
 void Channel::setTopicOnyOperator(int i)        { TopicOnyOperator = i; }
 void Channel::setHasLimitUser(int i)            { HasLimitUser = i; }
 void Channel::setTopic(string &topic)			{ topic_ = topic; }

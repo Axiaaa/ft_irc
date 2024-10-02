@@ -6,7 +6,7 @@
 /*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/25 10:51:54 by aammirat         ###   ########.fr       */
+/*   Updated: 2024/10/02 13:47:35 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,18 @@ Channel	*Server::findChannel(string Name)
 	for (std::vector<Channel*>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
 	{
 		if ((*i)->getName() == Name)
+		{
+			return (*i);
+		}
+	}
+	return (NULL);
+}
+
+Client	*Server::findClient(string Name)
+{
+	for (std::vector<Client*>::iterator i = this->clientsList_.begin(); i != this->clientsList_.end(); ++i)
+	{
+		if ((*i)->getRealname() == Name)
 		{
 			return (*i);
 		}

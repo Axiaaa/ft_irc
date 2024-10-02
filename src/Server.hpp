@@ -6,7 +6,7 @@
 /*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/25 10:31:11 by aammirat         ###   ########.fr       */
+/*   Updated: 2024/10/02 13:41:10 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ class Server {
 
 		Channel				&findOrCreateChannel(string Name, Client& client);
 		Channel				*findChannel(string Name);
+		Client				*findClient(string Name);
 		string				getPassword();
 		vector<Client *>&	getClientsList();
 		vector<Channel *>&	getChannelsList();
