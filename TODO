@@ -5,8 +5,7 @@
 - Clean up NumericReplies (Mostly the arguments given to the function and arg names)
 - Add argv parsing to avoid bad port
 - Do something with Exceptions (Create more or delete them because we're not using them)
-- Fix select() bug when a user disconnects
-
+- Handle +o, +t, +i in WHO, TOPIC, NAMES
 
 FAIT : 
 - Fix Topic time

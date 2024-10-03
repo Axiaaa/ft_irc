@@ -47,3 +47,14 @@ std::pair<std::string, std::string> splitFirstSpace(const std::string &s) {
     }
     return std::make_pair(command, arg);
 }
+
+
+vector <char> charsplit(const string &s)
+{
+    vector <char> result;
+    for (int i = 0; i < (int)s.size(); i++)
+    {
+        result.push_back(s[i]);
+    }
+    return result;
+}

@@ -34,6 +34,7 @@ class Client {
 		bool				isRegistered_;
 		sockaddr_in 		addr_;
 		vector<Channel *> 	joinedChannels_;
+		string				modstring;
 		
 	public :
 		Client(int fd, time_t t);
@@ -58,5 +59,5 @@ class Client {
 		string				getHostname() const;
 		string				getPassword() const;
 		vector<Channel *>   getJoinedChannels();
-
-		};
+		Channel				*findChannel(string Name);
+};

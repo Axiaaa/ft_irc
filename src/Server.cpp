@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 01:27:10 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/03 04:56:25 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,7 @@ Channel	&Server::findOrCreateChannel(string Name, Client& client)
 	// Channel not existing, creating new one
 	Channel	*NewChannel = new Channel(Name);
 	NewChannel->addOperator(client);
+	NewChannel->setCreationTime();
 	this->channelsList_.push_back(NewChannel);
 	return (*NewChannel);
 }
@@ -151,6 +152,18 @@ Channel	*Server::findChannel(string Name)
 	for (std::vector<Channel*>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
 	{
 		if ((*i)->getName() == Name)
+		{
+			return (*i);
+		}
+	}
+	return (NULL);
+}
+
+Client	*Server::findClient(string Name)
+{
+	for (std::vector<Client*>::iterator i = this->clientsList_.begin(); i != this->clientsList_.end(); ++i)
+	{
+		if ((*i)->getNickname() == Name)
 		{
 			return (*i);
 		}

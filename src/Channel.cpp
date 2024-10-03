@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:02:00 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 16:49:26 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/03 03:38:55 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ Channel::Channel(string Name, string Topic):
 name_(Name),
 topic_(Topic)
 {
-	std::cout << MAGENTA << "Creating New Channel !\n Name: " << Name << RESET << std::endl;
+	std::cout << MAGENTA << "Creating New Channel !\nName: " << Name << RESET << std::endl;
 	// Verifier le nom du channel
 	
 }
@@ -30,7 +30,9 @@ topic_(Topic)
 Channel::Channel(string Name):
 name_(Name)
 {
-	std::cout << MAGENTA << "Creating New Channel !\n Name: " << Name << RESET << std::endl;
+	std::cout << MAGENTA << "Creating New Channel !\nName: " << Name << RESET << std::endl;
+    this->setUserLimit(0);
+    this->setTopicOnlyOperator(false);
 }
 
 Channel::~Channel()
@@ -89,16 +91,45 @@ bool Channel::isOperator(Client &client)
 }
 
 // Getters
+int		Channel::getUserLimit()                 { return this->HasLimitUser; }
 string	Channel::getName()                      { return this->name_; }
 string	Channel::getTopic()                     { return this->topic_; }    
 std::vector<Client *>& Channel::getMembers()    { return this->members_; }
 string	Channel::getTopicTime()                 { return this->topicTime_; }
 string	Channel::getTopicSetBy()                { return this->topicSetBy_; }
+string	Channel::getCreationTime()              { return this->creationTime_; }
+bool	Channel::isTopicOnlyOperator()          { return this->TopicOnlyOperator; }
+string  Channel::getModString(Client& client)                  {
+    string modstring = " ";
+    for (std::vector<string>::iterator it = this->modstring.begin(); it != this->modstring.end(); it++)
+    {
+        modstring += *it;
+    }
+    if (this->isOperator(client))
+        modstring += "+o";
+    return modstring;
+}
 
 
 // Setters 
 void Channel::setTopic(string &topic)			{ topic_ = topic; }
+void Channel::setUserLimit(int limit)           { this->HasLimitUser = limit; }
+void Channel::setTopicOnlyOperator(bool status) { this->TopicOnlyOperator = status; }
 void Channel::setTopicSetBy(string &topic)		{ topicSetBy_ = topic; }
-void Channel::setTopicTime()                    {
-        topicTime_ = intToString(time(0));
-    }
+void Channel::setTopicTime()                    { topicTime_ = intToString(time(0)); }
+void Channel::setCreationTime()                 { creationTime_ = intToString(time(0)); }
+void Channel::addModString(string mod)          { modstring.push_back(mod); }
+void Channel::removeModString(string mod)       { 
+    std::vector<string>::iterator it = std::find(modstring.begin(), modstring.end(), mod);
+    if (it != modstring.end())
+        modstring.erase(it);
+}
+void Channel::removeOperator(Client &client)    {
+    std::vector<Client *>::iterator it = std::find(this->operators_.begin(), this->operators_.end(), &client);
+    if (it != this->operators_.end())
+        this->operators_.erase(it);
+}
+bool Channel::isOpsListEmpty()                  { return true ? this->operators_.empty() : false; }
+
+
+

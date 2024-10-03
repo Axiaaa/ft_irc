@@ -18,11 +18,16 @@ void	join(Server &server, Client &client, const string &buffer)
 		std::cout << RED << "Channel name not valid" << std::endl;
 		return ;
 	}
-	string join = "JOIN :";
+	string join = "JOIN ";
 	join += buffer;
 	// Getting specified channel (or creating it if doesn't exist)
 	ft_log("JOIN command detected");
 	Channel	&channel = server.findOrCreateChannel(buffer, client);
+	if (channel.getUserLimit() != 0 && channel.getMembers().size() >= (long unsigned int)channel.getUserLimit())
+	{
+		server.sendData(client.getClientFd(), getNumericReply(client, 471, channel.getName()));
+		return ;
+	}
 	ft_log("Channel joinned");
 	client.joinChannel(channel);
 	channel.addMember(client);

@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 20:54:08 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 16:21:09 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/03 03:13:32 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,9 +97,12 @@ string RPL_LISTEND() {
 }
 
 // 324: RPL_CHANNELMODEIS - Modes du canal
-string RPL_CHANNELMODEIS(const string &nick, const string &arg) {
+string RPL_CHANNELMODEIS(const string &nick, const string &channel, const string &modstring) {
 	std::stringstream ss;
-	ss << "324 " << nick << " " << arg;
+	if (modstring.empty())
+		ss << "324 " << nick << " " << channel ;
+	else
+		ss << "324 " << nick << " " << channel << " " << modstring;
 	return ss.str();
 }
 
@@ -163,7 +166,10 @@ string ERR_NICKNAMEINUSE(const string &nick, const string &command) {
 //451: ERR_NOTREGISTERED - Vous devez être enregistré pour effectuer cette action
 string ERR_NOTREGISTERED(const string &nick) {
 	std::stringstream ss;
-	ss << "451 " << nick << " :You have not registered";
+	if (nick.empty())
+		ss << "451 NotRegistered :You have not registered";
+	else
+		ss << "451 " << nick << " :You have not registered";
 	return ss.str();
 }
 
@@ -286,6 +292,28 @@ string ERR_INPUTTOOLONG(const string &nick) {
 	return ss.str();
 }
 
+// 329 RPL_CREATIONTIME - Date de création du canal
+string RPL_CREATIONTIME(const string &nick, const string &channel, const string &time) {
+	std::stringstream ss;
+	ss << "329 " << nick << " " << channel << " " << time;
+	return ss.str();
+}
+
+// 696 ERR_INVALIDMOREPARAM - Plus de paramètres invalides
+// "<client> <target chan/user> <mode char> <parameter> :<description>"
+string ERR_INVALIDMOREPARAM(const string &nick, const string &target, const string &mode, const string &parameter, const string &description) {
+	std::stringstream ss;
+	ss << "696 " << nick << " " << target << " " << mode << " " << parameter << " :" << description;
+	return ss.str();
+}
+
+// 471 ERR_CHANNELISFULL
+string ERR_CHANNELISFULL(const string &nick, const string &channel) {
+	std::stringstream ss;
+	ss << "471 " << nick << " " << channel << " :Cannot join channel (+l)";
+	return ss.str();
+}
+
 /* 
  *  @brief Get the numeric reply corresponding to the code
  *  @example Ex : "<username>!<hostname>@<servername> 001 :Welcome to the Internet Relay Network"
@@ -301,9 +329,10 @@ string getNumericReply(Client& client, int code, string arg)
 	if (arg != "" && arg.find('_') != string::npos)
 		arg_split = split(arg, '_');
 	switch (code) {
-		case 1: return s + RPL_WELCOME(client.getNickname(), client.getNickname());
+		case 1:   return s + RPL_WELCOME(client.getNickname(), client.getNickname());
 		case 315: return s + RPL_ENDOFWHOIS(client.getNickname());
-		case 324: return s + RPL_CHANNELMODEIS(client.getNickname(), arg);
+		case 324: return s + RPL_CHANNELMODEIS(client.getNickname(), arg_split[0], arg_split[1]);
+		case 329: return s + RPL_CREATIONTIME(client.getNickname(), arg_split[0], arg_split[1]);
 		case 331: return s + RPL_NOTOPIC(arg, client.getNickname());
 		case 332: return s + RPL_TOPIC(arg_split[0], arg_split[1], client.getNickname());
 		case 333: return s + RPL_TOPICWHOTIME(client.getNickname(), arg_split[0], arg_split[1], arg_split[2]);
@@ -325,7 +354,9 @@ string getNumericReply(Client& client, int code, string arg)
 		case 462: return s + ERR_ALREADYREGISTERED(client.getNickname());
 		case 461: return s + ERR_NEEDMOREPARAMS(client.getNickname(), arg);
 		case 464: return s + ERR_PASSWDMISMATCH(client.getClientFd());
+		case 471: return s + ERR_CHANNELISFULL(client.getNickname(), arg);
 		case 482: return s + ERR_CHANOPRIVSNEEDED(client.getNickname(), arg);
+		case 696: return s + ERR_INVALIDMOREPARAM(client.getNickname(), arg_split[0], arg_split[1], arg_split[2], arg_split[3]);
 		default: return "";
 	}
 }

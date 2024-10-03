@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 23:46:46 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/03 04:56:19 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 Client::Client(int fd , time_t t) : creationTime_(t),
 nickname_(""), username_(""), realname_(""), password_(""),
- clientFd_(fd), ispassgiven_(false)
+ clientFd_(fd), ispassgiven_(false), isRegistered_(false)
 {
 	
 }
@@ -67,6 +67,18 @@ void	Client::leaveChannel(Channel &target)
 		this->joinedChannels_.erase(it);
 }
 
+Channel	*Client::findChannel(string Name)
+{
+	for (std::vector<Channel*>::iterator i = this->joinedChannels_.begin(); i != this->joinedChannels_.end(); ++i)
+	{
+		if ((*i)->getName() == Name)
+		{
+			return (*i);
+		}
+	}
+	return (NULL);
+}
+
 // Getters
 string					Client::getNickname() const  			{ return this->nickname_; }
 string					Client::getUsername() const  			{ return this->username_; }
@@ -76,6 +88,7 @@ vector<Channel *>		Client::getJoinedChannels()				{ return this->joinedChannels_
 int						Client::getClientFd() const     		{ return this->clientFd_; }
 bool					Client::getRegistrationStatus() const 	{ return this->isRegistered_; }
 bool 					Client::getIspassgiven() const			{ return this->ispassgiven_; }
+
 
 
 //Setters

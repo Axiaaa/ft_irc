@@ -14,8 +14,6 @@ void topic(Server& server, Client& client, const string &buffer)
 			server.sendData(client.getClientFd(), getNumericReply(client, 331, channel.getName()));
 			return ;
 		}
-		channel.setTopicTime();
-		channel.setTopicSetBy(nickname);
 		// Send the topic to the client
 		server.sendData(client.getClientFd(), getNumericReply(client, 332, channel.getName() + "_" + channel.getTopic()));
 		server.sendData(client.getClientFd(), getNumericReply(client, 333, channel.getName() + "_" + channel.getTopicSetBy() + "_" + channel.getTopicTime()));
@@ -33,8 +31,9 @@ void topic(Server& server, Client& client, const string &buffer)
 		return ;
 	}
 	Channel& channel = server.findOrCreateChannel(split_buffer.first, client);
+
 	split_buffer.second = split_buffer.second.substr(1);
-	if (!channel.isOperator(client))
+	if (channel.isTopicOnlyOperator() && !channel.isOperator(client))
 	{ // Check if client is operator
 		server.sendData(client.getClientFd(), getNumericReply(client, 482, channel.getName()));
 		return ;
