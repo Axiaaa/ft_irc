@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 20:08:30 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/03 20:47:30 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/10/03 20:51:21 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int		GPTMode(int sock);
 
 
 
-#define	OPENAI_API_KEY "INSERT_YOUR_KEY_HERE"
+#define	OPENAI_API_KEY "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"
 
 #define OPENAI_API_CALL \
 "curl \"https://api.openai.com/v1/chat/completions\" \\\n" \
