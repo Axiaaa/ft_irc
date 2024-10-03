@@ -1,69 +1,49 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Utils.cpp                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/27 17:10:40 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 18:34:42 by ocyn             ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "Server.hpp"
 
+// Convert int to string
 std::string intToString(int value) {
-	std::ostringstream oss;
-	oss << value;
-	return oss.str();
+    std::ostringstream oss;
+    oss << value;
+    return oss.str();
 }
 
-int	ft_stoi(const string &str)
-{
-	int	out;
-	std::stringstream	ss(str);
-
-	ss >> out;
-	return out;
-}
-
+// Split string by a single char delimiter
 std::vector<std::string> split(const std::string &s, char delim) {
-	std::vector<std::string> result;
-	std::stringstream ss (s);
-	std::string item;
+    std::vector<std::string> result;
+    std::stringstream ss (s);
+    std::string item;
 
-	while (getline (ss, item, delim)) {
-		result.push_back (item);
-	}
+    while (getline (ss, item, delim)) {
+        result.push_back (item);
+    }
 
-	return result;
+    return result;
 }
 
+// Check if a char is authorized
 bool isAuthorized(char c) {
-	if (std::isalpha(c) && !std::isspace(c) && c != '#' && c != '&' && c != ':') 
-		return true;
-	return false;
+    if (c >= 'a' && c <= 'z')
+        return true;
+    if (c >= 'A' && c <= 'Z')
+        return true;
+    if (c >= '0' && c <= '9')
+        return true;
+    if (c == '[' || c == ']' || c == '\\' || c == '|' || c == '{' || c == '}')
+        return true;
+    return false;
 }
 
-/*
-	@brief Check if the port is valid (digits; no leading 0; in the range of 0 to 65535)
-	@param	port The port to check
-	@return	True if the port is valid, false otherwise
-*/
-bool isPortValid(const std::string &port)
-{
-	if (port.empty())
-		return false;
-	// Check if all characters are digits
-	for (std::string::const_iterator it = port.begin(); it != port.end(); ++it) {
-		if (!std::isdigit(*it))
-			return false;
-	}
-	// Check if there is a leading 0
-	if (port.size() > 1 && port[0] == '0')
-		return false;
-	// Check if the port is in the range of 0 to 65535
-	if (ft_stoi(port) < 0 || ft_stoi(port) > 65535)
-		return false;
-	return true;
+//Split a string by the first space and retuns a pair of strings
+std::pair<std::string, std::string> splitFirstSpace(const std::string &s) {
+    std::string command;
+    std::string arg;
+    std::vector<std::string> split_buffer = split(s, ' ');
+
+    if (split_buffer.size() > 1) {
+        command = split_buffer[0];
+        arg = s.substr(s.find(' ') + 1);
+    } else {
+        command = s;
+    }
+    return std::make_pair(command, arg);
 }

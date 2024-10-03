@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 22:46:39 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/10/03 19:14:02 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <stdio.h>
 
 #include "Client.hpp"
 #include "Channel.hpp"
@@ -41,37 +42,38 @@ using std::vector;
 using std::map;
 using std::set;
 
-class Channel;
 class Client;
+class Channel;
 
 class Server {
 
 	private :
-		sockaddr_in					addr_;
-		vector<Client *>			clientsList_;
-		vector<Channel *>			channelsList_;
-		int							socket_;
+		sockaddr_in			_addr;
+		vector<Client*>		_clientsList;
+		vector<Channel*>	_channelsList;
+		//fd_set				_fdSet;
+		string				_password;
+		int					_socket;
 
 	public :
 		Server(char *port, string password);
 		~Server();
 
-		void		createSocket();
-		void		bindSocket();
-		void		listenSocket();
-		void		startServer(char *port);
-		void 		handleClientMessage(Client &client, string command, string arg);
-		void		sendData(int client_fd, string data);
-		Channel		&findOrCreateChannel(string Name);
-		Channel		*findChannel(string Name);
+		void				createSocket();
+		void				bindSocket();
+		void				listenSocket();
+		void				startServer(char *port);
+		void 				handleClientMessage(Client &client, string command, string arg);
+		void				sendData(int client_fd, string data);
+		int&				getSocket();
 
-		int&			getSocket();
-		sockaddr		getAddr();
-		vector<Client *>	&getClientsList();
-		vector<Channel *>	&getChannelList();
-
+		Channel				&findOrCreateChannel(string Name, Client& client);
+		Channel				*findChannel(string Name);
+		string				getPassword();
+		vector<Client *>&	getClientsList();
+		vector<Channel *>&	getChannelsList();
 };
 
-// Externals functions (Temporaire: A mettre dans une classe non instanciable)
 
-string getNumericReply(Client& client, int code, string arg);
+string 	getNumericReply(Client& client, int code, string arg);
+void	ft_log(string content);

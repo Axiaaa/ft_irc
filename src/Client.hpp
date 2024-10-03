@@ -1,18 +1,19 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Client.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 20:48:59 by ocyn             ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   Client.hpp										 :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: lcamerly <lcamerly@student.42lyon.fr>	  +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2024/08/14 11:44:58 by ocyn			  #+#	#+#			 */
+/*   Updated: 2024/09/24 01:19:28 by lcamerly		 ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #pragma once
 
 #include "Server.hpp"
+#include "Exceptions.hpp"
 #include "time.h"
 
 using std::string;
@@ -22,35 +23,40 @@ class Channel;
 
 class Client {
 
-	private :
-		string				nickname_;
-		string				username_;
-		string				realname_;
-		time_t				creationTime_;
-		string				password_;
-		int					clientFd_;
-		bool				isRegistered_;
-		sockaddr_in			addr_;
-		std::vector<Channel *>	channels_;
+	private : 
+		//time_t  			_creationTime;
+		string  			_nickname;
+		string  			_username;
+		string  			_realname;
+		string  			_password;
+		int	 				_clientFd;
+		int 				_ispassgiven;
+		bool				_isRegistered;
+		//sock_addrin 		_addr;
+		vector<Channel *> 	_joinedChannels;
 		
 	public :
-		Client(int fd, sockaddr_in addr, time_t t);
+		Client(int fd);
 		~Client();
-		string					getNickname() const;
-		string					getUsername() const;
-		string					getRealname() const;
-		string					getHostname() const;
-		std::vector<Channel *>	getJoinedChannels();
 
-		bool					getRegistrationStatus() const;
-		void					setRegistrationStatus(bool status);
-		void					setNickname(string nickname);
-		void					setUsername(string username);
-		void					setRealname(string realname);
-		int						getClientFd() const;
+		bool				getIspassgiven() const;
+		bool				getRegistrationStatus() const;
+		bool				operator==(const Client& rhs) const;
+		void				setRegistrationStatus(bool status);
+		void				setNickname(string nickname);
+		void				setUsername(string username);
+		void				setRealname(string realname);
+		void				setIspassgiven(bool a);
+		void				setPassword(string password);
+		void				joinChannel(Channel &target);
+		void				leaveChannel(Channel &target);
+		int					getClientFd() const;
 
-		void					joinChannel(Channel &target);
-		void					leaveChannel(Channel &target);
-		bool					operator==(const Client& rhs) const;
+		string				getNickname() const;
+		string				getUsername() const;
+		string				getRealname() const;
+		string				getHostname() const;
+		string				getPassword() const;
+		vector<Channel *>   getJoinedChannels();
 
-};
+		};

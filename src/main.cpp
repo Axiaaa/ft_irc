@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 19:18:49 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/10/03 19:17:45 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 void	_receivingServ(Server &server, fd_set *fdset);
 void	_addFdClient(Server &server, int &max_sd, fd_set *fdset);
-int		_watchFds(int &max_sd, fd_set *fdset);
+int		_watchFds(Server &server, int &max_sd, fd_set *fdset);
 int		_newConnections(Server &server, fd_set *fdset);
+
 
 void	_stopServer(int sig)
 {
@@ -26,23 +27,21 @@ void	_stopServer(int sig)
 		throw SigInt();
 }
 
+
 int main(int ac, char **av)
 {
-	// Arguments checking (port and password)
-	if (ac < 2 || ac > 3)
-		return (std::cerr << "Usage: ./ircserv <port> [password]\n" << std::endl, 1);
-	if (isPortValid(av[1]) == false)
-		return (std::cerr << "Invalid port\n" << std::endl, 1);
+	if (ac < 3)
+		return (1);
 
 	// Initializating server
-	Server server(av[1], "password");
+	Server server(av[1], av[2]);
 	// Starting server
 	server.startServer(av[1]);
-	fd_set	fdset;
-	int 	max_sd = server.getSocket();
+	
+	fd_set fdset;
+	int max_sd = server.getSocket();
 	signal(SIGINT, _stopServer);
-	try
-	{
+	try {
 		while (!std::cin.eof())
 		{
 			if (std::cin.eof() || std::cin.fail())
@@ -52,12 +51,16 @@ int main(int ac, char **av)
 			// Adding new Clients to list
 			_addFdClient(server, max_sd, &fdset);
 			// Watching file descriptors
-			if (_watchFds(max_sd, &fdset))
+			if (_watchFds(server, max_sd, &fdset))
 				break;
 			// New coming connections handling
 			if (_newConnections(server, &fdset))
 				break ;
+			if (std::cin.eof() || std::cin.fail())
+				_stopServer(EOF);
 			_receivingServ(server, &fdset);
+			if (std::cin.eof() || std::cin.fail())
+				_stopServer(EOF);
 		}
 	}
 	catch(SigInt &e) {
@@ -105,13 +108,20 @@ void	_receivingServ(Server &server, fd_set *fdset)
 
 				// Split the buffer into commands and execute them one by one
 				string commands = buffer;
+				//Check if the buffers > 500 bytes
+				if (commands.size() > 500)
+				{
+					server.sendData(client_fd, getNumericReply(*(*it), 417, ""));
+					return ;
+				}
+
 				while (commands.find("\r\n") != string::npos)
 				{
 					string command = commands.substr(0, commands.find("\r\n"));
 					commands = commands.substr(commands.find("\r\n") + 2);
 					string arg = command.substr(command.find(" ") + 1);
 					command = command.substr(0, command.find(" "));
-					server.handleClientMessage(**it, command, arg);
+					server.handleClientMessage(*(*it), command, arg);
 				}
 				++it;
 			}
@@ -135,8 +145,9 @@ void	_addFdClient(Server &server, int &max_sd, fd_set *fdset)
 	}
 }
 
-int	_watchFds(int &max_sd, fd_set *fdset)
+int	_watchFds(Server &server, int &max_sd, fd_set *fdset)
 {
+	(void)server;
 	int activity = select(max_sd + 1, fdset, NULL, NULL, NULL);
 
 	if (activity < 0 && errno != EINTR) {
@@ -158,11 +169,9 @@ int		_newConnections(Server &server, fd_set *fdset)
 				return (1);
 			}
 			std::cout << MAGENTA << "Nouvelle connexion acceptée, socket fd: " << newsockfd << RESET << std::endl;
-			Client *newClient = new Client(newsockfd, client_addr, time(NULL));
+			Client *newClient = new Client(newsockfd);
 			newClient->setRegistrationStatus(false);
 			server.getClientsList().push_back(newClient);
 	}
 	return (0);
 }
-
-

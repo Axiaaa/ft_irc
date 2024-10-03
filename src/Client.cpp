@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 22:06:16 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/10/03 20:34:14 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,16 @@
 ###########----BASIC MEMBER FUNCTIONS
 */
 
-Client::Client(int fd, sockaddr_in addr, time_t t) :
-nickname_(""), username_(""), realname_(""),
-creationTime_(t), clientFd_(fd), addr_(addr)
+Client::Client(int fd) : 
+_nickname(""), _username(""), _realname(""), _password(""),
+ _clientFd(fd), _ispassgiven(false)
 {
 	
 }
 
 Client::~Client()
 {
-	for (std::vector<Channel *>::iterator it = this->channels_.begin(); it != this->channels_.end(); ++it)
+	for (std::vector<Channel *>::iterator it = this->_joinedChannels.begin(); it != this->_joinedChannels.end(); ++it)
 	{
 		(*it)->removeMember(*this);
 	}
@@ -37,24 +37,10 @@ Client::~Client()
 */
 
 // Operator overloads
-bool Client::operator==(const Client& rhs) const {
-    return this->clientFd_ == rhs.clientFd_;
+bool Client::operator==(const Client& rhs) const
+{
+	return this->_clientFd == rhs._clientFd;
 }
-
-// Getters
-string					Client::getNickname() const						{ return this->nickname_; }
-string					Client::getUsername() const						{ return this->username_; }
-string					Client::getRealname() const						{ return this->realname_; }
-int						Client::getClientFd() const     			{ return this->clientFd_; }
-bool					Client::getRegistrationStatus() const 		{ return this->isRegistered_; }
-std::vector<Channel *>	Client::getJoinedChannels()		{ return this->channels_; }
-
-//Setters
-void	Client::setNickname(string nickname)		{ this->nickname_ = nickname; }
-void	Client::setUsername(string username)   	{ this->username_ = username; }
-void	Client::setRealname(string realname)   	{ this->realname_ = realname; }
-void	Client::setRegistrationStatus(bool status) { this->isRegistered_ = status; }
-
 
 string	Client::getHostname() const
 {
@@ -76,13 +62,32 @@ string	Client::getHostname() const
 
 void	Client::joinChannel(Channel &target)
 {
-	//std::cout << "Client " << this->getNickname() << " joined the channel " << target.getName() << std::endl;
-	this->channels_.push_back(&target);
+	this->_joinedChannels.push_back(&target);
 }
 
 void	Client::leaveChannel(Channel &target)
 {
-	std::vector<Channel *>::iterator it = std::find(this->getJoinedChannels().begin(), this->getJoinedChannels().end(), &target);
-	if (it != this->getJoinedChannels().end())
-		this->channels_.erase(it);
+	std::vector<Channel *>::iterator it = std::find(this->_joinedChannels.begin(), this->_joinedChannels.end(), &target);
+
+	if (it != this->_joinedChannels.end())
+		this->_joinedChannels.erase(it);
 }
+
+// Getters
+string					Client::getNickname() const  			{ return this->_nickname; }
+string					Client::getUsername() const  			{ return this->_username; }
+string					Client::getRealname() const  			{ return this->_realname; }
+string 					Client::getPassword() const				{ return this->_password; }
+vector<Channel *>		Client::getJoinedChannels()				{ return this->_joinedChannels; }
+int						Client::getClientFd() const     		{ return this->_clientFd; }
+bool					Client::getRegistrationStatus() const 	{ return this->_isRegistered; }
+bool 					Client::getIspassgiven() const			{ return this->_ispassgiven; }
+
+
+//Setters
+void					Client::setNickname(string nickname)	{ this->_nickname = nickname; }
+void					Client::setUsername(string username)   	{ this->_username = username; }
+void					Client::setIspassgiven(bool a)			{ this->_ispassgiven = a; }
+void					Client::setPassword(string password)	{ this->_password = password; }
+void					Client::setRealname(string realname)   	{ this->_realname = realname; }
+void					Client::setRegistrationStatus(bool status)	{ this->_isRegistered = status; }

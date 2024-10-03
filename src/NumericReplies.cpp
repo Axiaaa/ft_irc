@@ -3,30 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   NumericReplies.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 20:54:08 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/23 16:02:58 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/24 16:21:09 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-/*
-NOTE POUR PLUS TARD: Utiliser std::ostringstream plutot que faire des
-string + string + string ...
-
-C'est vraiment mais VRAIMENT plus rapide et opti.
-std::stringstream << string << string << string ne fait qu'une allocation
-la ou string + string etc... re-alloue a chaque ajout.
-*/
-
 // 001: RPL_WELCOME - Bienvenue sur le serveur IRC
 string RPL_WELCOME(const string &nick, const string &hostname) {
-	std::stringstream	out;
-
-	out << "001 " << nick << " :Welcome to the Internet Relay Network, " << hostname;
-	return out.str();
+	std::stringstream ss;
+	ss << "001 " << nick << " :Welcome to the Internet Relay Network " << hostname;
+	return ss.str();
 }
 
 // 002: RPL_YOURHOST - Informations sur l'hôte
@@ -79,33 +69,16 @@ string RPL_WHOISOPERATOR(const string &nick) {
 	return "313 " + nick + " :is an IRC operator";
 }
 
-// 352: RPL_WHOREPLY - Reponse de la commande WHO apres un JOIN
-string RPL_WHOREPLY(const string &nick, const string &channel, \
-const string &username, const string &hostname, \
-const string &servname, const string &nickname) 
-{
-	(void) hostname;
-	(void) servname;
-	(void) username;
-	return ("352 " + nick + " " \
-		+ channel + " " \
-		+ nickname + " "
-		);
-}
-
 // 317: RPL_WHOISIDLE - Information de l'inactivité de l'utilisateur WHOIS
 string RPL_WHOISIDLE(const string &nick, const string &idle, const string &signon) {
 	return "317 " + nick + " " + idle + " " + signon + " :seconds idle, signon time";
 }
 
-// 315: RPL_ENDOFWHO - Fin de la commande WHO
-string RPL_ENDOFWHO(const string &nick,const string &channel) {
-	return "315 " + nick +  " " + channel + " :End of WHO list";
-}
-
 // 318: RPL_ENDOFWHOIS - Fin de la commande WHOIS
 string RPL_ENDOFWHOIS(const string &nick) {
-	return "318 " + nick + " :End of /WHOIS list";
+	std::stringstream ss;
+	ss << "318 " << nick << " :End of /WHOIS list";
+	return ss.str();
 }
 
 // 319: RPL_WHOISCHANNELS - Canaux auxquels l'utilisateur WHOIS est connecté
@@ -125,17 +98,21 @@ string RPL_LISTEND() {
 
 // 324: RPL_CHANNELMODEIS - Modes du canal
 string RPL_CHANNELMODEIS(const string &nick, const string &arg) {
-	return "324 " + nick + " " + arg;
+	std::stringstream ss;
+	ss << "324 " << nick << " " << arg;
+	return ss.str();
 }
 
 // 331: RPL_NOTOPIC - Aucun sujet défini pour le canal
-string RPL_NOTOPIC(const string &channel) {
-	return "331 " + channel + " :No topic is set";
+string RPL_NOTOPIC(const string &channel, const string &nick) {
+	std::stringstream ss;
+	ss << "331 " << nick << " " << channel << " :No topic is set";
+	return ss.str();
 }
 
 // 332: RPL_TOPIC - Sujet actuel du canal
-string RPL_TOPIC(const string &channel, const string &topic) {
-	return "332 " + channel + " :" + topic;
+string RPL_TOPIC(const string &channel, const string &topic, const string &nick) {
+	return "332 " + nick + " " + channel + " :" + topic;
 }
 
 // 341: RPL_INVITING - Invitation envoyée à un utilisateur
@@ -144,13 +121,21 @@ string RPL_INVITING(const string &nick, const string &channel) {
 }
 
 // 353: RPL_NAMREPLY - Réponse à la commande NAMES (liste des utilisateurs)
-string RPL_NAMREPLY(const string &nick, const string &channel, const string &symbol, const string &users) {
-	return "353 " + nick + " " + symbol + " " + channel + " :" + users;
+// Exemple : "353 #test :@user1 user2 user3"
+// @ : Opérateur
+// + : Voix
+// = : Normal
+string RPL_NAMREPLY(const string &symbol, const string &channel, const string &users) {
+	std::stringstream ss;
+	ss << "353 " << symbol << " " << channel << " :" << users;
+	return ss.str();
 }
 
 // 366: RPL_ENDOFNAMES - Fin de la commande NAMES
-string RPL_ENDOFNAMES(const string &nick, const string &channel) {
-	return "366 " + nick + " " + channel + " :End of /NAMES list";
+string RPL_ENDOFNAMES(const string &channel) {
+	std::stringstream ss;
+	ss << "366 " << channel << " :End of /NAMES list";
+	return ss.str();
 }
 
 // 372: RPL_MOTD - Message of the Day (MOTD)
@@ -170,67 +155,135 @@ string RPL_ENDOFMOTD() {
 
 // 433: ERR_NICKNAMEINUSE - Pseudonyme déjà utilisé
 string ERR_NICKNAMEINUSE(const string &nick, const string &command) {
-	return "433 " + nick + " " + command +" :Nickname is already in use";
+	std::stringstream ss;
+	ss << "433 " << nick << " " << command << " :Nickname is already in use";
+	return ss.str();
 }
 
 //451: ERR_NOTREGISTERED - Vous devez être enregistré pour effectuer cette action
-string ERR_NOTREGISTERED() {
-	return "451 :You have not registered";
+string ERR_NOTREGISTERED(const string &nick) {
+	std::stringstream ss;
+	ss << "451 " << nick << " :You have not registered";
+	return ss.str();
 }
 
 // 482: ERR_CHANOPRIVSNEEDED - Droits d'opérateur nécessaires pour effectuer une action sur un canal
-string ERR_CHANOPRIVSNEEDED(const string &channel) {
-	return "482 " + channel + " :You're not channel operator";
+string ERR_CHANOPRIVSNEEDED(const string &nick, const string &channel) {
+	std::stringstream ss;
+	ss << "482 " << nick << " " << channel << " :You're not channel operator";
+	return ss.str();
 }
 
 //  430: ERR_NOSUCHCHANNEL: Aucun canal avec ce nom
-string ERR_NOSUCHCHANNEL(const string &channel) {
-	return "403 " + channel + " :No such channel";
+string ERR_NOSUCHCHANNEL(const string &nick, const string &channel) {
+	std::stringstream ss;	
+	ss << "403 " << nick << " " << channel << " :No such channel";
+	return ss.str();
 }
 
 // 404: ERR_CANNOTSENDTOCHAN: Ne peut pas envoyer de message dans ce canal
 string ERR_CANNOTSENDTOCHAN(const string &channel) {
-	return "404 " + channel + " :Cannot send to channel";
+	std::stringstream ss;
+	ss << "404 " << channel << " :Cannot send message to " << channel;
+	return ss.str();
 }
 
+
 // 421: ERR_UNKNOWNCOMMAND: Commande inconnue
-string ERR_UNKNOWNCOMMAND(const string &command) {
-	return "421 " + command + " :Unknown command";
+string ERR_UNKNOWNCOMMAND(const string &command, const string &nick) {
+	std::stringstream ss;
+	ss << "421 " << nick << " " << command << " :Unknown command";
+	return ss.str();
 }
 
 // 462: ERR_ALREADYREGISTERED - Vous êtes déjà enregistré
 string ERR_ALREADYREGISTERED(const string &nick) {
-	return "462 " + nick + ":You may not reregister";
+	std::stringstream ss;
+	ss << "462 " << nick << " :You may not reregister";
+	return ss.str();
 }
 
 // 461: ERR_NEEDMOREPARAMS - Pas assez de paramètres
 string ERR_NEEDMOREPARAMS(const string &nick, const string &command) {
-	return "461 " + nick + " " + command + " :Not enough parameters";
+	
+	if (nick.empty())
+		return "461 NotRegistered " + command + " :Not enough parameters";
+	return "461 " + nick  + " " + command + " :Not enough parameters";
+}
+
+// 464: ERR_PASSWDMISMATCH - Mot de passe incorrect
+string ERR_PASSWDMISMATCH(int i) {
+	std::stringstream ss;
+	ss << "464 " << i << " :Password incorrect";
+	return ss.str();
 }
 
 // 432: ERR_ERRONEUSNICKNAME - Pseudonyme incorrect
 string ERR_ERRONEUSNICKNAME(const string &nick, const string &command) {
-	return "432 " + nick + " " + command + " :Erroneus nickname";
+	std::stringstream ss;
+	ss << "432 " << nick << " " << command << " :Erroneus nickname";
+	return ss.str();
 }
 
 // 431: ERR_NONICKNAMEGIVEN - Aucun pseudonyme donné
 string ERR_NONICKNAMEGIVEN(const string &nick) {
-	return "431 " + nick + " :No nickname given";
+	std::stringstream ss;
+	ss << "431 " << nick << " :No nickname given";
+	return ss.str();
 }
 
 // 412: ERR_NOTEXTTOSEND - Aucun texte donné
 string ERR_NOTEXTTOSEND(const string &nick) {
-	return "412 " + nick + " :No text to send";
+	std::stringstream ss;
+	ss << "412 " << nick << " :No text to send";
+	return ss.str();
 }
 
 // 401: ERR_NOSUCHNICK - Pseudonyme invalide
 string ERR_NOSUCHNICK(const string &command, const string &nick) {
-	return "401 " + command + " " + nick + " :No such nick";
+	std::stringstream ss;
+	ss << "401 " << command << " " << nick << " :No such nick";
+	return ss.str();
 }
 
 // 407: TOOMANYTARGETS - Trop de destinataires
 string ERR_TOOMANYTARGETS(const string &nick, const string &command) {
-	return "407 " + nick + " " + command + " :Too many recipients";
+	std::stringstream ss;
+	ss << "407 " << nick << " " << command << " :Too many recipients";
+	return ss.str();
+}
+
+//352: RPL_WHOREPLY - Réponse à la commande
+string RPL_WHOREPLY(const string &nick, const string &channel, const string &user, const string &host, const string &server, const string &status) {
+	std::stringstream ss;
+	ss << "352 " << nick << " " << channel << " " << user << " " << host << " " << server << " " << status;
+	return ss.str();
+}
+
+// 315: RPL_ENDOFWHO - Fin de la commande WHO
+string RPL_ENDOFWHO(const string &mask) {
+	return "315 " + mask + " :End of /WHO list";
+}
+
+// 333: RPL_TOPICWHOTIME - Sujet du canal et date de modification
+string RPL_TOPICWHOTIME(const string &client, const string &nick, const string &channel, const string &time) {
+	std::stringstream ss;
+	ss << "333 " << client << " " << nick << " " << channel << " " + time;
+	return ss.str();
+}
+
+//442 ERR_NOTONCHANNEL - Vous n'êtes pas sur ce canal
+string ERR_NOTONCHANNEL(const string &nick, const string &channel) {
+	std::stringstream ss;
+	ss << "442 " << nick << " " << channel << " :You're not on that channel";
+	return ss.str();
+}
+
+// 417 ERR_INPUTTOOLONG - Commande trop longue
+string ERR_INPUTTOOLONG(const string &nick) {
+	std::stringstream ss;
+	ss << "417 " << nick << " :Input line too long";
+	return ss.str();
 }
 
 /* 
@@ -243,28 +296,36 @@ string ERR_TOOMANYTARGETS(const string &nick, const string &command) {
  */
 string getNumericReply(Client& client, int code, string arg)
 {
+	string s = client.getHostname();
 	vector<string> arg_split;
-	string s = ":ircserv ";
-
 	if (arg != "" && arg.find('_') != string::npos)
 		arg_split = split(arg, '_');
-
 	switch (code) {
-		case 1: return s + RPL_WELCOME(client.getNickname(), client.getHostname());
-		case 315: return s + RPL_ENDOFWHO(client.getNickname(), arg);
+		case 1: return s + RPL_WELCOME(client.getNickname(), client.getNickname());
+		case 315: return s + RPL_ENDOFWHOIS(client.getNickname());
 		case 324: return s + RPL_CHANNELMODEIS(client.getNickname(), arg);
-		case 352: return s + RPL_WHOREPLY(client.getNickname(), \
-		arg_split[0], arg_split[1], arg_split[2], arg_split[3], arg_split[4]);
-		case 353: return s + RPL_NAMREPLY(client.getNickname(), arg_split[0], arg_split[1], arg_split[2]);
-		case 366: return  s + RPL_ENDOFNAMES(client.getNickname(), arg);
+		case 331: return s + RPL_NOTOPIC(arg, client.getNickname());
+		case 332: return s + RPL_TOPIC(arg_split[0], arg_split[1], client.getNickname());
+		case 333: return s + RPL_TOPICWHOTIME(client.getNickname(), arg_split[0], arg_split[1], arg_split[2]);
+		case 352: return s + RPL_WHOREPLY(client.getNickname(), arg_split[0], arg_split[1], arg_split[2], arg_split[3], arg_split[4]);
+		case 353: return s + RPL_NAMREPLY(arg_split[1] + " =", arg_split[0], arg_split[1]);
+		case 366: return s + RPL_ENDOFNAMES(client.getNickname() + " " + arg);
 		case 401: return s + ERR_NOSUCHNICK(client.getNickname(), arg);
+		case 403: return s + ERR_NOSUCHCHANNEL(client.getNickname(), arg);
+		case 404: return s + ERR_CANNOTSENDTOCHAN(arg);
 		case 407: return s + ERR_TOOMANYTARGETS(client.getNickname(), arg);
 		case 412: return s + ERR_NOTEXTTOSEND(client.getNickname());
-		case 433: return s + ERR_NICKNAMEINUSE(client.getNickname() , arg);
+		case 417: return s + ERR_INPUTTOOLONG(client.getNickname());
+		case 421: return s + ERR_UNKNOWNCOMMAND(arg, client.getNickname());
+		case 433: return s + ERR_NICKNAMEINUSE(arg, arg);
 		case 431: return s + ERR_NONICKNAMEGIVEN(client.getNickname());
 		case 432: return s + ERR_ERRONEUSNICKNAME(client.getNickname(), arg);
+		case 442: return s + ERR_NOTONCHANNEL(client.getNickname(), arg);
+		case 451: return s + ERR_NOTREGISTERED(client.getNickname());
 		case 462: return s + ERR_ALREADYREGISTERED(client.getNickname());
 		case 461: return s + ERR_NEEDMOREPARAMS(client.getNickname(), arg);
+		case 464: return s + ERR_PASSWDMISMATCH(client.getClientFd());
+		case 482: return s + ERR_CHANOPRIVSNEEDED(client.getNickname(), arg);
 		default: return "";
 	}
 }

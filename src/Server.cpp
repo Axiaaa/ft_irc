@@ -6,47 +6,52 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 23:39:06 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/10/03 20:35:37 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "Command.hpp"
+
+void	ft_log(string content) {
+	std::cout << CYAN << content << RESET << std::endl;
+}
+
 
 /*
 ###########----BASIC MEMBER FUNCTIONS
 */
 
-Server::Server(char* port, string password)
+Server::Server(char* port, string pass)
 {
-	(void)password;
-	memset(&this->addr_, 0, sizeof(this->addr_));
-	this->addr_.sin_port = htons(std::strtol(port, NULL, 10));
-	this->addr_.sin_family = AF_INET;
-	this->addr_.sin_addr.s_addr = INADDR_ANY;
+	this->_password = pass;
+	memset(&this->_addr, 0, sizeof(this->_addr));
+	this->_addr.sin_port = htons(std::strtol(port, NULL, 10));
+	this->_addr.sin_family = AF_INET;
+	this->_addr.sin_addr.s_addr = INADDR_ANY;
 	this->createSocket();
 }
 
 Server::~Server()
 {
-	for (vector<Client *>::iterator it = this->clientsList_.begin(); \
-	it != this->clientsList_.end(); ++it)
+	for (vector<Client *>::iterator it = this->_clientsList.begin(); \
+	it != this->_clientsList.end(); ++it)
 	{
 		close((*it)->getClientFd());
 		delete (*it);
 	}
-	this->clientsList_.clear();
-	for (vector<Channel *>::iterator it = this->channelsList_.begin(); \
-	it != this->channelsList_.end(); ++it) {
+	this->_clientsList.clear();
+	for (vector<Channel *>::iterator it = this->_channelsList.begin(); \
+	it != this->_channelsList.end(); ++it) {
 		delete (*it);
 	}
-	this->channelsList_.clear();
-	if (this->socket_ >= 0)
+	this->_channelsList.clear();
+	if (this->_socket >= 0)
 	{
-		close(this->socket_);
-		this->socket_ = -1;
+		close(this->_socket);
+		this->_socket = -1;
 	}
 }
-
 /*
 ###########----SPECIFICS MEMBER FUNCTIONS
 */
@@ -54,25 +59,25 @@ Server::~Server()
 // Create and init Socket
 void Server::createSocket()
 {
-	this->socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (socket_ < 0)
+	this->_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (_socket < 0)
 		throw SocketCreationException();
 	int optval = 1;
-	if (setsockopt(this->socket_, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval)) != 0)
-		close(this->socket_), throw SocketCreationException();
+	if (setsockopt(this->_socket, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval)) != 0)
+		close(this->_socket), throw SocketCreationException();
 }
 
 // Configure Socket
 void Server::bindSocket()
 {
-	if (bind(this->socket_, (struct sockaddr*)&this->addr_, sizeof(this->addr_)) != 0)
-		close(this->socket_), throw SocketBindException();
+	if (bind(this-> _socket, (struct sockaddr*)&this->_addr, sizeof(this->_addr)) != 0)
+		close(this-> _socket), throw SocketBindException();
 }
 
 void Server::listenSocket()
 {
-	if (listen(this->socket_, 5) < 0)
-		close(this->socket_), throw SocketListenException();
+	if (listen(this-> _socket, 5) < 0)
+		close(this-> _socket), throw SocketListenException();
 }
 
 void	Server::startServer(char *port)
@@ -95,19 +100,15 @@ void Server::handleClientMessage(Client &client, string command, string arg)
 	commands["JOIN"] = join;
 	commands["MODE"] = mode;
 	commands["WHO"] = who;
+	commands["PASS"] = pass;
+	commands["TOPIC"] = topic;
 	
 
 	// If the command is in the map, execute the corresponding function
 	if (commands.find(command) != commands.end()) 
 		commands[command](*this, client, arg.c_str());
 	else if (command != "CAP" && command != "QUIT")
-	{
-		//If the command is not in the map, send an error message to the client
-		std::string error = "ERROR :Unknown command ";
-		error += command;
-		error += "\r\n";
-		this->sendData(client.getClientFd(), error);
-	}
+		this->sendData(client.getClientFd(), getNumericReply(client, 421, command));
 }
 
 // Send data to a client
@@ -127,9 +128,9 @@ void	Server::sendData(int client_fd, string data)
 	@param	Name The name of the choosen channel
 	@return	The reference of the channel specified
 */
-Channel	&Server::findOrCreateChannel(string Name)
+Channel	&Server::findOrCreateChannel(string Name, Client& client)
 {
-	for (std::vector<Channel *>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
+	for (std::vector<Channel*>::iterator i = this->_channelsList.begin(); i != this->_channelsList.end(); ++i)
 	{
 		if ((*i)->getName() == Name)
 		{
@@ -139,7 +140,8 @@ Channel	&Server::findOrCreateChannel(string Name)
 	}
 	// Channel not existing, creating new one
 	Channel	*NewChannel = new Channel(Name);
-	this->channelsList_.push_back(NewChannel);
+	NewChannel->addOperator(client);
+	this->_channelsList.push_back(NewChannel);
 	return (*NewChannel);
 }
 
@@ -152,7 +154,7 @@ Channel	&Server::findOrCreateChannel(string Name)
 */
 Channel	*Server::findChannel(string Name)
 {
-	for (std::vector<Channel *>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
+	for (std::vector<Channel*>::iterator i = this->_channelsList.begin(); i != this->_channelsList.end(); ++i)
 	{
 		if ((*i)->getName() == Name)
 		{
@@ -163,7 +165,9 @@ Channel	*Server::findChannel(string Name)
 }
 
 // GETTERS 
-int& 		Server::getSocket() 			{ return this->socket_; }
-sockaddr 	Server::getAddr() 				{ return *(sockaddr*)&this->addr_; }
-vector<Client *>  &Server::getClientsList() 	{ return this->clientsList_; }
-vector<Channel *>  &Server::getChannelList() 	{ return this->channelsList_; }
+int&				Server::getSocket() 		{ return this-> _socket; }
+vector<Client *>& 	Server::getClientsList() 	{ return this->_clientsList; }
+vector<Channel *>& 	Server::getChannelsList() 	{ return this->_channelsList; }
+string				Server::getPassword()		{ return this->_password; }
+
+// Setters 

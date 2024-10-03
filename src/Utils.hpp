@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Utils.hpp                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/29 21:01:23 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 18:50:53 by ocyn             ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
 #include <iostream> 
@@ -17,14 +5,11 @@
 #include <sstream>
 
 
-// Functions prototypes
-std::vector<std::string>	split(const std::string &s, char delim);
-std::string					intToString(int value);
-bool						isAuthorized(char c);
-bool						isPortValid(const std::string &port);
-std::stringstream			ss(const string &str);
+std::vector<std::string>               split(const std::string &s, char delim);
+std::pair<std::string, std::string> splitFirstSpace(const std::string &s);
+std::string                         intToString(int value);
+bool                                isAuthorized(char c);
 
-// Colors codes
 #define BLUE    "\033[1;34m"
 #define RED     "\033[1;31m"
 #define GREEN   "\033[1;32m"
@@ -32,5 +17,3 @@ std::stringstream			ss(const string &str);
 #define CYAN    "\033[1;36m"
 #define MAGENTA "\033[1;35m"
 #define RESET   "\033[0m"
-
-#define	EOF		-1

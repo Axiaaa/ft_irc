@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Exceptions.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:16 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/24 18:49:07 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/09/25 10:52:03 by aammirat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,13 @@ const char * SigEOF::what() const throw()
 const char * SocketCreationException::what() const throw() {
 
 	string error = "Error while creating socket";
+	const char *ret;
 	if (errno != 0) {
 		error += ": ";
 		error += strerror(errno);
 	}
-	return error.c_str();
+	ret = error.c_str();
+	return (ret);
 }
 
 const char * SocketBindException::what() const throw() {
@@ -40,34 +42,23 @@ const char * SocketBindException::what() const throw() {
 const char * SocketListenException::what() const throw() {
 
 	string error = "Error while listening on the socket";
+	const char *ret;
 	if (errno != 0) {
 		error += ": ";
 		error += strerror(errno);
 	}
-	return error.c_str();
+	ret = error.c_str();
+	return (ret);
 }
 
 const char * SendFailedException::what() const throw() {
 
-	string error = "Error while sending data with send()";
-	if (errno != 0) {
-		error += ": ";
-		error += strerror(errno);
-	}
-	return error.c_str();
-}
-
-const char * ChannelNotExistingException::what() const throw() {
-
-	return "Error while creating / finding the channel, specified channel not exist\n";
-}
-
-const char * AlreadyInChannelException::what() const throw() {
-
-	return "Error while joining the specified channel, the client is already in the channel\n";
-}
-
-const char * InvalidChannelName::what() const throw() {
-
-	return "Error while creating / finding the channel, specified name not valid\n";
+    string error = "Error while sending data with send()";
+	const char *ret;
+    if (errno != 0) {
+        error += ": ";
+        error += strerror(errno);
+    }
+	ret = error.c_str();
+	return (ret);
 }
