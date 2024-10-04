@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:02:00 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/03 03:38:55 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/03 22:53:14 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,8 @@ bool Channel::isOperator(Client &client)
 // Getters
 int		Channel::getUserLimit()                 { return this->HasLimitUser; }
 string	Channel::getName()                      { return this->name_; }
-string	Channel::getTopic()                     { return this->topic_; }    
+string	Channel::getTopic()                     { return this->topic_; }
+string  Channel::getKey()                       { return this->key_; }    
 std::vector<Client *>& Channel::getMembers()    { return this->members_; }
 string	Channel::getTopicTime()                 { return this->topicTime_; }
 string	Channel::getTopicSetBy()                { return this->topicSetBy_; }
@@ -113,12 +114,21 @@ string  Channel::getModString(Client& client)                  {
 
 // Setters 
 void Channel::setTopic(string &topic)			{ topic_ = topic; }
+void Channel::setKey(string key)				{ key_ = key; }
 void Channel::setUserLimit(int limit)           { this->HasLimitUser = limit; }
 void Channel::setTopicOnlyOperator(bool status) { this->TopicOnlyOperator = status; }
 void Channel::setTopicSetBy(string &topic)		{ topicSetBy_ = topic; }
 void Channel::setTopicTime()                    { topicTime_ = intToString(time(0)); }
 void Channel::setCreationTime()                 { creationTime_ = intToString(time(0)); }
-void Channel::addModString(string mod)          { modstring.push_back(mod); }
+void Channel::addModString(string mod)          { 
+    
+    for (vector<string>::iterator it = this->modstring.begin(); it != this->modstring.end(); it++)
+    {
+        if (*it == mod)
+            return ;
+    }
+    this->modstring.push_back(mod);
+}
 void Channel::removeModString(string mod)       { 
     std::vector<string>::iterator it = std::find(modstring.begin(), modstring.end(), mod);
     if (it != modstring.end())

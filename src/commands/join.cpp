@@ -28,6 +28,15 @@ void	join(Server &server, Client &client, const string &buffer)
 		server.sendData(client.getClientFd(), getNumericReply(client, 471, channel.getName()));
 		return ;
 	}
+	if (!channel.getKey().empty())
+	{
+		string key = buffer.substr(buffer.find(" ") + 1);
+		if (key != channel.getKey())
+		{
+			server.sendData(client.getClientFd(), getNumericReply(client, 475, channel.getName()));
+			return ;
+		}
+	}
 	ft_log("Channel joinned");
 	client.joinChannel(channel);
 	channel.addMember(client);

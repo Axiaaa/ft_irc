@@ -10,6 +10,7 @@ void mode_topic (t_type add_or_del, Channel &chan, Server &server, Client &clien
 	ss << "MODE " << chan.getName() << " " << (add_or_del == ADD ? "+t" : "-t");
 	for (std::vector<Client *>::iterator it = chan.getMembers().begin(); it != chan.getMembers().end(); it++)
 		server.sendData((*it)->getClientFd(), client.getHostname() + ss.str());
+	chan.addModString((add_or_del == ADD ? "+t" : "-t"));
 }
 
 
@@ -49,8 +50,11 @@ void mode_o(t_type add_or_del, Channel &chan, Server &server, Client &client, co
 	}
 }
 
-void mode_l(t_type add_or_del, Channel &chan, unsigned long int limit, Server &server, Client &client)
+void mode_l(t_type add_or_del, Channel &chan, vector<string> buffer, Server &server, Client &client)
 {
+	unsigned long int limit = 0;
+	if (buffer.size() >= 3)
+		limit = atoi(buffer[2].c_str());
 	if (!limit)
 	{
 		if (add_or_del == DELETE)
@@ -70,6 +74,23 @@ void mode_l(t_type add_or_del, Channel &chan, unsigned long int limit, Server &s
 	ss << "MODE " << chan.getName() << " " << (add_or_del == ADD ? "+l" : "-l") << " " << limit;
 	for (std::vector<Client *>::iterator it = chan.getMembers().begin(); it != chan.getMembers().end(); it++)
 		server.sendData((*it)->getClientFd(), client.getHostname() + ss.str());
+	chan.addModString((add_or_del == ADD ? "+l" : "-l"));
+}
+
+void mode_k(t_type add_or_del, Channel &chan, vector<string> keys, Server &server, Client &client)
+{
+	string key;
+	if (keys.size() >= 3)
+		key = keys[2];
+	if (add_or_del == ADD)
+		chan.setKey(string(key));
+	else if (add_or_del == DELETE)		
+		chan.setKey("");
+	std::stringstream ss;
+	ss << "MODE " << chan.getName() << " " << (add_or_del == ADD ? "+k" : "-k") << " " << key;
+	for (std::vector<Client *>::iterator it = chan.getMembers().begin(); it != chan.getMembers().end(); it++)
+		server.sendData((*it)->getClientFd(), client.getHostname() + ss.str());
+	chan.addModString((add_or_del == ADD ? "+k" : "-k"));
 }
 
 void	mode(Server &server, Client &client, const string &buffer)
@@ -119,24 +140,46 @@ void	mode(Server &server, Client &client, const string &buffer)
 				mode_o(add_or_del, *chan, server, client, buffsplit[2]);	
 				break;
 			case 'l':
-				mode_l(add_or_del, *chan, atoi(buffsplit[2].c_str()), server, client);
-				break;
+				if (buffsplit.size() >= 3 || add_or_del == DELETE) {
+			 		mode_l(add_or_del, *chan, buffsplit, server, client);
+			 		break;
+				}
+				else
+				{
+					string s = "696 " + client.getNickname() + " " + chan->getName() + " " + buffsplit[1];
+					for (int i = 2; i < (int)buffsplit.size(); i++)
+						s += " " + buffsplit[i];
+					s += " :Need more arguments";
+					server.sendData(client.getClientFd(), client.getHostname() + s);
+					break;
+				}
 			case 't':
 				mode_topic(add_or_del, *chan, server, client);
 				break;
-			// case 'k':
-			// 	mode_k(add_or_del, *chan, buffsplit[2]);
-			// 	break;
 			// case 'i':
 			// 	mode_i(add_or_del, *chan);
 			// 	break;
+			case 'k':
+				if (buffsplit.size() >= 3 || add_or_del == DELETE) {
+			 		mode_k(add_or_del, *chan, buffsplit, server, client);
+			 		break;
+				}
+				else
+				{
+					string s = "696 " + client.getNickname() + " " + chan->getName() + " " + buffsplit[1];
+					for (int i = 2; i < (int)buffsplit.size(); i++)
+						s += " " + buffsplit[i];
+					s += " :Need more arguments";
+					server.sendData(client.getClientFd(), client.getHostname() + s);
+					break;
+				}
 			default:
 				string s = "696 " + client.getNickname() + " " + chan->getName() + " " + buffsplit[1];
 				for (int i = 2; i < (int)buffsplit.size(); i++)
 					s += " " + buffsplit[i];
 				s += " :Invalid modestring";
 				server.sendData(client.getClientFd(), client.getHostname() + s);
-				break;
+				return ;
 		}
 	}	 
 }

@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 20:54:08 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/03 03:13:32 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/03 21:45:01 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,6 +314,13 @@ string ERR_CHANNELISFULL(const string &nick, const string &channel) {
 	return ss.str();
 }
 
+// 475 ERR_BADCHANNELKEY
+string ERR_BADCHANNELKEY(const string &nick, const string &channel) {
+	std::stringstream ss;
+	ss << "475 " << nick << " " << channel << " :Cannot join channel (+k)";
+	return ss.str();
+}
+
 /* 
  *  @brief Get the numeric reply corresponding to the code
  *  @example Ex : "<username>!<hostname>@<servername> 001 :Welcome to the Internet Relay Network"
@@ -355,6 +362,7 @@ string getNumericReply(Client& client, int code, string arg)
 		case 461: return s + ERR_NEEDMOREPARAMS(client.getNickname(), arg);
 		case 464: return s + ERR_PASSWDMISMATCH(client.getClientFd());
 		case 471: return s + ERR_CHANNELISFULL(client.getNickname(), arg);
+		case 475: return s + ERR_BADCHANNELKEY(client.getNickname(), arg);
 		case 482: return s + ERR_CHANOPRIVSNEEDED(client.getNickname(), arg);
 		case 696: return s + ERR_INVALIDMOREPARAM(client.getNickname(), arg_split[0], arg_split[1], arg_split[2], arg_split[3]);
 		default: return "";

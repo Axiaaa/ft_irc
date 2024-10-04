@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/03 04:56:25 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/03 21:51:28 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,18 +122,21 @@ void	Server::sendData(int client_fd, string data)
 	@param	Name The name of the choosen channel
 	@return	The reference of the channel specified
 */
-Channel	&Server::findOrCreateChannel(string Name, Client& client)
+Channel	&Server::findOrCreateChannel(string buffer, Client& client)
 {
+	std::pair<string, string> ChannelData = splitFirstSpace(buffer);
 	for (std::vector<Channel*>::iterator i = this->channelsList_.begin(); i != this->channelsList_.end(); ++i)
 	{
-		if ((*i)->getName() == Name)
+		if ((*i)->getName() == ChannelData.first)
 		{
 			// Channel found
 			return (**i);
 		}
 	}
 	// Channel not existing, creating new one
-	Channel	*NewChannel = new Channel(Name);
+	Channel	*NewChannel = new Channel(ChannelData.first);
+	if (!ChannelData.second.empty())
+		NewChannel->setKey(ChannelData.second);
 	NewChannel->addOperator(client);
 	NewChannel->setCreationTime();
 	this->channelsList_.push_back(NewChannel);

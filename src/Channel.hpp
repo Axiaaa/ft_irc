@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:04:02 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/03 03:32:02 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/03 21:41:56 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class Channel {
         std::vector<Client *>	operators_;
 		vector<string>			modstring;
 		string					creationTime_;
+		string					key_;
 		int						RequestOnly;
 		bool					TopicOnlyOperator;
 		int						NeedPassword; //must change to definite a password
@@ -48,6 +49,7 @@ class Channel {
 		void					setCreationTime();
 		void					setTopicSetBy(string &topic);
 		void					setTopic(string &topic);
+		void					setKey(string key);
 		void					setTopicOnlyOperator(bool status);
 		void					addMember(Client &client);
 		void					removeMember(Client &client);
@@ -59,6 +61,7 @@ class Channel {
 		bool					isOpsListEmpty();
 		bool					isTopicOnlyOperator();
 		string					getName();
+		string					getKey();
 		string					getTopic();
 		string					getTopicTime();
 		string					getCreationTime();
