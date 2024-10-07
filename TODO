@@ -6,6 +6,8 @@
 - Add argv parsing to avoid bad port
 - Do something with Exceptions (Create more or delete them because we're not using them)
 - Handle +o, +t, +i in WHO, TOPIC, NAMES
+- Create a 696 function that will handle the 696 numeric reply (bc I send it like 4 times and it's not good)
+- Fix command.hpp relink
 
 
 FAIT : 

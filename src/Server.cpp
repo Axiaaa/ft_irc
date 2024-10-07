@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/03 21:51:28 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/07 11:01:29 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ void Server::handleClientMessage(Client &client, string command, string arg)
 	commands["WHO"] = who;
 	commands["PASS"] = pass;
 	commands["TOPIC"] = topic;
+	commands["INVITE"] = invite;
 	
 
 	// If the command is in the map, execute the corresponding function
@@ -139,6 +140,9 @@ Channel	&Server::findOrCreateChannel(string buffer, Client& client)
 		NewChannel->setKey(ChannelData.second);
 	NewChannel->addOperator(client);
 	NewChannel->setCreationTime();
+	NewChannel->setTopicOnlyOperator(false);
+	NewChannel->setUserLimit(0);
+	NewChannel->setVisible(PUBLIC);
 	this->channelsList_.push_back(NewChannel);
 	return (*NewChannel);
 }

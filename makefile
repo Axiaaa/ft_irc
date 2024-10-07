@@ -44,6 +44,7 @@ ALL_SRC				= main.cpp \
 					commands/topic.cpp \
 					commands/pass.cpp \
 					commands/mode.cpp \
+					commands/invite.cpp \
 
 ALL_HEADERS			= $(ALL_SRC:.cpp=.hpp)
 

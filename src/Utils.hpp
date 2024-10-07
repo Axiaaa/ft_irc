@@ -19,7 +19,3 @@ bool                                isAuthorized(char c);
 #define MAGENTA "\033[1;35m"
 #define RESET   "\033[0m"
 
-typedef enum {
-    ADD,
-    DELETE
-}   t_type;

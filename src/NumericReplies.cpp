@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 20:54:08 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/03 21:45:01 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/07 11:05:23 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,6 +321,27 @@ string ERR_BADCHANNELKEY(const string &nick, const string &channel) {
 	return ss.str();
 }
 
+// 473 ERR_INVITEONLYCHAN
+string ERR_INVITEONLYCHAN(const string &nick, const string &channel) {
+	std::stringstream ss;
+	ss << "473 " << nick << " " << channel << " :Cannot join channel (+i)";
+	return ss.str();
+}
+
+// 443 ERR_USERONCHANNEL
+string ERR_USERONCHANNEL(const string &client,const string &nick, const string &channel) {
+	std::stringstream ss;
+	ss << "443 " << client << " " << nick << " " << channel << " :is already on channel";
+	return ss.str();
+}
+
+// 341 RPL_INVITING
+string RPL_INVITING(const string &client, const string &nick, const string &channel) {
+	std::stringstream ss;
+	ss << "341 " << client << " " << nick << " " << channel << " :Inviting";
+	return ss.str();
+}
+
 /* 
  *  @brief Get the numeric reply corresponding to the code
  *  @example Ex : "<username>!<hostname>@<servername> 001 :Welcome to the Internet Relay Network"
@@ -343,6 +364,7 @@ string getNumericReply(Client& client, int code, string arg)
 		case 331: return s + RPL_NOTOPIC(arg, client.getNickname());
 		case 332: return s + RPL_TOPIC(arg_split[0], arg_split[1], client.getNickname());
 		case 333: return s + RPL_TOPICWHOTIME(client.getNickname(), arg_split[0], arg_split[1], arg_split[2]);
+		case 341: return s + RPL_INVITING(client.getNickname(), arg_split[0], arg_split[1]);
 		case 352: return s + RPL_WHOREPLY(client.getNickname(), arg_split[0], arg_split[1], arg_split[2], arg_split[3], arg_split[4]);
 		case 353: return s + RPL_NAMREPLY(arg_split[1] + " =", arg_split[0], arg_split[1]);
 		case 366: return s + RPL_ENDOFNAMES(client.getNickname() + " " + arg);
@@ -357,11 +379,13 @@ string getNumericReply(Client& client, int code, string arg)
 		case 431: return s + ERR_NONICKNAMEGIVEN(client.getNickname());
 		case 432: return s + ERR_ERRONEUSNICKNAME(client.getNickname(), arg);
 		case 442: return s + ERR_NOTONCHANNEL(client.getNickname(), arg);
+		case 443: return s + ERR_USERONCHANNEL(client.getNickname(), arg_split[0], arg_split[1]);
 		case 451: return s + ERR_NOTREGISTERED(client.getNickname());
 		case 462: return s + ERR_ALREADYREGISTERED(client.getNickname());
 		case 461: return s + ERR_NEEDMOREPARAMS(client.getNickname(), arg);
 		case 464: return s + ERR_PASSWDMISMATCH(client.getClientFd());
 		case 471: return s + ERR_CHANNELISFULL(client.getNickname(), arg);
+		case 473: return s + ERR_INVITEONLYCHAN(client.getNickname(), arg);
 		case 475: return s + ERR_BADCHANNELKEY(client.getNickname(), arg);
 		case 482: return s + ERR_CHANOPRIVSNEEDED(client.getNickname(), arg);
 		case 696: return s + ERR_INVALIDMOREPARAM(client.getNickname(), arg_split[0], arg_split[1], arg_split[2], arg_split[3]);

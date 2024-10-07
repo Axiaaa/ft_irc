@@ -22,7 +22,7 @@ void	join(Server &server, Client &client, const string &buffer)
 	join += buffer;
 	// Getting specified channel (or creating it if doesn't exist)
 	ft_log("JOIN command detected");
-	Channel	&channel = server.findOrCreateChannel(buffer, client);
+	Channel &channel = server.findOrCreateChannel(buffer, client);
 	if (channel.getUserLimit() != 0 && channel.getMembers().size() >= (long unsigned int)channel.getUserLimit())
 	{
 		server.sendData(client.getClientFd(), getNumericReply(client, 471, channel.getName()));
@@ -38,6 +38,11 @@ void	join(Server &server, Client &client, const string &buffer)
 		}
 	}
 	ft_log("Channel joinned");
+	if (channel.isVisible() == PRIVATE && !channel.isInvited(client))
+	{
+		server.sendData(client.getClientFd(), getNumericReply(client, 473, channel.getName()));
+		return ;
+	}
 	client.joinChannel(channel);
 	channel.addMember(client);
 	// Sending JOIN to client
@@ -47,4 +52,6 @@ void	join(Server &server, Client &client, const string &buffer)
 		server.sendData(client.getClientFd(), getNumericReply(client, 332, channel.getName() + "_" + channel.getTopic()));
 		server.sendData(client.getClientFd(), getNumericReply(client, 333, channel.getName() + "_" + channel.getTopicSetBy() + "_" + channel.getTopicTime()));
 	}
+	if (channel.isInvited(client))
+		channel.removeInvitation(client);
 }

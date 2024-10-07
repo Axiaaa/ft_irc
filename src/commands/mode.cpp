@@ -1,5 +1,19 @@
 #include "../Command.hpp"
 
+void mode_i(t_type add_or_del, Channel &chan, Server &server, Client &client)
+{
+	if (add_or_del == ADD)
+		chan.setVisible(PRIVATE);
+	else if (add_or_del == DELETE)
+		chan.setVisible(PUBLIC);
+	std::stringstream ss;
+	ss << "MODE " << chan.getName() << " " << (add_or_del == ADD ? "+i" : "-i");
+	for (std::vector<Client *>::iterator it = chan.getMembers().begin(); it != chan.getMembers().end(); it++)
+		server.sendData((*it)->getClientFd(), client.getHostname() + ss.str());
+	chan.addModString((add_or_del == ADD ? "+i" : "-i"));	
+}
+
+
 void mode_topic (t_type add_or_del, Channel &chan, Server &server, Client &client)
 {
 	if (add_or_del == ADD)
@@ -156,9 +170,9 @@ void	mode(Server &server, Client &client, const string &buffer)
 			case 't':
 				mode_topic(add_or_del, *chan, server, client);
 				break;
-			// case 'i':
-			// 	mode_i(add_or_del, *chan);
-			// 	break;
+			case 'i':
+			 	mode_i(add_or_del, *chan, server, client);
+			 	break;
 			case 'k':
 				if (buffsplit.size() >= 3 || add_or_del == DELETE) {
 			 		mode_k(add_or_del, *chan, buffsplit, server, client);
@@ -173,6 +187,12 @@ void	mode(Server &server, Client &client, const string &buffer)
 					server.sendData(client.getClientFd(), client.getHostname() + s);
 					break;
 				}
+			case '+':
+				add_or_del = ADD;	
+				break;
+			case '-':
+				add_or_del = DELETE;
+				break;
 			default:
 				string s = "696 " + client.getNickname() + " " + chan->getName() + " " + buffsplit[1];
 				for (int i = 2; i < (int)buffsplit.size(); i++)

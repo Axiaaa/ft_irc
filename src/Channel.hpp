@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:04:02 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/03 21:41:56 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/07 10:56:50 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,16 @@
 
 using std::string;
 using std::vector;
+
+typedef enum {
+    ADD,
+    DELETE
+}   t_type;
+
+typedef enum {
+    PUBLIC,
+    PRIVATE
+}   t_channelType;
 
 class	Client;
 class   Server;
@@ -29,13 +39,14 @@ class Channel {
 		string					topicTime_;
 		std::vector<Client *>	members_;
         std::vector<Client *>	operators_;
+		std::vector<Client *>	invited_;
 		vector<string>			modstring;
 		string					creationTime_;
 		string					key_;
-		int						RequestOnly;
+		t_channelType			visible_;
 		bool					TopicOnlyOperator;
 		int						NeedPassword; //must change to definite a password
-		int						HasLimitUser; //must change the amount of limit user
+		int						userLimit; //must change the amount of limit user
 
 	public:
 		Channel();
@@ -55,11 +66,15 @@ class Channel {
 		void					removeMember(Client &client);
         void    				addOperator(Client &client);
 		void    				removeOperator(Client &client);
-		void					broadcastMessage(const std::string& message, Client* sender, Server *server);	
+		void					addInvitation(Client &client);	
+		void					removeInvitation(Client &client);
+		void					broadcastMessage(const std::string& message, Client* sender, Server *server);
+		void					setVisible(t_channelType visible);
 		
         bool 					isOperator(Client &client);
 		bool					isOpsListEmpty();
 		bool					isTopicOnlyOperator();
+		bool					isInvited(Client &client);
 		string					getName();
 		string					getKey();
 		string					getTopic();
@@ -68,6 +83,7 @@ class Channel {
 		string					getTopicSetBy();
 		string					getModString(Client& client);
 		std::vector<Client *>&	getMembers();
+		t_channelType			isVisible();
 		void					addModString(string mod);
 		void					removeModString(string mod);
 		int						getUserLimit();
