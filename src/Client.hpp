@@ -24,16 +24,16 @@ class Channel;
 class Client {
 
 	private : 
-		//time_t  			_creationTime;
-		string  			_nickname;
-		string  			_username;
-		string  			_realname;
-		string  			_password;
-		int	 				_clientFd;
-		int 				_ispassgiven;
+		time_t				_creationTime;
+		string				_nickname;
+		string				_username;
+		string				_realname;
+		string				_password;
+		int					_clientFd;
+		int					_ispassgiven;
 		bool				_isRegistered;
-		//sock_addrin 		_addr;
-		vector<Channel *> 	_joinedChannels;
+		sockaddr_in			_addr;
+		vector<Channel *>	_joinedChannels;
 		
 	public :
 		Client(int fd);

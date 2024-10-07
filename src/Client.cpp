@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/03 20:34:14 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/10/04 00:50:17 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 ###########----BASIC MEMBER FUNCTIONS
 */
 
-Client::Client(int fd) : 
+Client::Client(int fd) :
 _nickname(""), _username(""), _realname(""), _password(""),
- _clientFd(fd), _ispassgiven(false)
+ _clientFd(fd), _ispassgiven(false), _isRegistered(false)
 {
 	
 }
@@ -27,6 +27,7 @@ Client::~Client()
 {
 	for (std::vector<Channel *>::iterator it = this->_joinedChannels.begin(); it != this->_joinedChannels.end(); ++it)
 	{
+		(*it)->removeOperator(*this);
 		(*it)->removeMember(*this);
 	}
 	this->getJoinedChannels().clear();

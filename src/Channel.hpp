@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:04:02 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/03 19:06:45 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/10/04 00:45:55 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ class Channel {
 		void					addMember(Client &client);
 		void					removeMember(Client &client);
 		void					addOperator(Client &client);
+		void					removeOperator(Client &client);
 		void					broadcastMessage(const std::string& message, Client* sender, Server *server);	
 		bool 					isOperator(Client &client);
 		

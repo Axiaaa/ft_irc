@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:02:00 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/03 19:20:50 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/10/04 00:46:10 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void Channel::addMember(Client &client)
 	// Add a member to the channel
 	this->_members.push_back(&client);
 }
+
 void Channel::removeMember(Client &client)
 {
 	// Remove a member from the channel
@@ -65,6 +66,13 @@ void Channel::addOperator(Client &client)
 	this->_operators.push_back(&client);
 }
 
+void Channel::removeOperator(Client &client)
+{
+	std::vector<Client *>::iterator it = std::find(this->_operators.begin(), this->_operators.end(), &client);
+	if (it != this->_operators.end())
+		this->_operators.erase(it);
+}
+
 void Channel::broadcastMessage(const std::string& message, Client* sender, Server *server)
 {
 	(void)sender;
@@ -77,10 +85,11 @@ void Channel::broadcastMessage(const std::string& message, Client* sender, Serve
 		}
 	}
 }
+
 bool Channel::isOperator(Client &client)
 {
-	//Check if the client is an operator of the channel
-	for (std::vector<Client *>::iterator it = this->_operators.begin(); it != this->_operators.end(); ++it)
+	// Check if the client is an operator of the channel
+	for (std::vector<Client *>::iterator it = this->_operators.begin(); it != this->_operators.end(); it++)
 	{
 		if ((*it)->getClientFd() == client.getClientFd())
 			return true;
