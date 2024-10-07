@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 00:04:06 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/06 14:11:26 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/10/07 15:37:09 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int		GPTMode(int sock);
 #define NAME "Omegatron9000"
 
 // Put your OpenAI API key here
-#define	OPENAI_API_KEY "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"
+#define	OPENAI_API_KEY ""
 
 
 // System prompt: the behavior and personnality of the bot
