@@ -6,7 +6,7 @@
 /*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 20:08:30 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/06 14:10:25 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/10/07 21:16:50 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ int	GPTMode(int sock)
 	ft_log(MAGENTA, "\n##_GPTMode ON\n");
 
 	string	commandPrefix = "OG9 ";
+	string	privateMsg = "PRIVMSG Omegatron9000 :";
 	ft_log(YELLOW, "\t__Checking API status");
 	string	welcomeMessage = sendOpenAIRequest("Write a welcome message and introduce yourself.");
 	if (welcomeMessage.empty())
@@ -64,6 +65,31 @@ int	GPTMode(int sock)
 	{
 		string	message = getMessage(sock);
 		size_t	index = message.find(commandPrefix);
+		size_t	index2 = message.find(privateMsg);
+		if (index2 != message.npos)
+		{
+			string	user = message.substr(1, message.find("!") - 1);
+			if (user.empty())
+				return (errorlog("Command's username not found"));
+			string	command = message.substr(index2 + privateMsg.size(), message.size() - (index2 + privateMsg.size() + 2));
+			if (command.empty())
+				return (errorlog("OG9 command not valid"));
+			if (command.find("\r\n") != string::npos)
+				command = command.substr(0, command.find("\r\n"));
+			ft_log(YELLOW, "\tSending [" + command + "] to " + user + " in private message");
+			string	APIresponse = sendOpenAIRequest(removesQuotes(command));
+			if (APIresponse.empty())
+				errorlog("Response could not be generated");
+			else
+			{
+				string	answer = "PRIVMSG " + user + " :To" + user + ": " + APIresponse;
+				ft_log(YELLOW, "\tSending AI response to server...");
+				if (answer.size() > 500)
+					answer = "PRIVMSG " + user + " :To" + user + ": " + "Sorry, but my response is too long to be sent.";
+				sendMessage(sock, answer);
+				ft_log(GREEN, "AI response sent !");
+			}
+		}
 		if (index != message.npos) 
 		{
 			index += 5;
