@@ -64,6 +64,15 @@ void    kick(Server& server, Client& client, const string &buffer)
         chan->removeMember(*target);
         if (chan->getMembers().size() == 0)
             server.removeChannel(chan);
-
+        for (vector<Client*>::iterator it = chan->getMembers().begin(); it != chan->getMembers().end(); it++)
+        {
+            if (chan->isOperator(**it) == true)
+                return;
+        }
+        chan->addOperator(*chan->getMembers().front());
+        std::stringstream ss;
+        ss << "MODE " << chan->getName() << " +o " << chan->getMembers().front()->getNickname();
+        for (std::vector<Client *>::iterator it = chan->getMembers().begin(); it != chan->getMembers().end(); it++)
+            server.sendData((*it)->getClientFd(), client.getHostname() + ss.str());
     }
 }
