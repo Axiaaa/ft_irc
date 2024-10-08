@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/03 04:56:32 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/08 02:02:30 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ class Server {
 		vector<Client *>&	getClientsList();
 		vector<Channel *>&	getChannelsList();
 		Client				*findClient(string nickname);
+		void				removeChannel(Channel *channel);
 };
 
 

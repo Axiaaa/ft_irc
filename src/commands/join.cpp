@@ -1,6 +1,5 @@
 #include "../Command.hpp"
 
-
 /*
 	@brief Send JOIN command
 	@param server The serverl object
@@ -15,7 +14,7 @@ void	join(Server &server, Client &client, const string &buffer)
 	}
 	if (buffer[0] != '#')
 	{
-		std::cout << RED << "Channel name not valid" << std::endl;
+		server.sendData(client.getClientFd(), getNumericReply(client, 476, buffer));
 		return ;
 	}
 	string join = "JOIN ";

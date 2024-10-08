@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 20:54:08 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/07 11:05:23 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/08 01:02:35 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ string RPL_CHANNELMODEIS(const string &nick, const string &channel, const string
 	if (modstring.empty())
 		ss << "324 " << nick << " " << channel ;
 	else
-		ss << "324 " << nick << " " << channel << " " << modstring;
+		ss << "324 " << nick << " " << channel << modstring;
 	return ss.str();
 }
 
@@ -278,6 +278,14 @@ string RPL_TOPICWHOTIME(const string &client, const string &nick, const string &
 	return ss.str();
 }
 
+// 441 ERR_USERNOTINCHANNEL - L'utilisateur n'est pas sur le canal
+
+string ERR_USERNOTINCHANNEL(const string &client, const string &nick, const string &channel) {
+	std::stringstream ss;
+	ss << "441 " << client << " " << nick << " " << channel << " :They aren't on that channel";
+	return ss.str();
+}
+
 //442 ERR_NOTONCHANNEL - Vous n'êtes pas sur ce canal
 string ERR_NOTONCHANNEL(const string &nick, const string &channel) {
 	std::stringstream ss;
@@ -318,6 +326,13 @@ string ERR_CHANNELISFULL(const string &nick, const string &channel) {
 string ERR_BADCHANNELKEY(const string &nick, const string &channel) {
 	std::stringstream ss;
 	ss << "475 " << nick << " " << channel << " :Cannot join channel (+k)";
+	return ss.str();
+}
+
+// 476 ERR_BADCHANMASK
+string ERR_BADCHANMASK(const string &nick, const string &channel) {
+	std::stringstream ss;
+	ss << "476 " << nick << " " << channel << " :Bad channel mask";
 	return ss.str();
 }
 
@@ -378,6 +393,7 @@ string getNumericReply(Client& client, int code, string arg)
 		case 433: return s + ERR_NICKNAMEINUSE(arg, arg);
 		case 431: return s + ERR_NONICKNAMEGIVEN(client.getNickname());
 		case 432: return s + ERR_ERRONEUSNICKNAME(client.getNickname(), arg);
+		case 441: return s + ERR_USERNOTINCHANNEL(client.getNickname(), arg_split[0], arg_split[1]);
 		case 442: return s + ERR_NOTONCHANNEL(client.getNickname(), arg);
 		case 443: return s + ERR_USERONCHANNEL(client.getNickname(), arg_split[0], arg_split[1]);
 		case 451: return s + ERR_NOTREGISTERED(client.getNickname());
@@ -387,6 +403,7 @@ string getNumericReply(Client& client, int code, string arg)
 		case 471: return s + ERR_CHANNELISFULL(client.getNickname(), arg);
 		case 473: return s + ERR_INVITEONLYCHAN(client.getNickname(), arg);
 		case 475: return s + ERR_BADCHANNELKEY(client.getNickname(), arg);
+		case 476: return s + ERR_BADCHANMASK(client.getNickname(), arg);
 		case 482: return s + ERR_CHANOPRIVSNEEDED(client.getNickname(), arg);
 		case 696: return s + ERR_INVALIDMOREPARAM(client.getNickname(), arg_split[0], arg_split[1], arg_split[2], arg_split[3]);
 		default: return "";

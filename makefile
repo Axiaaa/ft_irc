@@ -45,6 +45,7 @@ ALL_SRC				= main.cpp \
 					commands/pass.cpp \
 					commands/mode.cpp \
 					commands/invite.cpp \
+					commands/kick.cpp \
 
 ALL_HEADERS			= $(ALL_SRC:.cpp=.hpp)
 
@@ -53,9 +54,9 @@ ALL_LIBS			= empty
 PREFIX_SRC			= $(addprefix $(SRC_DIR), $(ALL_SRC))
 PREFIX_LIB			= $(addprefix $(LIB_DIR), $(ALL_LIBS))
 PREFIX_HEADER		= $(addprefix $(HEAD_DIR), $(ALL_HEADERS))
-SRC					= $(wildcard $(PREFIX_SRC))
-HEADER				= $(wildcard $(PREFIX_HEADER))
-LIB					= $(wildcard $(PREFIX_LIB))
+# SRC					= $(wildcard $(PREFIX_SRC))
+# HEADER				= $(wildcard $(PREFIX_HEADER))
+# LIB					= $(wildcard $(PREFIX_LIB))
 
 # Preserve subdirectory structure for object files
 OBJ					= $(patsubst $(SRC_DIR)%.cpp, $(OBJ_DIR)%.o, $(PREFIX_SRC))

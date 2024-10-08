@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:02:00 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/07 10:57:08 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/08 01:00:20 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,10 @@ Channel::Channel(string Name) :
     name_(Name),
     topic_("")
 {
+    modstring.push_back("-k");
+    modstring.push_back("-l");
+    modstring.push_back("-t");
+    modstring.push_back("-i");
 	std::cout << MAGENTA << "Creating New Channel !\nName: " << Name << RESET << std::endl;
 }
 
@@ -73,8 +77,8 @@ void Channel::broadcastMessage(const std::string& message, Client* sender, Serve
     for (std::vector<Client *>::iterator it = this->members_.begin(); it != this->members_.end(); ++it)
     {
         if ((*it)->getClientFd() != sender->getClientFd())
-        {
             server->sendData((*it)->getClientFd(), message);
+        {
         }
     }
 }
@@ -134,8 +138,14 @@ void Channel::addModString(string mod)          {
     
     for (vector<string>::iterator it = this->modstring.begin(); it != this->modstring.end(); it++)
     {
-        if (*it == mod)
-            return ;
+        if ((*it) == mod)
+            return;
+        if ((*it).substr(1) == mod.substr(1) && (*it)[0] != mod[0])
+        {
+            this->modstring.erase(it);
+            this->modstring.push_back(mod);
+            return;
+        }
     }
     this->modstring.push_back(mod);
 }

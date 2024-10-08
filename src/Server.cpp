@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/07 11:01:29 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/08 02:02:57 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ void Server::handleClientMessage(Client &client, string command, string arg)
 	commands["PASS"] = pass;
 	commands["TOPIC"] = topic;
 	commands["INVITE"] = invite;
+	commands["KICK"] = kick;
 	
 
 	// If the command is in the map, execute the corresponding function
@@ -137,7 +138,7 @@ Channel	&Server::findOrCreateChannel(string buffer, Client& client)
 	// Channel not existing, creating new one
 	Channel	*NewChannel = new Channel(ChannelData.first);
 	if (!ChannelData.second.empty())
-		NewChannel->setKey(ChannelData.second);
+		NewChannel->setKey(ChannelData.second), NewChannel->addModString("+k");
 	NewChannel->addOperator(client);
 	NewChannel->setCreationTime();
 	NewChannel->setTopicOnlyOperator(false);
@@ -185,3 +186,10 @@ vector<Channel *>& 	Server::getChannelsList() 	{ return this->channelsList_; }
 string				Server::getPassword()		{ return this->password_; }
 
 // Setters 
+void 				Server::removeChannel(Channel *channel)
+{
+
+	std::vector<Channel *>::iterator it = std::find(this->channelsList_.begin(), this->channelsList_.end(), channel);
+	if (it != this->channelsList_.end())
+		delete *it, this->channelsList_.erase(it);
+}
