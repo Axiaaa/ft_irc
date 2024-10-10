@@ -38,9 +38,17 @@ void nick(Server &server, Client &client, const string &buffer)
 	}
 	std::string nick = "NICK :";
 	nick += buffer;
+	for (vector<Channel *>::iterator it = server.getChannelsList().begin(); it != server.getChannelsList().end(); it++) {
+		if ((*it)->checkMember(client)) {
+			string msg = client.getHostname();
+			msg += "NICK :";
+			msg += buffer;
+			(*it)->broadcastMessage(msg, &client, &server);
+		}
+	}
 	server.sendData(client.getClientFd(), client.getHostname() + nick);
 	client.setNickname(buffer);
-    if (client.getUsername() != "" && client.getRealname() != "" && client.getNickname() != "")
+    if (client.getUsername() != "" && client.getRealname() != "" && client.getNickname() != "" && client.getRegistrationStatus() == false)
     {
         server.sendData(client.getClientFd(), getNumericReply(client, 001, ""));
         client.setRegistrationStatus(true);

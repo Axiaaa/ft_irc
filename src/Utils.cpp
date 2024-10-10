@@ -58,3 +58,20 @@ vector <char> charsplit(const string &s)
     }
     return result;
 }
+
+
+vector<pair<string, string> >bufferParser(const string& buffer) { 
+    vector<pair<string, string> > args;
+    vector<string> buffsplit = split(buffer.substr(0, buffer.find(' ')), ',');
+    for (size_t i = 0; i < buffsplit.size(); i++) 
+    {
+        pair<string, string> p(buffsplit[i], "");
+        args.push_back(p);
+    }
+    buffsplit = split(buffer.substr(buffer.find(':') + 1, buffer.size()), ' ');
+    if (buffsplit.size() == 1)
+        return args;
+    for (size_t i = 0; i < buffsplit.size() && i < args.size(); i++)
+        args[i].second = buffsplit[i];
+    return args;
+}

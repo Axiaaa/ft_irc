@@ -15,3 +15,4 @@ void    pass(Server& server, Client& client, const string &buffer);
 void    topic(Server& server, Client& client, const string &buffer);
 void    invite(Server& server, Client& client, const string &buffer);
 void    kick(Server& server, Client& client, const string &buffer);
+void    part(Server& server, Client& client, const string &buffer);

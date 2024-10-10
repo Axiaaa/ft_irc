@@ -1,17 +1,19 @@
 - Handle CTRL-D
-- Handle Channel modes
-- Handle Channel commandes (invites, kicks, password, leave, etc)
 - Create the bot
 - Clean up NumericReplies (Mostly the arguments given to the function and arg names)
 - Add argv parsing to avoid bad port
 - Do something with Exceptions (Create more or delete them because we're not using them)
-- Handle +o, +t, +i in WHO, TOPIC, NAMES
 - Create a 696 function that will handle the 696 numeric reply (bc I send it like 4 times and it's not good)
 - Fix command.hpp relink
-- Part (handle channel desctruction + op when the op leaves (handle if for kicks too))
+- Passer tout en anglais
 
 
 FAIT :
+- Handle Channel modes
+- Handle Channel commandes (invites, kicks, password, leave, etc)
+- Fixed handling for multiples args and keys
+- Handle +o, +t, +i in WHO, TOPIC, NAMES
+- Gérer NICK dans un channel (actualisation du nick à gérer)
 - pass
 - topic
 - join

@@ -2,77 +2,54 @@
 
 void    kick(Server& server, Client& client, const string &buffer)
 {
-    vector<string> buffsplit = split(buffer, ' ');
-    if (buffsplit.size() < 2)
-    {
-        server.sendData(client.getClientFd(), getNumericReply(client, 461, "KICK"));
-        return ;
-    }
-    Channel *chan = server.findChannel(buffsplit[0]);
+    if (client.getRegistrationStatus() != true) {
+		server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
+		return ;
+	}
+    Channel *chan = server.findChannel(buffer.substr(0, buffer.find(' ')));
     if (!chan)
     {
-        server.sendData(client.getClientFd(), getNumericReply(client, 403, buffsplit[0]));
+        server.sendData(client.getClientFd(), getNumericReply(client, 403, buffer.substr(0, buffer.find(' '))));
         return ;
     }
-    if (chan->checkMember(client) == 0)
+    vector<pair<string, string> > args = bufferParser(buffer.substr(buffer.find(' ') + 1, buffer.size()));
+    string reason = (args.size() > 1) ? args[0].second : "The Kick-Hammer has spoken!";
+    for (vector<pair<string, string> >::iterator it = args.begin(); it != args.end(); it++)
     {
-        server.sendData(client.getClientFd(), getNumericReply(client, 442, chan->getName()));
-        return ;
-    }
-    if (chan->isOperator(client) == false)
-    {
-        server.sendData(client.getClientFd(), getNumericReply(client, 482, chan->getName()));
-        return ;
-    } 
-    // Generate me a reason finder (the reason will start by :)
-    // And the command can be like KICK username username username :reason
-    string reason = " ";
-    size_t reason_pos = buffer.find(" :");
-    if (reason_pos != string::npos)
-    {
-        reason += buffer.substr(reason_pos + 2);
-        buffsplit.resize(reason_pos); // Remove the reason part from buffsplit
-    }
-    else
-    {
-        reason += "The kick-hammer has spoken";
-    }
-    for (int i = 1; i < (int)buffsplit.size(); i++)
-    {
-        Client *target = NULL;
-        for (vector<Client *>::iterator it = chan->getMembers().begin(); it != chan->getMembers().end(); it++)
+        Client *target = server.findClient((*it).first);
+        if (!target)
         {
-            if ((*it)->getNickname() == buffsplit[i])
-            {
-                target = *it;
-                break ;
-            }
-        }
-        if (target == NULL)
-        { 
-            if (!(buffsplit[i][0] == ':'))
-                server.sendData(client.getClientFd(), getNumericReply(client, 401, buffsplit[i]));
+            server.sendData(client.getClientFd(), getNumericReply(client, 401, (*it).first));
             return ;
         }
-        if (chan->checkMember(*target) == 0)
+        if (!chan->checkMember(*target))
         {
-            server.sendData(client.getClientFd(), getNumericReply(client, 441, chan->getName()));
+            server.sendData(client.getClientFd(), getNumericReply(client, 441, chan->getName() + "_" + (*it).first));
             return ;
         }
-        chan->broadcastMessage(client.getHostname() + "KICK " + chan->getName() + " " + target->getNickname() + reason, &client, &server);
-        server.sendData(client.getClientFd(), client.getHostname() + "KICK " + chan->getName() + " " + target->getNickname() + reason);
+        if (!chan->isOperator(client))
+        {
+            server.sendData(client.getClientFd(), getNumericReply(client, 482, chan->getName()));
+            return ;
+        }
+        string kick = "KICK ";
+        kick += chan->getName();
+        kick += " ";
+        kick += target->getNickname();
+        if (reason != "")
+            kick += " " + reason;
+        server.sendData(client.getClientFd(), client.getHostname() + kick);
+        chan->broadcastMessage(client.getHostname() + kick, &client, &server);
         chan->removeMember(*target);
-        if (chan->getMembers().size() == 0)
+        if (chan->getMembers().empty())
             server.removeChannel(chan);
-        for (vector<Client*>::iterator it = chan->getMembers().begin(); it != chan->getMembers().end(); it++)
-        {
-            if (chan->isOperator(**it) == true)
-                return;
+        else if (server.findChannel(chan->getName()) && chan->isOpsListEmpty()) {
+            std::stringstream ss;
+            ss << "MODE " << chan->getName() << " +o " << chan->getMembers().front()->getNickname();
+            for (std::vector<Client *>::iterator it = chan->getMembers().begin(); it != chan->getMembers().end(); it++)
+                server.sendData((*it)->getClientFd(), client.getHostname() + ss.str());
+            chan->addOperator(*chan->getMembers().front());
         }
-        chan->addOperator(*chan->getMembers().front());
-        std::stringstream ss;
-        ss << "MODE " << chan->getName() << " +o " << chan->getMembers().front()->getNickname();
-        for (std::vector<Client *>::iterator it = chan->getMembers().begin(); it != chan->getMembers().end(); it++)
-            server.sendData((*it)->getClientFd(), client.getHostname() + ss.str());
     }
+    
 }

@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:02:00 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/08 04:33:13 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/10 01:03:06 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ Channel::Channel(string Name) :
 
 Channel::~Channel()
 {
-    
+    std::cout << RED << "Destroying Channel " << this->name_ << RESET << std::endl;
 }
 
 void Channel::addMember(Client &client)
@@ -48,12 +48,16 @@ void Channel::addMember(Client &client)
     // Add a member to the channel
     this->members_.push_back(&client);
 }
+// Remove a member from the channel and the operator list if the client is an operator
 void Channel::removeMember(Client &client)
 {
     // Remove a member from the channel
     std::vector<Client *>::iterator it = std::find(this->members_.begin(), this->members_.end(), &client);
     if (it != this->members_.end())
         this->members_.erase(it);
+    std::vector<Client *>::iterator it2 = std::find(this->operators_.begin(), this->operators_.end(), &client);
+    if (it2 != this->operators_.end())
+        this->removeOperator(client);
 }
 
 int Channel::checkMember(Client &client)

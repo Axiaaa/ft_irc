@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/08 04:34:41 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/10 04:12:21 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ void Server::handleClientMessage(Client &client, string command, string arg)
 	commands["TOPIC"] = topic;
 	commands["INVITE"] = invite;
 	commands["KICK"] = kick;
+	commands["PART"] = part;
 	
 
 	// If the command is in the map, execute the corresponding function
@@ -137,8 +138,7 @@ Channel	&Server::findOrCreateChannel(string buffer, Client& client)
 	}
 	// Channel not existing, creating new one
 	Channel	*NewChannel = new Channel(ChannelData.first);
-	if (!ChannelData.second.empty())
-		NewChannel->setKey(ChannelData.second), NewChannel->addModString("+k");
+	ft_log("aaaa" + ChannelData.second);
 	NewChannel->addOperator(client);
 	NewChannel->setCreationTime();
 	NewChannel->setTopicOnlyOperator(false);
@@ -191,6 +191,6 @@ void 				Server::removeChannel(Channel *channel)
 
 	std::vector<Channel *>::iterator it = std::find(this->channelsList_.begin(), this->channelsList_.end(), channel);
 	if (it != this->channelsList_.end())
-		this->channelsList_.erase(it);
+		this->channelsList_.erase(it), delete *it;
 }
 	

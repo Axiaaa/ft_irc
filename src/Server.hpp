@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/08 02:02:30 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/09 23:15:17 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ using std::string;
 using std::vector;
 using std::map;
 using std::set;
+using std::pair;
 
 class Client;
 class Channel;

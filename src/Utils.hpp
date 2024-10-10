@@ -10,7 +10,7 @@ std::pair<std::string, std::string> splitFirstSpace(const std::string &s);
 std::string                         intToString(int value);
 vector<char>                        charsplit(const string &s);
 bool                                isAuthorized(char c);
-
+std::vector<std::pair<std::string, std::string> > bufferParser(const std::string& buffer);
 #define BLUE    "\033[1;34m"
 #define RED     "\033[1;31m"
 #define GREEN   "\033[1;32m"
