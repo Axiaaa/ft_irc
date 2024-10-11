@@ -74,7 +74,6 @@ all : $(NAME)
 bot : Bot/Omegatron_9000.cpp
 	$(CC) -Wextra -Wall -Werror -std=c++98 -g3 Bot/Omegatron_9000.cpp -o Omegatron_9000
 
-
 $(NAME): $(DIRS) $(OBJ)
 	$(call logs, $(CYAN),"Compiling\ Executable")
 	$(CC) $(CFLAGS) $(OBJ) -I . -o $(NAME)
