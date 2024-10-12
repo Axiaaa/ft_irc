@@ -1,14 +1,12 @@
-- Handle CTRL-D
-- Create the bot
-- Clean up NumericReplies (Mostly the arguments given to the function and arg names)
-- Add argv parsing to avoid bad port
-- Do something with Exceptions (Create more or delete them because we're not using them)
-- Create a 696 function that will handle the 696 numeric reply (bc I send it like 4 times and it's not good)
-- Fix command.hpp relink
-- Passer tout en anglais
-
 
 FAIT :
+- Passer tout en anglais
+- Clean up NumericReplies (Mostly the arguments given to the function and arg names)
+- Fix command.hpp relink
+- Add argv parsing to avoid bad port
+- Create the bot
+- Handle CTRL-D
+- Create a 696 function that will handle the 696 numeric reply (bc I send it like 4 times and it's not good)
 - Handle Channel modes
 - Handle Channel commandes (invites, kicks, password, leave, etc)
 - Fixed handling for multiples args and keys

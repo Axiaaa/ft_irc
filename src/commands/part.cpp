@@ -1,5 +1,10 @@
 #include "../Command.hpp"
 
+
+/// @brief Leave a channel by removing it from the list of joined channels
+/// @param server The server object
+/// @param client The client that wants to leave the channel
+/// @param buffer The buffer containing the channel name
 void part(Server& server, Client& client, const string &buffer)
 {
     if (client.getRegistrationStatus() != true) {

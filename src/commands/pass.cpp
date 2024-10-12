@@ -1,6 +1,9 @@
 #include "../Command.hpp"
 
-
+// @brief Store the password of the client
+// @param server The server object
+// @param client_fd The client file descriptor
+// @param buffer The buffer containing the password
 void pass(Server& server, Client& client, const string &buffer)
 {
     if (client.getPassword() != "")

@@ -63,7 +63,7 @@ PREFIX_HEADER		= $(addprefix $(HEAD_DIR), $(ALL_HEADERS))
 OBJ					= $(patsubst $(SRC_DIR)%.cpp, $(OBJ_DIR)%.o, $(PREFIX_SRC))
 DEP					= $(OBJ:.o=.d)
 
-DIRS				= $(OBJ_DIR) $(sort $(dir $(OBJ)))
+DIRS				= $(sort $(dir $(OBJ)))
 
 #____________UTILITIES
 CC					= c++
@@ -74,7 +74,9 @@ CFLAGS				= -Wextra -Wall -Werror -MMD -std=c++98 -g3
 all : $(NAME)
 	$(LOG__ALLSUCCESS)
 
-$(NAME): $(OBJ)
+-include $(DEP)
+
+$(NAME): $(DIRS) $(OBJ)
 	$(call logs, $(CYAN),"Compiling\ Executable")
 	$(CC) $(CFLAGS) $(OBJ) -I . -o $(NAME)
 	$(LOG__SUCCESS)
@@ -90,7 +92,7 @@ $(LIB) : force
 	@make -sC $(LIB_DIR)
 	$(LOG__SUCCESS)
 
-$(DIRS): 
+$(DIRS) :
 	$(call logs, $(CYAN),"Creating\ directories")
 	@mkdir -p $@
 	$(LOG__SUCCESS)

@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:04:02 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/07 10:56:50 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/12 04:21:05 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ class Channel {
 		string					key_;
 		t_channelType			visible_;
 		bool					TopicOnlyOperator;
-		int						NeedPassword; //must change to definite a password
-		int						userLimit; //must change the amount of limit user
+		int						NeedPassword;
+		int						userLimit;
 
 	public:
 		Channel();

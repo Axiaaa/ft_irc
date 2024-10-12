@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/09 23:15:17 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/12 04:07:34 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,4 +78,3 @@ class Server {
 
 
 string 	getNumericReply(Client& client, int code, string arg);
-void	ft_log(string content);

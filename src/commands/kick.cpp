@@ -2,17 +2,21 @@
 
 void    kick(Server& server, Client& client, const string &buffer)
 {
+    // Check if the client is registered
     if (client.getRegistrationStatus() != true) {
 		server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
 		return ;
 	}
+    // Check if the channel exists
     Channel *chan = server.findChannel(buffer.substr(0, buffer.find(' ')));
     if (!chan)
     {
         server.sendData(client.getClientFd(), getNumericReply(client, 403, buffer.substr(0, buffer.find(' '))));
         return ;
     }
+    //Split the buffer into arguments
     vector<pair<string, string> > args = bufferParser(buffer.substr(buffer.find(' ') + 1, buffer.size()));
+    //Set the reason for the kick (default is "The Kick-Hammer has spoken!")
     string reason = (args.size() > 1) ? args[0].second : "The Kick-Hammer has spoken!";
     for (vector<pair<string, string> >::iterator it = args.begin(); it != args.end(); it++)
     {

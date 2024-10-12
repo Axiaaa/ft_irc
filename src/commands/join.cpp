@@ -26,7 +26,7 @@ void	join(Server &server, Client &client, const string &buffer)
 		if (channel.getUserLimit() != 0 && channel.getMembers().size() >= (long unsigned int)channel.getUserLimit())
 		{
 			server.sendData(client.getClientFd(), getNumericReply(client, 471, channel.getName()));
-			return ;
+			return;
 		}
 		if (!channel.getKey().empty())
 		{
@@ -41,15 +41,17 @@ void	join(Server &server, Client &client, const string &buffer)
 			server.sendData(client.getClientFd(), getNumericReply(client, 473, channel.getName()));
 			return ;
 		}
-		ft_log("Channel joinned");
+		ft_log("Channel joined");
 		client.joinChannel(channel);
 		channel.addMember(client);
 		server.sendData(client.getClientFd(), client.getHostname() + "JOIN " + channel.getName());
 		channel.broadcastMessage(client.getHostname() + "JOIN " + channel.getName(), &client, &server);
 		if (channel.getTopic() != "") {
+			// Send the topic to the client if it exists
 			server.sendData(client.getClientFd(), getNumericReply(client, 332, channel.getName() + "_" + channel.getTopic()));
 			server.sendData(client.getClientFd(), getNumericReply(client, 333, channel.getName() + "_" + channel.getTopicSetBy() + "_" + channel.getTopicTime()));
 		}
+		// Remove the invitation if the client was invited
 		if (channel.isInvited(client))
 			channel.removeInvitation(client);
 	}
