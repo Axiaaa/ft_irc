@@ -24,7 +24,6 @@ class Channel;
 class Client {
 
 	private : 
-		time_t  			creationTime_;
 		string  			nickname_;
 		string  			username_;
 		string  			realname_;
@@ -32,12 +31,11 @@ class Client {
 		int	 				clientFd_;
 		int 				ispassgiven_;
 		bool				isRegistered_;
-		sockaddr_in 		addr_;
 		vector<Channel *> 	joinedChannels_;
 		string				modstring;
 		
 	public :
-		Client(int fd, time_t t);
+		Client(int fd);
 		~Client();
 
 		bool				getIspassgiven() const;

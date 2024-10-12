@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/12 04:07:34 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/12 04:56:42 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ class Server {
 		sockaddr_in			addr_;
 		vector<Client*>		clientsList_;
 		vector<Channel*>	channelsList_;
-		fd_set				fdSet_;
 		string				password_;
 		int					socket_;
 

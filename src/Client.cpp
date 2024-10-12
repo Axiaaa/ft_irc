@@ -6,14 +6,14 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/12 04:20:59 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/12 04:57:26 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
 // Constructor
-Client::Client(int fd , time_t t) : creationTime_(t),
+Client::Client(int fd) :
 nickname_(""), username_(""), realname_(""), password_(""),
  clientFd_(fd), ispassgiven_(false), isRegistered_(false)
 {
