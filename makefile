@@ -74,7 +74,7 @@ CFLAGS				= -Wextra -Wall -Werror -MMD -std=c++98 -g3
 all : $(NAME)
 	$(LOG__ALLSUCCESS)
 
-$(NAME): $(DIRS) $(OBJ)
+$(NAME): $(OBJ)
 	$(call logs, $(CYAN),"Compiling\ Executable")
 	$(CC) $(CFLAGS) $(OBJ) -I . -o $(NAME)
 	$(LOG__SUCCESS)
