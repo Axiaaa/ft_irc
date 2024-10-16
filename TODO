@@ -1,14 +1,21 @@
+
+FAIT :
+- Passer tout en anglais
+- Clean up NumericReplies (Mostly the arguments given to the function and arg names)
+- Fix command.hpp relink
+- Add argv parsing to avoid bad port
+- Create the bot
 - Handle CTRL-D
+- Create a 696 function that will handle the 696 numeric reply (bc I send it like 4 times and it's not good)
 - Handle Channel modes
 - Handle Channel commandes (invites, kicks, password, leave, etc)
-- Create the bot
-- Clean up NumericReplies (Mostly the arguments given to the function and arg names)
-- Do something with Exceptions (Create more or delete them because we're not using them)
-
-
-FAIT : 
-- Add argv parsing to avoid bad port
-- Fix select() bug when a user disconnects
+- Fixed handling for multiples args and keys
+- Handle +o, +t, +i in WHO, TOPIC, NAMES
+- Gérer NICK dans un channel (actualisation du nick à gérer)
+- pass
+- topic
+- join
+- who
 - Fix Topic time
 - Fix no password joining
 - Remove useless functions

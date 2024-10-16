@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:44:58 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/25 10:31:11 by aammirat         ###   ########.fr       */
+/*   Updated: 2024/10/17 00:32:59 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 #include <sstream>
 #include <map>
 #include <set>
-#include <string>
+#include <cstdio>
 
 #include "Client.hpp"
 #include "Channel.hpp"
@@ -40,6 +40,7 @@ using std::string;
 using std::vector;
 using std::map;
 using std::set;
+using std::pair;
 
 class Client;
 class Channel;
@@ -47,12 +48,11 @@ class Channel;
 class Server {
 
 	private :
-		sockaddr_in			addr_;
-		vector<Client*>		clientsList_;
-		vector<Channel*>	channelsList_;
-		//fd_set				fdSet_;
-		string				password_;
-		int					socket_;
+		int					_socket;
+		string				_password;
+		sockaddr_in			_addr;
+		vector<Client*>		_clientsList;
+		vector<Channel*>	_channelsList;
 
 	public :
 		Server(char *port, string password);
@@ -71,8 +71,9 @@ class Server {
 		string				getPassword();
 		vector<Client *>&	getClientsList();
 		vector<Channel *>&	getChannelsList();
+		Client				*findClient(string nickname);
+		void				removeChannel(Channel *channel);
 };
 
 
 string 	getNumericReply(Client& client, int code, string arg);
-void	ft_log(string content);

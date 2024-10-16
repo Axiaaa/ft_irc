@@ -3,18 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   Exceptions.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammirat <aammirat@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:16 by ocyn              #+#    #+#             */
-/*   Updated: 2024/09/25 10:52:03 by aammirat         ###   ########.fr       */
+/*   Updated: 2024/10/17 01:37:47 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Exceptions.hpp"
 
+
 const char * SigInt::what() const throw()
 {
-	return "SIGINT received";
+	return "SIGINT received, stopping server";
 }
 
 const char * SigEOF::what() const throw()

@@ -1,8 +1,8 @@
 #include "../Command.hpp"
 
-
 void	who(Server &server, Client &client, const string &buffer)
 {	
+	// Checking if the client is registered
 	if (client.getRegistrationStatus() != true) {
 		server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
 		return ;

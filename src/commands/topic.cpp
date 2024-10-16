@@ -6,16 +6,14 @@ void topic(Server& server, Client& client, const string &buffer)
 	if (client.getRegistrationStatus() != true) 
 		return ;
 	std::string nickname = client.getNickname();
-	if (split(buffer, ' ').size() < 2)
-	{	// Check if the command has enough arguments
+	// Check if the command has enough arguments, if not, send the topic of the channel
+	if (split(buffer, ' ').size() < 2) {
 		Channel& channel = server.findOrCreateChannel(buffer, client);
 		if (channel.getTopic().empty())
 		{
 			server.sendData(client.getClientFd(), getNumericReply(client, 331, channel.getName()));
 			return ;
 		}
-		channel.setTopicTime();
-		channel.setTopicSetBy(nickname);
 		// Send the topic to the client
 		server.sendData(client.getClientFd(), getNumericReply(client, 332, channel.getName() + "_" + channel.getTopic()));
 		server.sendData(client.getClientFd(), getNumericReply(client, 333, channel.getName() + "_" + channel.getTopicSetBy() + "_" + channel.getTopicTime()));
@@ -23,7 +21,7 @@ void topic(Server& server, Client& client, const string &buffer)
 	}
 	std::pair<std::string, std::string> split_buffer = splitFirstSpace(buffer);
 	if (server.findChannel(split_buffer.first) == NULL)
-	{	// Check if  channel exists
+	{	// Check if channel exists
 		server.sendData(client.getClientFd(), getNumericReply(client, 403, split_buffer.first));
 		return ;
 	}
@@ -33,8 +31,9 @@ void topic(Server& server, Client& client, const string &buffer)
 		return ;
 	}
 	Channel& channel = server.findOrCreateChannel(split_buffer.first, client);
+
 	split_buffer.second = split_buffer.second.substr(1);
-	if (!channel.isOperator(client))
+	if (channel.isTopicOnlyOperator() && !channel.isOperator(client))
 	{ // Check if client is operator
 		server.sendData(client.getClientFd(), getNumericReply(client, 482, channel.getName()));
 		return ;

@@ -9,7 +9,7 @@
 
 	If the client is already registered, the server will send a 462 error message.
 	If the buffer is less than 4, the server will send a 461 error message.
-	Otherwise, the server will send a 001 message.
+	Otherwise, the server will send a 001 welcoming message.
 */
 void user(Server& server, Client& client, const string &buffer)
 {

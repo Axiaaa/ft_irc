@@ -44,6 +44,9 @@ ALL_SRC				= main.cpp \
 					commands/topic.cpp \
 					commands/pass.cpp \
 					commands/mode.cpp \
+					commands/invite.cpp \
+					commands/kick.cpp \
+					commands/part.cpp \
 
 ALL_HEADERS			= $(ALL_SRC:.cpp=.hpp)
 
@@ -52,15 +55,15 @@ ALL_LIBS			= empty
 PREFIX_SRC			= $(addprefix $(SRC_DIR), $(ALL_SRC))
 PREFIX_LIB			= $(addprefix $(LIB_DIR), $(ALL_LIBS))
 PREFIX_HEADER		= $(addprefix $(HEAD_DIR), $(ALL_HEADERS))
-SRC					= $(wildcard $(PREFIX_SRC))
-HEADER				= $(wildcard $(PREFIX_HEADER))
-LIB					= $(wildcard $(PREFIX_LIB))
+# SRC					= $(wildcard $(PREFIX_SRC))
+# HEADER				= $(wildcard $(PREFIX_HEADER))
+# LIB					= $(wildcard $(PREFIX_LIB))
 
 # Preserve subdirectory structure for object files
 OBJ					= $(patsubst $(SRC_DIR)%.cpp, $(OBJ_DIR)%.o, $(PREFIX_SRC))
 DEP					= $(OBJ:.o=.d)
 
-DIRS				= $(OBJ_DIR) $(sort $(dir $(OBJ)))
+DIRS				= $(sort $(dir $(OBJ)))
 
 #____________UTILITIES
 CC					= c++
@@ -70,6 +73,8 @@ CFLAGS				= -Wextra -Wall -Werror -MMD -std=c++98 -g3
 
 all : $(NAME)
 	$(LOG__ALLSUCCESS)
+
+-include $(DEP)
 
 $(NAME): $(DIRS) $(OBJ)
 	$(call logs, $(CYAN),"Compiling\ Executable")
@@ -87,10 +92,13 @@ $(LIB) : force
 	@make -sC $(LIB_DIR)
 	$(LOG__SUCCESS)
 
-$(DIRS): 
+$(DIRS) :
 	$(call logs, $(CYAN),"Creating\ directories")
 	@mkdir -p $@
 	$(LOG__SUCCESS)
+
+bot : src/bot/Omegatron_9000.cpp
+	$(CC) -Wextra -Wall -Werror -std=c++98 -g3 src/bot/Omegatron_9000.cpp -o Omegatron_9000
 
 clean : 
 	$(call logs, $(YELLOW),"Cleaning\ OBJ\ files")

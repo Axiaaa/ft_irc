@@ -26,6 +26,9 @@ Numeric Replies:
 		ERR_WILDTOPLEVEL                ERR_TOOMANYTARGETS
 		ERR_NOSUCHNICK
 		RPL_AWAY
+
+
+Self messages are client sides.
 */
 
 void privmsg(Server& server, Client& client, const string &buffer) {
@@ -53,7 +56,7 @@ void privmsg(Server& server, Client& client, const string &buffer) {
 			string msg; 
 			msg += "PRIVMSG ";
 			msg += target;
-			msg += " ";
+			msg += " :";
 			msg += buffer.substr(buffer.find(' ') + 1);
 			server.sendData((*it)->getClientFd(), client.getHostname() + msg);
 			return ;
@@ -63,7 +66,9 @@ void privmsg(Server& server, Client& client, const string &buffer) {
 		if (target == (*it)->getName()) {
 			string msg = client.getHostname();
 			msg += "PRIVMSG ";
-			msg += buffer;
+			msg += target;
+			msg += " ";
+			msg += buffer.substr(buffer.find(' ') + 1);
 			(*it)->broadcastMessage(msg, &client, &server);
 			return ;
 		}
