@@ -1,11 +1,13 @@
 #include "../Command.hpp"
+#include "limits.h"
 
 /// @brief Send 696 ERR_INVALIDMOREPARAM - More invalid parameters
 /// @param client The client object
 /// @param chan The channel object
 /// @param server The server object
 /// @param buffsplit The buffer split
-void send_ERR696(Client	&client, Channel &chan, Server &server, vector<string> buffsplit);
+/// @param err_message The error message
+void send_ERR696(Client	&client, Channel &chan, Server &server, vector<string> buffsplit, string err_message);
 
 /// @brief Handle the mode command for a channel (mode +i or -i)
 /// @param server The server object
@@ -50,11 +52,13 @@ void mode_topic(t_type add_or_del, Channel &chan, Server &server, Client &client
 void mode_o(t_type add_or_del, Channel &chan, Server &server, Client &client, pair<char, string>keys)
 {
 	Client *target;
-	if (keys.second.empty())
-		send_ERR696(client, chan, server, vector<string>(1, string(1, keys.first)));
+	if (keys.second.empty()) { 
+		send_ERR696(client, chan, server, vector<string>(1, string(1, keys.first)), ":Need more params");
+		return ;
+	}
 	if (!(target = server.findClient(keys.second)))
 	{
-		server.sendData(client.getClientFd(), getNumericReply(client, 401, client.getNickname()));
+		server.sendData(client.getClientFd(), getNumericReply(client, 401, keys.second));
 		return ;
 	}
 	if (chan.checkMember(*target) == 0)
@@ -101,7 +105,7 @@ void mode_l(t_type add_or_del, Channel &chan, Server &server, Client &client, pa
 	unsigned long int limit = 0;
 	if (!keys.second.empty())
 		limit = atoi(keys.second.c_str());
-	if (!limit)
+	if (!limit || limit == ULLONG_MAX)
 	{
 		if (add_or_del == DELETE)
 			chan.setUserLimit(0) , limit = 0;
@@ -163,9 +167,14 @@ vector<pair<char, string> > split_mode_args(string mode_args)
     {
         pair<char, string> p(mode_args[i], "");
         args.push_back(p);
-    }
-    vector<string> buffsplit = split(mode_args.substr(mode_args.find(' ') + 1), ' ');
-	if (buffsplit.front() == mode_args)
+    
+	}
+	size_t pos = mode_args.find(' ');
+	string remaining_args = "";
+	if (pos != string::npos)
+		remaining_args = mode_args.substr(pos + 1);
+	vector<string> buffsplit = split(remaining_args, ' ');
+	if (buffsplit.empty() || buffsplit.front() == mode_args)
 		return args;
 	size_t j = 0;
 	for (size_t i = 0; i < args.size() && j < buffsplit.size(); i++)
@@ -215,7 +224,7 @@ void	mode(Server &server, Client &client, const string &buffer)
 		add_or_del = DELETE;
 	else
 	{
-		send_ERR696(client, *chan, server, buffsplit);
+		send_ERR696(client, *chan, server, buffsplit, ":Invalid ModString");
 		return ;
 	}
 	// Check if the client is an operator
@@ -251,7 +260,7 @@ void	mode(Server &server, Client &client, const string &buffer)
 				add_or_del = DELETE;
 				break;
 			default:
-				send_ERR696(client, *chan, server, buffsplit);
+				send_ERR696(client, *chan, server, buffsplit, ":Invalid ModString");
 				return ;
 		}
 	}	 

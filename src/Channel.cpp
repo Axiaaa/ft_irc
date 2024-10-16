@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:02:00 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/12 04:24:23 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/15 17:52:53 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,53 +14,53 @@
 
 // Constructor
 Channel::Channel():
-name_("Default"),
-topic_("")
+_name("Default"),
+_topic("")
 {
 }
 
 // Constructor
 Channel::Channel(string Name, string Topic):
-name_(Name),
-topic_(Topic)
+_name(Name),
+_topic(Topic)
 {
 	std::cout << MAGENTA << "Creating New Channel !\nName: " << Name << RESET << std::endl;	
 }
 
 // Constructor
 Channel::Channel(string Name) :
-    name_(Name),
-    topic_("")
+    _name(Name),
+    _topic("")
 {
-    modstring.push_back("-k");
-    modstring.push_back("-l");
-    modstring.push_back("-t");
-    modstring.push_back("-i");
+    _modstring.push_back("-k");
+    _modstring.push_back("-l");
+    _modstring.push_back("-t");
+    _modstring.push_back("-i");
 	std::cout << MAGENTA << "Creating New Channel !\nName: " << Name << RESET << std::endl;
 }
 
 // Destructor
 Channel::~Channel()
 {
-    std::cout << RED << "Destroying Channel " << this->name_ << RESET << std::endl;
+    std::cout << RED << "Destroying Channel " << this->_name << RESET << std::endl;
 }
 
 /// @brief Add a member to the channel
 /// @param client The client to add
 void Channel::addMember(Client &client)
 {
-    this->members_.push_back(&client);
+    this->_members.push_back(&client);
 }
 
 /// @brief Remove a member from the channel (also remove from operators of the channel)
 /// @param client The client to remove
 void Channel::removeMember(Client &client)
 {
-    std::vector<Client *>::iterator it = std::find(this->members_.begin(), this->members_.end(), &client);
-    if (it != this->members_.end())
-        this->members_.erase(it);
-    std::vector<Client *>::iterator it2 = std::find(this->operators_.begin(), this->operators_.end(), &client);
-    if (it2 != this->operators_.end())
+    std::vector<Client *>::iterator it = std::find(this->_members.begin(), this->_members.end(), &client);
+    if (it != this->_members.end())
+        this->_members.erase(it);
+    std::vector<Client *>::iterator it2 = std::find(this->_operators.begin(), this->_operators.end(), &client);
+    if (it2 != this->_operators.end())
         this->removeOperator(client);
 }
 
@@ -68,8 +68,8 @@ void Channel::removeMember(Client &client)
 /// @param client The client to check
 int Channel::checkMember(Client &client)
 {
-    std::vector<Client *>::iterator it = std::find(this->members_.begin(), this->members_.end(), &client);
-    if (it != this->members_.end())
+    std::vector<Client *>::iterator it = std::find(this->_members.begin(), this->_members.end(), &client);
+    if (it != this->_members.end())
         return 1;
     return 0;
 }
@@ -78,7 +78,7 @@ int Channel::checkMember(Client &client)
 /// @param client The client to add
 void Channel::addOperator(Client &client)
 {
-    this->operators_.push_back(&client);
+    this->_operators.push_back(&client);
 }
 
 /// @brief Broadcast a message to all clients in the channel
@@ -88,7 +88,7 @@ void Channel::addOperator(Client &client)
 void Channel::broadcastMessage(const std::string& message, Client* sender, Server *server)
 {
     (void)sender;
-    for (std::vector<Client *>::iterator it = this->members_.begin(); it != this->members_.end(); ++it)
+    for (std::vector<Client *>::iterator it = this->_members.begin(); it != this->_members.end(); ++it)
     {
         if ((*it)->getClientFd() != sender->getClientFd())
             server->sendData((*it)->getClientFd(), message);
@@ -102,7 +102,7 @@ void Channel::broadcastMessage(const std::string& message, Client* sender, Serve
 /// @return True if the client is an operator, false otherwise
 bool Channel::isOperator(Client &client)
 {
-    for (std::vector<Client *>::iterator it = this->operators_.begin(); it != this->operators_.end(); ++it)
+    for (std::vector<Client *>::iterator it = this->_operators.begin(); it != this->_operators.end(); ++it)
     {
         if ((*it)->getClientFd() == client.getClientFd())
             return true;
@@ -111,19 +111,19 @@ bool Channel::isOperator(Client &client)
 }
 
 /*================== GETTERS ==================*/
-int		Channel::getUserLimit()                 { return this->userLimit; }
-bool	Channel::isTopicOnlyOperator()          { return this->TopicOnlyOperator; }
-string	Channel::getName()                      { return this->name_; }
-string	Channel::getTopic()                     { return this->topic_; }
-string  Channel::getKey()                       { return this->key_; }    
-string	Channel::getTopicTime()                 { return this->topicTime_; }
-string	Channel::getTopicSetBy()                { return this->topicSetBy_; }
-string	Channel::getCreationTime()              { return this->creationTime_; }
-std::vector<Client *>& Channel::getMembers()    { return this->members_; }
-t_channelType Channel::isVisible()              { return this->visible_; }
-bool Channel::isOpsListEmpty()                  { return true ? this->operators_.empty() : false; }
+int		Channel::getUserLimit()                 { return this->_userLimit; }
+bool	Channel::isTopicOnlyOperator()          { return this->_topicOnlyOperator; }
+string	Channel::getName()                      { return this->_name; }
+string	Channel::getTopic()                     { return this->_topic; }
+string  Channel::getKey()                       { return this->_key; }    
+string	Channel::getTopicTime()                 { return this->_topicTime; }
+string	Channel::getTopicSetBy()                { return this->_topicSetBy; }
+string	Channel::getCreationTime()              { return this->_creationTime; }
+std::vector<Client *>& Channel::getMembers()    { return this->_members; }
+t_channelType Channel::isVisible()              { return this->_visible; }
+bool Channel::isOpsListEmpty()                  { return true ? this->_operators.empty() : false; }
 bool Channel::isInvited(Client &client)         { 
-    for (vector<Client *>::iterator it = this->invited_.begin(); it != this->invited_.end(); it++)
+    for (vector<Client *>::iterator it = this->_invited.begin(); it != this->_invited.end(); it++)
     {
         if ((*it)->getClientFd() == client.getClientFd())
             return true;
@@ -131,62 +131,62 @@ bool Channel::isInvited(Client &client)         {
     return false;
 }
 string  Channel::getModString(Client& client)                  {
-    string modstring = " ";
-    for (std::vector<string>::iterator it = this->modstring.begin(); it != this->modstring.end(); it++)
+    string _modstring = " ";
+    for (std::vector<string>::iterator it = this->_modstring.begin(); it != this->_modstring.end(); it++)
     {
-        modstring += *it;
+        _modstring += *it;
     }
     if (this->isOperator(client))
-        modstring += "+o";
-    return modstring;
+        _modstring += "+o";
+    return _modstring;
 }
 
 
 /*================== SETTERS ==================*/
-void Channel::setTopic(string &topic)			{ topic_ = topic; }
-void Channel::setKey(string key)				{ key_ = key; }
-void Channel::setUserLimit(int limit)           { this->userLimit = limit; }
-void Channel::setTopicOnlyOperator(bool status) { this->TopicOnlyOperator = status; }
-void Channel::setTopicSetBy(string &topic)		{ topicSetBy_ = topic; }
-void Channel::setTopicTime()                    { topicTime_ = intToString(time(0)); }
-void Channel::setCreationTime()                 { creationTime_ = intToString(time(0)); }
-void Channel::setVisible(t_channelType type)   { this->visible_ = type; }
+void Channel::setTopic(string &topic)			{ _topic = topic; }
+void Channel::setKey(string key)				{ _key = key; }
+void Channel::setUserLimit(int limit)           { this->_userLimit = limit; }
+void Channel::setTopicOnlyOperator(bool status) { this->_topicOnlyOperator = status; }
+void Channel::setTopicSetBy(string &topic)		{ _topicSetBy = topic; }
+void Channel::setTopicTime()                    { _topicTime = intToString(time(0)); }
+void Channel::setCreationTime()                 { _creationTime = intToString(time(0)); }
+void Channel::setVisible(t_channelType type)   { this->_visible = type; }
 void Channel::addModString(string mod)          { 
     
-    for (vector<string>::iterator it = this->modstring.begin(); it != this->modstring.end(); it++)
+    for (vector<string>::iterator it = this->_modstring.begin(); it != this->_modstring.end(); it++)
     {
         if ((*it) == mod)
             return;
         if ((*it).substr(1) == mod.substr(1) && (*it)[0] != mod[0])
         {
-            this->modstring.erase(it);
-            this->modstring.push_back(mod);
+            this->_modstring.erase(it);
+            this->_modstring.push_back(mod);
             return;
         }
     }
-    this->modstring.push_back(mod);
+    this->_modstring.push_back(mod);
 }
 void Channel::removeModString(string mod)       { 
-    std::vector<string>::iterator it = std::find(modstring.begin(), modstring.end(), mod);
-    if (it != modstring.end())
-        modstring.erase(it);
+    std::vector<string>::iterator it = std::find(_modstring.begin(), _modstring.end(), mod);
+    if (it != _modstring.end())
+        _modstring.erase(it);
 }
 void Channel::removeOperator(Client &client)    {
-    std::vector<Client *>::iterator it = std::find(this->operators_.begin(), this->operators_.end(), &client);
-    if (it != this->operators_.end())
-        this->operators_.erase(it);
+    std::vector<Client *>::iterator it = std::find(this->_operators.begin(), this->_operators.end(), &client);
+    if (it != this->_operators.end())
+        this->_operators.erase(it);
 }
 void Channel::addInvitation(Client &client)     {
-    for (vector<Client *>::iterator it = this->invited_.begin(); it != this->invited_.end(); it++)
+    for (vector<Client *>::iterator it = this->_invited.begin(); it != this->_invited.end(); it++)
     {
         if ((*it)->getClientFd() == client.getClientFd())
             return ;
     }
-    this->invited_.push_back(&client); 
+    this->_invited.push_back(&client); 
 }
 void Channel::removeInvitation(Client &client)  {
-    std::vector<Client *>::iterator it = std::find(this->invited_.begin(), this->invited_.end(), &client);
-    if (it != this->invited_.end())
-        this->invited_.erase(it);
+    std::vector<Client *>::iterator it = std::find(this->_invited.begin(), this->_invited.end(), &client);
+    if (it != this->_invited.end())
+        this->_invited.erase(it);
 }
 

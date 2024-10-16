@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:04:02 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/12 04:58:07 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/15 17:52:28 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,19 +33,19 @@ class   Server;
 class Channel {
 
 	private:
-		string					name_;
-		string					topic_;
-		string					topicSetBy_;
-		string					topicTime_;
-		std::vector<Client *>	members_;
-        std::vector<Client *>	operators_;
-		std::vector<Client *>	invited_;
-		vector<string>			modstring;
-		string					creationTime_;
-		string					key_;
-		t_channelType			visible_;
-		bool					TopicOnlyOperator;
-		int						userLimit;
+		string					_name;
+		string					_topic;
+		string					_topicSetBy;
+		string					_topicTime;
+		std::vector<Client *>	_members;
+        std::vector<Client *>	_operators;
+		std::vector<Client *>	_invited;
+		vector<string>			_modstring;
+		string					_creationTime;
+		string					_key;
+		t_channelType			_visible;
+		bool					_topicOnlyOperator;
+		int						_userLimit;
 
 	public:
 		Channel();
@@ -63,8 +63,9 @@ class Channel {
 		void					setTopicOnlyOperator(bool status);
 		void					addMember(Client &client);
 		void					removeMember(Client &client);
-        void    				addOperator(Client &client);
+		void					removeModString(string mod);
 		void    				removeOperator(Client &client);
+        void    				addOperator(Client &client);
 		void					addInvitation(Client &client);	
 		void					removeInvitation(Client &client);
 		void					broadcastMessage(const std::string& message, Client* sender, Server *server);
@@ -84,6 +85,5 @@ class Channel {
 		std::vector<Client *>&	getMembers();
 		t_channelType			isVisible();
 		void					addModString(string mod);
-		void					removeModString(string mod);
 		int						getUserLimit();
 };

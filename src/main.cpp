@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/12 04:57:50 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/15 17:41:19 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int main(int ac, char **av)
 	}
 	catch (SigInt &e) {
 		// Stopping server if SIGINT received (Ctrl+C) to avoid leaks
-		std::cerr << "SIGINT received, stopping server" << std::endl;
+		std::cerr << RED <<"\nSIGINT received, stopping server" << RESET <<std::endl;
 	}
 	return 0;
 }
@@ -70,7 +70,7 @@ void	_receivingServ(Server &server, fd_set *fdset)
 		if (FD_ISSET(client_fd, fdset))
 		{
 			// Get datas in buffer
-			char buffer[1024];
+			char buffer[512];
 			int valread = recv(client_fd, buffer, 1024, 0);
 			buffer[valread] = '\0';
 

@@ -1,18 +1,18 @@
 #include "Server.hpp"
 
-// @brief Convert an int to a string
-// @param value The int to convert
-// @return string The string
+/// @brief Convert an int to a string
+/// @param value The int to convert
+/// @return string The string
 std::string intToString(int value) {
     std::ostringstream oss;
     oss << value;
     return oss.str();
 }
 
-// @brief Split a string by a delimiter
-// @param s The string to split
-// @param delim The delimiter
-// @return vector<string> The vector of strings
+/// @brief Split a string by a delimiter
+/// @param s The string to split
+/// @param delim The delimiter
+/// @return vector<string> The vector of strings
 std::vector<std::string> split(const std::string &s, char delim) {
     std::vector<std::string> result;
     std::stringstream ss (s);
@@ -25,9 +25,9 @@ std::vector<std::string> split(const std::string &s, char delim) {
     return result;
 }
 
-// Check if a char is authorized
-// @param c The char to check
-// @return bool True if the char is authorized, false otherwise
+/// @brief Check if a char is authorized
+/// @param c The char to check
+/// @return bool True if the char is authorized, false otherwise
 bool isAuthorized(char c) {
     if (c >= 'a' && c <= 'z')
         return true;

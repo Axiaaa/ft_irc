@@ -6,19 +6,24 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 20:54:08 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/12 04:35:38 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/16 18:57:16 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-void send_ERR696(Client	&client, Channel &chan, Server &server, vector<string> buffsplit) {
+void send_ERR696(Client	&client, Channel &chan, Server &server, vector<string> buffsplit, string err_message) {
 
-	string s = "696 " + client.getNickname() + " " + chan.getName() + " " + buffsplit[1];
+	string s = "";
+	if (buffsplit.size() < 2)
+		s = buffsplit[0];
+	else 
+		s = buffsplit[1];
+	string rpl = "696 " + client.getNickname() + " " + chan.getName() + " " + s;
 	for (int i = 2; i < (int)buffsplit.size(); i++)
-		s += " " + buffsplit[i];
-	s += " :Invalid modestring";
-	server.sendData(client.getClientFd(), client.getHostname() + s);
+		rpl += " " + buffsplit[i];
+	rpl += (" " + err_message);
+	server.sendData(client.getClientFd(), client.getHostname() + rpl);
 }
 
 // 001: RPL_WELCOME - Welcome to the IRC server
