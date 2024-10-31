@@ -48,9 +48,17 @@ void nick(Server &server, Client &client, const string &buffer)
 	}
 	server.sendData(client.getClientFd(), client.getHostname() + nick);
 	client.setNickname(buffer);
-    if (client.getUsername() != "" && client.getRealname() != "" && client.getNickname() != "" && client.getRegistrationStatus() == false)
-    {
-        server.sendData(client.getClientFd(), getNumericReply(client, 001, ""));
-        client.setRegistrationStatus(true);
-    }
+	if (client.getUsername() != "" && client.getRealname() != "" && client.getNickname() != "" && client.getRegistrationStatus() == false)
+	{
+		server.sendData(client.getClientFd(), getNumericReply(client, 001, ""));
+		server.sendData(client.getClientFd(), getNumericReply(client, 002, ""));
+		server.sendData(client.getClientFd(), getNumericReply(client, 003, ""));
+		server.sendData(client.getClientFd(), getNumericReply(client, 004, ""));
+		server.sendData(client.getClientFd(), getNumericReply(client, 005, ""));
+		server.sendData(client.getClientFd(), getNumericReply(client, 251, intToString(server.getClientsList().size())));
+		server.sendData(client.getClientFd(), getNumericReply(client, 252, ""));
+		server.sendData(client.getClientFd(), getNumericReply(client, 255, intToString(server.getClientsList().size())));
+		motd(server, client);
+		client.setRegistrationStatus(true);
+	}
 }

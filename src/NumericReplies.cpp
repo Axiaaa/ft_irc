@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   NumericReplies.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jcuzin <jcuzin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 20:54:08 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/17 01:20:12 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/31 18:54:51 by jcuzin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,56 @@ void send_ERR696(Client	&client, Channel &chan, Server &server, vector<string> b
 // 001: RPL_WELCOME - Welcome to the IRC server
 string RPL_WELCOME(const string &nick, const string &hostname) {
 	std::stringstream ss;
-	ss << "001 " << nick << " :Welcome to the Internet Relay Network " << hostname;
+	ss << "001 " << nick << " :Welcome to the ircserv Network, " << hostname;
+	return ss.str();
+}
+
+// 002: RPL_YOURHOST - returns the name and software/version of the server the client is currently connected to
+string RPL_YOURHOST(const string &nick) {
+	std::stringstream ss;
+	ss << "002 " << nick << " :Your host is ircserv, running version 1.0.0";
+	return ss.str();
+}
+
+// 003: RPL_CREATED - returns a human-readable date/time that the server was started or created.
+string RPL_CREATED(const string &nick) {
+	std::stringstream ss;
+	ss << "003 " << nick << " :This server was created 18/07/2024";
+	return ss.str();
+}
+
+// 004: RPL_MYINFO - Clients SHOULD discover available features using RPL_ISUPPORT tokens rather than the mode letters listed in this reply.
+string RPL_MYINFO(const string &nick) {
+	std::stringstream ss;
+	ss << "004 " << nick << " ircserv 1.0.0 o ilkt";
+	return ss.str();
+}
+
+// 005: RPL_ISUPPORT
+string RPL_ISUPPORT(const string &nick) {
+	std::stringstream ss;
+	ss << "005 " << nick << " CHANMODES=,,klt,i :are supported by this server";
+	return ss.str();
+}
+
+// 251: RPL_LUSERCLIENT
+string RPL_LUSERCLIENT(const string &nick, const string &userCount) {
+	std::stringstream ss;
+	ss << "251 " << nick << " :There are " << userCount << " users and 0 invisible on 0 server";
+	return ss.str();
+}
+
+// 252: RPL_LUSEROP
+string RPL_LUSEROP(const string &nick) {
+	std::stringstream ss;
+	ss << "252 " << nick << " 0 :operator(s) online";
+	return ss.str();
+}
+
+// 255: RPL_LUSERME
+string RPL_LUSERME(const string &nick, const string &clientCount) {
+	std::stringstream ss;
+	ss << "255 " << nick << ":I have " << clientCount << " clients and 0 servers";
 	return ss.str();
 }
 
@@ -81,6 +130,28 @@ string RPL_NAMREPLY(const string &symbol, const string &channel, const string &u
 string RPL_ENDOFNAMES(const string &channel) {
 	std::stringstream ss;
 	ss << "366 " << channel << " :End of /NAMES list";
+	return ss.str();
+}
+
+// 375: RPL_MOTDSTART - Invitation sent to a user
+string RPL_MOTDSTART(const string &nick) {
+	return "375 " + nick + ":- ircserv Message of the day -";
+}
+
+// 372: RPL_MOTDSTART - Invitation sent to a user
+string RPL_MOTD(const string &nick, const string &content) {
+	return "372 " + nick + ":" + content;
+}
+
+// 376: RPL_ENDOFMOTD - Invitation sent to a user
+string RPL_ENDOFMOTD(const string &nick) {
+	return "376 " + nick + ":End of /MOTD command.";
+}
+
+// 422: ERR_NOMOTD - Error if no motd
+string ERR_NOMOTD(const string &nick) {
+	std::stringstream ss;
+	ss << "422 " << nick << ":MOTD File is missing";
 	return ss.str();
 }
 
@@ -303,7 +374,14 @@ string getNumericReply(Client& client, int code, string arg)
 	if (arg != "" && arg.find('_') != string::npos)
 		arg_split = split(arg, '_');
 	switch (code) {
-		case 1:   return s + RPL_WELCOME(client.getNickname(), client.getNickname());
+		case 1: return s + RPL_WELCOME(client.getNickname(), client.getNickname());
+		case 2: return s + RPL_YOURHOST(client.getNickname());
+		case 3: return s + RPL_CREATED(client.getNickname());
+		case 4: return s + RPL_MYINFO(client.getNickname());
+		case 5: return s + RPL_ISUPPORT(client.getNickname());
+		case 251: return s + RPL_LUSERCLIENT(client.getNickname(), arg);
+		case 252: return s + RPL_LUSEROP(client.getNickname());
+		case 255: return s + RPL_LUSERME(client.getNickname(), arg);
 		case 315: return s + RPL_ENDOFWHOIS(client.getNickname());
 		case 324: return s + RPL_CHANNELMODEIS(client.getNickname(), arg_split[0], arg_split[1]);
 		case 329: return s + RPL_CREATIONTIME(client.getNickname(), arg_split[0], arg_split[1]);
@@ -314,6 +392,9 @@ string getNumericReply(Client& client, int code, string arg)
 		case 352: return s + RPL_WHOREPLY(client.getNickname(), arg_split[0], arg_split[1], arg_split[2], arg_split[3], arg_split[4]);
 		case 353: return s + RPL_NAMREPLY(arg_split[1] + " =", arg_split[0], arg_split[1]);
 		case 366: return s + RPL_ENDOFNAMES(client.getNickname() + " " + arg);
+		case 375: return s + RPL_MOTDSTART(client.getNickname());
+		case 372: return s + RPL_MOTD(client.getNickname(), arg);
+		case 376: return s + RPL_ENDOFMOTD(client.getNickname());
 		case 401: return s + ERR_NOSUCHNICK(client.getNickname(), arg);
 		case 403: return s + ERR_NOSUCHCHANNEL(client.getNickname(), arg);
 		case 404: return s + ERR_CANNOTSENDTOCHAN(arg);
@@ -322,6 +403,7 @@ string getNumericReply(Client& client, int code, string arg)
 		case 417: return s + ERR_INPUTTOOLONG(client.getNickname());
 		case 421: return s + ERR_UNKNOWNCOMMAND(arg, client.getNickname());
 		case 433: return s + ERR_NICKNAMEINUSE(arg, arg);
+		case 422: return s + ERR_NOMOTD(client.getNickname());
 		case 431: return s + ERR_NONICKNAMEGIVEN(client.getNickname());
 		case 432: return s + ERR_ERRONEUSNICKNAME(client.getNickname(), arg);
 		case 441: return s + ERR_USERNOTINCHANNEL(client.getNickname(), arg_split[0], arg_split[1]);

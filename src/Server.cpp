@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jcuzin <jcuzin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/17 01:24:15 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/10/31 18:38:42 by jcuzin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ void Server::handleClientMessage(Client &client, string command, string arg)
 	commands["INVITE"] 	= 	invite;
 	commands["KICK"] 	= 	kick;
 	commands["PART"] 	= 	part;
+	commands["PING"] 	= 	pong;
 		
 
 	// If the command is in the map, execute the corresponding function

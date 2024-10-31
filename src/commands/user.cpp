@@ -32,7 +32,17 @@ void user(Server& server, Client& client, const string &buffer)
 		client.setUsername(buff_split[0]);
 	if (client.getRealname() == "")
 		client.setRealname(buff_split[3].substr(1));
-    if (client.getNickname() != "" && client.getUsername() != "" && client.getRealname() != "") {
-	    server.sendData(client.getClientFd(), getNumericReply(client, 001, ""));
-	    client.setRegistrationStatus(true); }
+    if (client.getNickname() != "" && client.getUsername() != "" && client.getRealname() != "")
+	{
+		server.sendData(client.getClientFd(), getNumericReply(client, 001, ""));
+		server.sendData(client.getClientFd(), getNumericReply(client, 002, ""));
+		server.sendData(client.getClientFd(), getNumericReply(client, 003, ""));
+		server.sendData(client.getClientFd(), getNumericReply(client, 004, ""));
+		server.sendData(client.getClientFd(), getNumericReply(client, 005, ""));
+		server.sendData(client.getClientFd(), getNumericReply(client, 251, intToString(server.getClientsList().size())));
+		server.sendData(client.getClientFd(), getNumericReply(client, 252, ""));
+		server.sendData(client.getClientFd(), getNumericReply(client, 255, intToString(server.getClientsList().size())));
+		motd(server, client);
+		client.setRegistrationStatus(true);
+		}
 }
