@@ -81,10 +81,15 @@ vector<pair<string, string> >bufferParser(const string& buffer) {
         args.push_back(p);
     }
     buffsplit = split(buffer.substr(buffer.find(':') + 1, buffer.size()), ' ');
-    if (buffsplit.size() == 1)
+    if (buffsplit.size() == 1 && buffer != buffsplit[0]) {
+        for (vector<pair<string, string> >::iterator it = args.begin(); it != args.end(); it++) 
+            (*it).second = buffsplit[0];
         return args;
-    for (size_t i = 0; i < buffsplit.size() && i < args.size(); i++)
-        args[i].second = buffsplit[i];
+    }
+    else if (buffsplit.size() > 1) {
+        for (size_t i = 0; i < buffsplit.size() && i < args.size(); i++)
+            args[i].second = buffsplit[i];  
+    }
     return args;
 }
 

@@ -17,7 +17,8 @@ void    kick(Server& server, Client& client, const string &buffer)
     //Split the buffer into arguments
     vector<pair<string, string> > args = bufferParser(buffer.substr(buffer.find(' ') + 1, buffer.size()));
     //Set the reason for the kick (default is "The Kick-Hammer has spoken!")
-    string reason = (args.size() > 1) ? args[0].second : "The Kick-Hammer has spoken!";
+    std::cout << "reason = " << args[0].second << "\n";
+    string reason = args[0].second;
     for (vector<pair<string, string> >::iterator it = args.begin(); it != args.end(); it++)
     {
         Client *target = server.findClient((*it).first);
@@ -40,7 +41,9 @@ void    kick(Server& server, Client& client, const string &buffer)
         kick += chan->getName();
         kick += " ";
         kick += target->getNickname();
-        if (reason != "")
+        if (reason == "")
+            kick += " The kick-hammer has spoken!";
+        else 
             kick += " " + reason;
         server.sendData(client.getClientFd(), client.getHostname() + kick);
         chan->broadcastMessage(client.getHostname() + kick, &client, &server);
@@ -55,5 +58,4 @@ void    kick(Server& server, Client& client, const string &buffer)
             chan->addOperator(*chan->getMembers().front());
         }
     }
-    
 }
