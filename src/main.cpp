@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/17 01:35:13 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/05 10:00:56 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	_receivingServ(Server &server, fd_set *fdset)
 		if (FD_ISSET(client_fd, fdset))
 		{
 			// Get datas in buffer
-			char buffer[512];
+			char buffer[1024];
 			int valread = recv(client_fd, buffer, 1024, 0);
 			buffer[valread] = '\0';
 
@@ -85,8 +85,8 @@ void	_receivingServ(Server &server, fd_set *fdset)
 				else
 					std::cerr << "Error during socket creation, socket fd: " << client_fd << std::endl;
 				close(client_fd);
-				delete *it;
 				it = clients.erase(it);
+				delete *it;
 			}
 			else
 			{

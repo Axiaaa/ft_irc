@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Omegatron_9000.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 20:08:30 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/17 00:30:07 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/05 10:00:17 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,6 @@ string	sendOpenAIRequest(const string &command_content)
 	if (command_index == command.npos)
 		return ("");
 	command.insert(command_index + 15, command_content);
-	//ft_log(YELLOW, "Sending [" + command + "]");
 	FILE	*fp = popen(command.c_str(), "r");
 	if (fp == NULL)
 		return (errorlog("fd could not be not working WTF"), "");
@@ -178,7 +177,14 @@ void	manualRemoteControl(int sock)
 			sendMessage(sock, line);
 		response = getMessage(sock);
 		if (!response.empty())
-			std::cout << "   <server\\> " << response;
+		{
+			string	isTooLong;
+			if (response.find('\n') != response.npos) {
+				response = response.substr(0, response.find('\n') - 1);
+				isTooLong = " (response too long, truncated) ";
+			}
+			std::cout << "   <server\\> " << isTooLong << response;
+		}
 	}
 	ft_log(MAGENTA, "\n##_ManualRemoteControl OFF\n");
 }

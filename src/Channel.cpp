@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:02:00 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/17 01:15:54 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/05 10:09:10 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ Channel::Channel(string Name) :
 Channel::~Channel()
 {
     std::cout << RED << "Destroying Channel " << this->_name << RESET << std::endl;
+    // this->_members.clear();
 }
 
 /// @brief Add a member to the channel

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/17 01:13:35 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/05 10:09:24 by ocyn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@ _nickname(""), _username(""), _realname(""), _password("")
 // Destructor
 Client::~Client()
 {
+	for (std::vector<Channel *>::iterator it = this->_joinedChannels.begin(); it != this->_joinedChannels.end(); ++it)
+	{
+		(*it)->removeOperator(*this);
+		(*it)->removeMember(*this);
+	}
+	this->getJoinedChannels().clear();
 }
 
 // Overload
