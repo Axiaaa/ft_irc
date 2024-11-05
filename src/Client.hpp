@@ -10,7 +10,8 @@
 /*																			*/
 /* ************************************************************************** */
 
-#pragma once
+#ifndef CLIENT_HPP
+#define CLIENT_HPP
 
 #include "Server.hpp"
 #include "Exceptions.hpp"
@@ -64,3 +65,6 @@ class Client {
 		vector<Channel *>   getJoinedChannels();
 		Channel				*findChannel(string Name);
 };
+
+
+#endif

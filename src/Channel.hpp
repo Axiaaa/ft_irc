@@ -6,11 +6,12 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:04:02 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/17 00:32:46 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/05 08:31:33 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef CHANNEL_HPP
+#define CHANNEL_HPP
 
 #include "Server.hpp"
 
@@ -87,3 +88,5 @@ class Channel {
 		t_channelType			isVisible();
 		std::vector<Client *>&	getMembers();
 };
+
+#endif

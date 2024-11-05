@@ -1,4 +1,5 @@
-#pragma once
+#ifndef UTILS_HPP
+#define UTILS_HPP
 
 #include <iostream> 
 #include <cstring>
@@ -22,3 +23,4 @@ std::vector<std::pair<std::string, std::string> > bufferParser(const std::string
 #define MAGENTA "\033[1;35m"
 #define RESET   "\033[0m"
 
+#endif

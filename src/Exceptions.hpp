@@ -6,11 +6,12 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:45:03 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/17 01:27:40 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/05 08:32:29 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef EXCEPTIONS_HPP
+#define EXCEPTIONS_HPP
 
 # include "Server.hpp"
 
@@ -23,3 +24,5 @@ class ChannelNotExistingException	:   public std::exception { public : const cha
 class AlreadyInChannelException		:   public std::exception { public : const char * what() const throw();};
 class InvalidChannelName			:   public std::exception { public : const char * what() const throw();};
 class SigEOF						:   public std::exception { public : const char * what() const throw();};
+
+#endif

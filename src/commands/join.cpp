@@ -1,11 +1,10 @@
 #include "../Command.hpp"
 
-/*
-	@brief Send JOIN command
-	@param server The serverl object
-	@param client The cient file descriptor
-	@param channel The channel name
-*/
+
+///	@brief Send JOIN command
+///	@param server The serverl object
+/// @param client The cient file descriptor
+/// @param channel The channel name
 void	join(Server &server, Client &client, const string &buffer)
 {
 	if (client.getRegistrationStatus() != true) {

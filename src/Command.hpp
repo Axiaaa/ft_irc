@@ -1,4 +1,5 @@
-#pragma once
+#ifndef COMMAND_HPP
+#define COMMAND_HPP
 
 #include "Server.hpp"
 
@@ -18,3 +19,5 @@ void	kick(Server& server, Client& client, const string &buffer);
 void	part(Server& server, Client& client, const string &buffer);
 void	pong(Server& server, Client& client, const string &buffer);
 void	motd(Server& server, Client& client);
+
+#endif
