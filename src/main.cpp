@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/05 10:00:56 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/11/08 20:35:57 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,7 @@ void	_receivingServ(Server &server, fd_set *fdset)
 				if ((*it)->getCommand().size() > 500)
 				{
 					server.sendData(client_fd, getNumericReply(*(*it), 417, ""));
+					(*it)->setCommand((*it)->getCommand().substr((*it)->getCommand().find("\r\n") + 2));
 					return ;
 				}
 				if ((*it)->getCommand().find("\r\n") == string::npos)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   NumericReplies.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcuzin <jcuzin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 20:54:08 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/31 18:54:51 by jcuzin           ###   ########.fr       */
+/*   Updated: 2024/11/08 21:31:03 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ string RPL_CREATED(const string &nick) {
 // 004: RPL_MYINFO - Clients SHOULD discover available features using RPL_ISUPPORT tokens rather than the mode letters listed in this reply.
 string RPL_MYINFO(const string &nick) {
 	std::stringstream ss;
-	ss << "004 " << nick << " ircserv 1.0.0 o ilkt";
+	ss << "004 " << nick << " ircserv 1.0.0 oilkt";
 	return ss.str();
 }
 
@@ -78,7 +78,7 @@ string RPL_LUSEROP(const string &nick) {
 // 255: RPL_LUSERME
 string RPL_LUSERME(const string &nick, const string &clientCount) {
 	std::stringstream ss;
-	ss << "255 " << nick << ":I have " << clientCount << " clients and 0 servers";
+	ss << "255 " << nick << " :I have " << clientCount << " clients and 0 servers";
 	return ss.str();
 }
 
@@ -145,7 +145,7 @@ string RPL_MOTD(const string &nick, const string &content) {
 
 // 376: RPL_ENDOFMOTD - Invitation sent to a user
 string RPL_ENDOFMOTD(const string &nick) {
-	return "376 " + nick + ":End of /MOTD command.";
+	return "376 " + nick + " :End of /MOTD command.";
 }
 
 // 422: ERR_NOMOTD - Error if no motd
@@ -182,7 +182,10 @@ string ERR_CHANOPRIVSNEEDED(const string &nick, const string &channel) {
 //  430: ERR_NOSUCHCHANNEL: No channel with this name
 string ERR_NOSUCHCHANNEL(const string &nick, const string &channel) {
 	std::stringstream ss;	
-	ss << "403 " << nick << " " << channel << " :No such channel";
+	if (channel.empty())
+		ss << "403 " << nick << " " << channel << ":No such channel";
+	else
+		ss << "403 " << nick << " " << channel << " :No such channel";
 	return ss.str();
 }
 
@@ -209,7 +212,6 @@ string ERR_ALREADYREGISTERED(const string &nick) {
 
 // 461: ERR_NEEDMOREPARAMS - Not enough parameters
 string ERR_NEEDMOREPARAMS(const string &nick, const string &command) {
-	
 	if (nick.empty())
 		return "461 NotRegistered " + command + " :Not enough parameters";
 	return "461 " + nick  + " " + command + " :Not enough parameters";

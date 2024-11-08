@@ -56,7 +56,7 @@ void privmsg(Server& server, Client& client, const string &buffer) {
 			string msg; 
 			msg += "PRIVMSG ";
 			msg += target;
-			msg += " :";
+			msg += " ";
 			msg += buffer.substr(buffer.find(' ') + 1);
 			server.sendData((*it)->getClientFd(), client.getHostname() + msg);
 			return ;
@@ -73,5 +73,8 @@ void privmsg(Server& server, Client& client, const string &buffer) {
 			return ;
 		}
 	}
-	server.sendData(client.getClientFd(), getNumericReply(client, 401, target));
+	if (target[0] == '#')
+		server.sendData(client.getClientFd(), getNumericReply(client, 403, target));
+	else
+		server.sendData(client.getClientFd(), getNumericReply(client, 401, target));
 }

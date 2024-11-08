@@ -11,6 +11,11 @@ void part(Server& server, Client& client, const string &buffer)
         server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
         return ;
     }
+    if (buffer.empty())
+    {
+        server.sendData(client.getClientFd(), getNumericReply(client, 461,""));
+        return;
+    }
     vector<pair<string, string> > args = bufferParser(buffer);
     for (vector<pair<string, string> >::iterator it = args.begin(); it != args.end(); it++)
     {

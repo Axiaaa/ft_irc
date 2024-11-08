@@ -7,6 +7,11 @@ void invite(Server &server, Client &client, const string &buffer)
         server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
         return ;
     }
+    if (buffer.empty())
+    {
+        server.sendData(client.getClientFd(), getNumericReply(client, 461, ""));
+        return;
+    }
     std::vector<std::string> buffsplit = split(buffer, ' ');
     Client *target = server.findClient(buffsplit.front());
     if (!target)

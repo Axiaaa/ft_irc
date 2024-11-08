@@ -11,7 +11,7 @@ void pass(Server& server, Client& client, const string &buffer)
 		server.sendData(client.getClientFd(), getNumericReply(client, 462, "PASS"));
 		return ;
 	}
-		client.setPassword(buffer);
+	client.setPassword(buffer);
 	if (client.getPassword() == "")
 	{
 		server.sendData(client.getClientFd(), getNumericReply(client, 461, "PASS"));

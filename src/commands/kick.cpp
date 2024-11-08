@@ -8,6 +8,11 @@ void    kick(Server& server, Client& client, const string &buffer)
 		return ;
 	}
     // Check if the channel exists
+    if (buffer.empty())
+    {
+        server.sendData(client.getClientFd(), getNumericReply(client, 461,""));
+        return;
+    }
     Channel *chan = server.findChannel(buffer.substr(0, buffer.find(' ')));
     if (!chan)
     {
@@ -17,7 +22,6 @@ void    kick(Server& server, Client& client, const string &buffer)
     //Split the buffer into arguments
     vector<pair<string, string> > args = bufferParser(buffer.substr(buffer.find(' ') + 1, buffer.size()));
     //Set the reason for the kick (default is "The Kick-Hammer has spoken!")
-    std::cout << "reason = " << args[0].second << "\n";
     string reason = args[0].second;
     for (vector<pair<string, string> >::iterator it = args.begin(); it != args.end(); it++)
     {

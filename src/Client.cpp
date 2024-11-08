@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ocyn <ocyn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/05 10:09:24 by ocyn             ###   ########.fr       */
+/*   Updated: 2024/11/08 20:41:58 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ Client::~Client()
 		(*it)->removeMember(*this);
 	}
 	this->getJoinedChannels().clear();
+	std::cout << RED << "Destroying Client " << _nickname  << " FD : " << _clientFd << RESET << std::endl;
 }
 
 // Overload

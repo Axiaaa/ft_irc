@@ -181,7 +181,7 @@ vector<pair<char, string> > split_mode_args(string mode_args)
 	{	
 		if (args[i].first == '-')
 			is_valid = false;
-		if (args[i].first == 'o' ||	args[i].first == 'l' ||	args[i].first == 'k')
+		if (args[i].first == 'o' ||	(args[i].first == 'l' && atoi(buffsplit[j].c_str())) ||	args[i].first == 'k')
 			if (is_valid || args[i].first == 'o')
 				args[i].second = buffsplit[j], j++;
 		if (args[i].first == '+')
@@ -192,16 +192,20 @@ vector<pair<char, string> > split_mode_args(string mode_args)
 
 void	mode(Server &server, Client &client, const string &buffer)
 {
+	Channel* chan;
 	if (client.getRegistrationStatus() != true) {
 		server.sendData(client.getClientFd(), getNumericReply(client, 451, ""));
 		return ;
 	}
-	std::vector<std::string> buffsplit = split(buffer, ' ');
+	vector<string> buffsplit = split(buffer, ' ');
 	// Check if the client is in the channel and if the channel exists
-	Channel *chan = server.findChannel(buffsplit.front());
+	if (buffer.empty())
+		chan = NULL;
+	else 
+		chan = server.findChannel(buffsplit.front());
 	if (!chan)
 	{
-		server.sendData(client.getClientFd(), getNumericReply(client, 403, buffsplit.front()));
+		server.sendData(client.getClientFd(), getNumericReply(client, 403, buffer.empty() ? "" : buffsplit.front()));
 		return ;
 	}
 	if (!chan->checkMember(client))
@@ -265,3 +269,11 @@ void	mode(Server &server, Client &client, const string &buffer)
 		}
 	}	 
 }
+
+
+/*
+CAP LS 302
+PASS awe
+NICK test
+USER test 0 * :realname
+*/	

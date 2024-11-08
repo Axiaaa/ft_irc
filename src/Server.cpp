@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcuzin <jcuzin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/10/31 18:38:42 by jcuzin           ###   ########.fr       */
+/*   Updated: 2024/11/08 20:38:35 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,6 @@ Channel	&Server::findOrCreateChannel(string buffer, Client& client)
 	}
 	// Channel not existing, creating new one
 	Channel	*NewChannel = new Channel(ChannelData.first);
-	ft_log("aaaa" + ChannelData.second);
 	NewChannel->addOperator(client);
 	NewChannel->setCreationTime();
 	NewChannel->setTopicOnlyOperator(false);
