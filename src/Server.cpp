@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/08 20:38:35 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/09 04:43:58 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,4 +187,3 @@ void 				Server::removeChannel(Channel *channel)
 	if (it != this->_channelsList.end())
 		this->_channelsList.erase(it), delete *it;
 }
-	

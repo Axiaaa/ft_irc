@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/08 20:35:57 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/09 04:44:34 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,8 @@ void	_receivingServ(Server &server, fd_set *fdset)
 				else
 					std::cerr << "Error during socket creation, socket fd: " << client_fd << std::endl;
 				close(client_fd);
-				it = clients.erase(it);
 				delete *it;
+				it = clients.erase(it);
 			}
 			else
 			{
@@ -138,7 +138,7 @@ int		_watchFds(Server &server, int &max_sd, fd_set *fdset)
 	(void)server;
 	int activity = select(max_sd + 1, fdset, NULL, NULL, NULL);
 
-	if (activity < 0 && errno != EINTR) {
+	if (activity < 0) {
 		std::cerr << "Error during select()" << std::endl;
 		return (1);
 	}
@@ -163,3 +163,10 @@ int		_newConnections(Server &server, fd_set *fdset)
 	}
 	return (0);
 }
+
+
+/*
+PASS awe
+NICK test
+USER test 0 * :realname
+*/

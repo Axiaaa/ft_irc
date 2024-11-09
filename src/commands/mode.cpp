@@ -269,11 +269,3 @@ void	mode(Server &server, Client &client, const string &buffer)
 		}
 	}	 
 }
-
-
-/*
-CAP LS 302
-PASS awe
-NICK test
-USER test 0 * :realname
-*/	
