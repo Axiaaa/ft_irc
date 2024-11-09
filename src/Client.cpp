@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/09 17:36:52 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/09 17:49:07 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,6 @@ _nickname(""), _username("") ,_realname(""), _password("")
 Client::~Client()
 {	
 	ft_log("Destroying Client");
-	// for (std::vector<Channel *>::iterator it = this->_joinedChannels.begin(); it != this->_joinedChannels.end(); ++it)
-	// {
-	// 	(*it)->removeOperator(*this);
-	// 	(*it)->removeMember(*this);
-	// }
 	this->getJoinedChannels().clear();
 	std::cout << RED << "Destroying Client " << _nickname  << " FD : " << _clientFd << RESET << std::endl;
 }
