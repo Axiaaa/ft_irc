@@ -19,5 +19,6 @@ void	kick(Server& server, Client& client, const string &buffer);
 void	part(Server& server, Client& client, const string &buffer);
 void	pong(Server& server, Client& client, const string &buffer);
 void	motd(Server& server, Client& client);
+void    quit(Server& server, Client& client, const string &buffer);
 
 #endif

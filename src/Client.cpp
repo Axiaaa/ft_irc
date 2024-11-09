@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/09 04:42:03 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/09 17:36:52 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 // Constructor
 Client::Client(int fd) :
-_clientFd(fd), _ispassgiven(false), _isRegistered(false),
-_nickname(""), _username(""), _realname(""), _password("")
+_clientFd(fd), _ispassgiven(false), _isRegistered(false), _shoulQuit(false),
+_nickname(""), _username("") ,_realname(""), _password("")
 {
 	
 }
@@ -24,11 +24,11 @@ _nickname(""), _username(""), _realname(""), _password("")
 Client::~Client()
 {	
 	ft_log("Destroying Client");
-	for (std::vector<Channel *>::iterator it = this->_joinedChannels.begin(); it != this->_joinedChannels.end(); ++it)
-	{
-		(*it)->removeOperator(*this);
-		(*it)->removeMember(*this);
-	}
+	// for (std::vector<Channel *>::iterator it = this->_joinedChannels.begin(); it != this->_joinedChannels.end(); ++it)
+	// {
+	// 	(*it)->removeOperator(*this);
+	// 	(*it)->removeMember(*this);
+	// }
 	this->getJoinedChannels().clear();
 	std::cout << RED << "Destroying Client " << _nickname  << " FD : " << _clientFd << RESET << std::endl;
 }
@@ -99,6 +99,7 @@ bool					Client::getRegistrationStatus() const 	{ return this->_isRegistered; }
 bool 					Client::getIspassgiven() const			{ return this->_ispassgiven; }
 vector<Channel *>		Client::getJoinedChannels()				{ return this->_joinedChannels; }
 string					Client::getCommand() const				{ return this->_command; }
+bool					Client::getQuit() const					{ return this->_shoulQuit; }
 
 
 
@@ -112,3 +113,4 @@ void					Client::setRealname(string realname)   		{ this->_realname = realname; 
 void					Client::setRegistrationStatus(bool status)	{ this->_isRegistered = status; }
 void					Client::setCommand(string command)			{ this->_command = command; }
 void					Client::clearCommand()						{ this->_command.clear(); }
+void					Client::setQuit(bool a)						{ this->_shoulQuit = a; }

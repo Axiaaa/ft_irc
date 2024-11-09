@@ -37,8 +37,9 @@ void part(Server& server, Client& client, const string &buffer)
         server.sendData(client.getClientFd(), client.getHostname() + part);
         chan->broadcastMessage(client.getHostname() + part, &client, &server);
         chan->removeMember(client);
+        chan->removeOperator(client);
         if (chan->getMembers().empty())
-            server.removeChannel(chan);
+            server.removeChannel(chan), client.leaveChannel(*chan);
         else if (server.findChannel(chan->getName()) && chan->isOpsListEmpty()) {
             std::stringstream ss;
             ss << "MODE " << chan->getName() << " +o " << chan->getMembers().front()->getNickname();

@@ -28,6 +28,7 @@ class Client {
 		int	 				_clientFd;
 		int 				_ispassgiven;
 		bool				_isRegistered;
+		bool				_shoulQuit;
 		string  			_nickname;
 		string  			_username;
 		string  			_realname;
@@ -47,6 +48,7 @@ class Client {
 		void				setNickname(string nickname);
 		void				setUsername(string username);
 		void				setCommand(string command);
+		void				setQuit(bool a);
 		void				setRealname(string realname);
 		void				setIspassgiven(bool a);
 		void				setPassword(string password);
@@ -55,6 +57,7 @@ class Client {
 		void				clearCommand();
 		void				appendCommand(string command);
 
+		bool				getQuit() const;	
 		int					getClientFd() const;
 		string				getNickname() const;
 		string				getCommand() const;

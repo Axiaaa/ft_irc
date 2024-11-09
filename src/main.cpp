@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/09 04:44:34 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/09 17:39:35 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,9 @@ int main(int ac, char **av)
 void	_receivingServ(Server &server, fd_set *fdset)
 {
 	std::vector<Client *> &clients = server.getClientsList();
-	for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); )
+	for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end();)
 	{
+
 		int client_fd = (*it)->getClientFd();
 		// Check new incoming datas
 		if (FD_ISSET(client_fd, fdset))
@@ -84,9 +85,7 @@ void	_receivingServ(Server &server, fd_set *fdset)
 					std::cout << RED << "Client disconnected, socket fd: " << client_fd << RESET << std::endl;
 				else
 					std::cerr << "Error during socket creation, socket fd: " << client_fd << std::endl;
-				close(client_fd);
-				delete *it;
-				it = clients.erase(it);
+				(*it)->setQuit(true);
 			}
 			else
 			{
@@ -111,11 +110,16 @@ void	_receivingServ(Server &server, fd_set *fdset)
 					server.handleClientMessage(*(*it), split.first, split.second);
 					(*it)->setCommand((*it)->getCommand().substr((*it)->getCommand().find("\r\n") + 2));
 				}
-				++it;
 			}
 		}
-		else
-			++it;
+        if ((*it)->getQuit())
+        {
+            close(client_fd);
+            delete *it;
+            it = clients.erase(it);
+        }
+        else
+            ++it;
 	}
 }
 
