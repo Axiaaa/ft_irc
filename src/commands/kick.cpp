@@ -53,8 +53,9 @@ void    kick(Server& server, Client& client, const string &buffer)
         chan->broadcastMessage(client.getHostname() + kick, &client, &server);
         chan->removeMember(*target);
         chan->removeOperator(*target);
+        client.leaveChannel(*chan);
         if (chan->getMembers().empty())
-            server.removeChannel(chan), client.leaveChannel(*chan);
+            server.removeChannel(chan), delete chan;
         else if (server.findChannel(chan->getName()) && chan->isOpsListEmpty()) {
             std::stringstream ss;
             ss << "MODE " << chan->getName() << " +o " << chan->getMembers().front()->getNickname();

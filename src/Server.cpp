@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/09 17:17:55 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/11 13:09:34 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,5 +186,5 @@ void 				Server::removeChannel(Channel *channel)
 {
 	std::vector<Channel *>::iterator it = std::find(this->_channelsList.begin(), this->_channelsList.end(), channel);
 	if (it != this->_channelsList.end())
-		this->_channelsList.erase(it), delete *it;
+		this->_channelsList.erase(it);
 }
