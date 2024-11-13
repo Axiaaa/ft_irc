@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/12 02:18:17 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/13 18:37:00 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,8 @@ void Server::handleClientMessage(Client &client, string command, string arg)
 	commands["KICK"] 	= 	kick;
 	commands["PART"] 	= 	part;
 	commands["PING"] 	= 	pong;
-	commands["QUIT"] 	= 	quit;	
-		
+	commands["QUIT"] 	= 	quit;
+	commands["LIST"] 	= 	list;		
 
 	// If the command is in the map, execute the corresponding function
 	if (commands.find(command) != commands.end()) 

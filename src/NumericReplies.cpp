@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 20:54:08 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/08 21:31:03 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/13 18:44:25 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -364,6 +364,25 @@ string ERR_INVALIDKEY(const string &client, const string &channel) {
 	return ss.str();
 }
 
+string RPL_LISTSTART(const string &client) {
+	std::stringstream ss;
+	ss << "321" << client << " Channel :User Name";
+	return ss.str();
+}
+
+
+string RPL_LIST(const string &client, const string &channel, const string &usercount, const string &topic) {
+	std::stringstream ss;
+	ss << "322 " << client << " " << channel << " " << usercount << " :" << topic;
+	return ss.str();
+}
+
+string RPL_ENDOFLIST(const string &client) {
+	std::stringstream ss;
+	ss << "323 " << client << " :End of /LIST";
+	return ss.str();
+}
+
 /// @brief Get a numeric reply
 /// @param client The client object
 /// @param code The numeric reply code
@@ -385,6 +404,9 @@ string getNumericReply(Client& client, int code, string arg)
 		case 252: return s + RPL_LUSEROP(client.getNickname());
 		case 255: return s + RPL_LUSERME(client.getNickname(), arg);
 		case 315: return s + RPL_ENDOFWHOIS(client.getNickname());
+		case 321: return s  + RPL_LISTSTART(client.getNickname());
+		case 322: return s + RPL_LIST(client.getNickname(), arg_split[0], arg_split[1], arg_split[2]);
+		case 323: return s + RPL_ENDOFLIST(client.getNickname());
 		case 324: return s + RPL_CHANNELMODEIS(client.getNickname(), arg_split[0], arg_split[1]);
 		case 329: return s + RPL_CREATIONTIME(client.getNickname(), arg_split[0], arg_split[1]);
 		case 331: return s + RPL_NOTOPIC(arg, client.getNickname());

@@ -50,6 +50,7 @@ ALL_SRC				= main.cpp \
 					commands/pong.cpp \
 					commands/motd.cpp \
 					commands/quit.cpp \
+					commands/list.cpp \
 
 ALL_HEADERS			= $(ALL_SRC:.cpp=.hpp)
 
