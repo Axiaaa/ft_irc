@@ -20,6 +20,7 @@ void pass(Server& server, Client& client, const string &buffer)
 	if (client.getPassword() != server.getPassword())
 	{
 		server.sendData(client.getClientFd(), getNumericReply(client, 464, "PASS"));
+		client.setPassword("");
 		return ;
 	}
 	client.setIspassgiven(true);

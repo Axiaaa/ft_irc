@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/12 02:42:20 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/13 23:02:51 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,7 @@ void	_receivingServ(Server &server, fd_set *fdset)
 		}
         if ((*it)->getQuit())
         {
+			quit(server, *(*it), string(""));
             close(client_fd);
             delete *it;
             it = clients.erase(it);
@@ -170,7 +171,7 @@ int		_newConnections(Server &server, fd_set *fdset)
 
 
 /*
-PASS awe
+PASS aze
 NICK test
 USER test 0 * :realname
 */
