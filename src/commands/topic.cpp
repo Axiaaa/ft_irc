@@ -24,7 +24,7 @@ void topic(Server& server, Client& client, const string &buffer)
 		server.sendData(client.getClientFd(), getNumericReply(client, 333, channel->getName() + "_" + channel->getTopicSetBy() + "_" + channel->getTopicTime()));
 		return ;
 	}
-	std::pair<std::string, std::string> split_buffer = splitFirstSpace(buffer);
+	std::pair<std::string, std::string> split_buffer = splitFirstOf(buffer, ' ');
 	if (server.findChannel(split_buffer.first) == NULL)
 	{	// Check if channel exists
 		server.sendData(client.getClientFd(), getNumericReply(client, 403, split_buffer.first));

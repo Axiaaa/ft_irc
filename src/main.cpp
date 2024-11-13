@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/09 17:39:35 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/12 02:42:20 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int main(int ac, char **av)
 		return (std::cerr << "Invalid port\n" << std::endl, 1);
 
 	// Initializating server
+	try {
 	Server server(av[1], av[2]);
 	// Starting server
 	server.startServer(av[1]);
@@ -40,7 +41,6 @@ int main(int ac, char **av)
 	fd_set fdset;
 	int max_sd = server.getSocket();
 	signal(SIGINT, _stopServer);
-	try {
 		while (42)
 		{
 			FD_ZERO(&fdset);
@@ -106,7 +106,7 @@ void	_receivingServ(Server &server, fd_set *fdset)
 				while ((*it)->getCommand().find("\r\n") != string::npos)
 				{
 					string command = (*it)->getCommand().substr(0, (*it)->getCommand().find("\r\n"));
-					pair<string, string> split = splitFirstSpace(command);
+					pair<string, string> split = splitFirstOf(command, ' ');
 					server.handleClientMessage(*(*it), split.first, split.second);
 					(*it)->setCommand((*it)->getCommand().substr((*it)->getCommand().find("\r\n") + 2));
 				}

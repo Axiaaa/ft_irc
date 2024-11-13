@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:11 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/11 13:09:34 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/12 02:18:17 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ void	Server::sendData(int client_fd, string data)
 /// @return Channel& The channel object
 Channel	&Server::findOrCreateChannel(string buffer, Client& client)
 {
-	pair<string, string> ChannelData = splitFirstSpace(buffer);
+	pair<string, string> ChannelData = splitFirstOf(buffer, ' ');
 	for (vector<Channel*>::iterator i = this->_channelsList.begin(); i != this->_channelsList.end(); ++i)
 	{
 		if ((*i)->getName() == ChannelData.first)

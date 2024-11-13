@@ -42,39 +42,45 @@ void privmsg(Server& server, Client& client, const string &buffer) {
 		server.sendData(client.getClientFd(), getNumericReply(client, 412, ""));
 		return ;
 	}
-	string message = string(buffer).substr(string(buffer).find(' '));
-	if (message.find("#*") != string::npos || message.find("$*") != string::npos) {
-		server.sendData(client.getClientFd(), getNumericReply(client, 407, "PRIVMSG")); 
-		return ;
-	}
-	for (vector<Client *>::iterator it = server.getClientsList().begin(); it != server.getClientsList().end(); it++) {
-		if (target == (*it)->getNickname() && ((*it)->getRegistrationStatus() == true)) {
-			if ((*it)->getNickname() == client.getNickname()) {
-				server.sendData(client.getClientFd(), getNumericReply(client, 404, "yourself"));
-				return ;
+	vector<pair<string, string> > buffsplit = bufferParser(buffer);
+	for (vector<pair<string, string> >::iterator iterator = buffsplit.begin(); iterator != buffsplit.end(); iterator++) {
+	{
+		string target = (*iterator).first;
+		string message = (*iterator).second;
+		if (message.find("#*") != string::npos || message.find("$*") != string::npos) {
+			server.sendData(client.getClientFd(), getNumericReply(client, 407, "PRIVMSG")); 
+			break ;
+		}
+		for (vector<Client *>::iterator it = server.getClientsList().begin(); it != server.getClientsList().end(); it++) {
+			if (target == (*it)->getNickname() && ((*it)->getRegistrationStatus() == true)) {
+				if ((*it)->getNickname() == client.getNickname()) {
+					server.sendData(client.getClientFd(), getNumericReply(client, 404, "yourself"));
+					break; 
+				}
+				string msg = "PRIVMSG ";
+				msg.append(target);
+				msg.append(" ");
+				msg.append(message);
+				server.sendData((*it)->getClientFd(), client.getHostname() + msg);
+				break;
 			}
-			string msg; 
-			msg += "PRIVMSG ";
-			msg += target;
-			msg += " ";
-			msg += buffer.substr(buffer.find(' ') + 1);
-			server.sendData((*it)->getClientFd(), client.getHostname() + msg);
-			return ;
+		}
+		for (vector<Channel *>::iterator it = server.getChannelsList().begin(); it != server.getChannelsList().end(); it++) {
+			if (target == (*it)->getName()) {
+				string msg = client.getHostname();
+				msg += "PRIVMSG ";
+				msg.append(target);
+				msg.append(" ");
+				msg.append(message);
+				(*it)->broadcastMessage(msg, &client, &server);
+				break;
+			}
+		}
+		// if (target[0] == '#')
+		// 	server.sendData(client.getClientFd(), getNumericReply(client, 403, target));
+		// else
+		// 	server.sendData(client.getClientFd(), getNumericReply(client, 401, target));
+		// }
 		}
 	}
-	for (vector<Channel *>::iterator it = server.getChannelsList().begin(); it != server.getChannelsList().end(); it++) {
-		if (target == (*it)->getName()) {
-			string msg = client.getHostname();
-			msg += "PRIVMSG ";
-			msg += target;
-			msg += " ";
-			msg += buffer.substr(buffer.find(' ') + 1);
-			(*it)->broadcastMessage(msg, &client, &server);
-			return ;
-		}
-	}
-	if (target[0] == '#')
-		server.sendData(client.getClientFd(), getNumericReply(client, 403, target));
-	else
-		server.sendData(client.getClientFd(), getNumericReply(client, 401, target));
 }

@@ -12,7 +12,7 @@ vector<char>                        charsplit(const string &s);
 bool                                isPortValid(const std::string &port);
 bool                                isAuthorized(char c);
 void	                            ft_log(string content);
-std::pair<std::string, std::string> splitFirstSpace(const std::string &s);
+std::pair<std::string, std::string> splitFirstOf(const std::string &s, char delim);
 std::vector<std::pair<std::string, std::string> > bufferParser(const std::string& buffer);
 
 #define BLUE    "\033[1;34m"

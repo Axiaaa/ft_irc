@@ -42,15 +42,16 @@ bool isAuthorized(char c) {
 
 // @brief Split a string by the first space
 // @param s The string to split
+// @param delim The delimiter
 // @return pair<string, string> The pair of strings
-std::pair<std::string, std::string> splitFirstSpace(const std::string &s) {
+std::pair<std::string, std::string> splitFirstOf(const std::string &s, char delim) {
     std::string command;
     std::string arg;
-    std::vector<std::string> split_buffer = split(s, ' ');
+    std::vector<std::string> split_buffer = split(s, delim);
 
     if (split_buffer.size() > 1) {
         command = split_buffer[0];
-        arg = s.substr(s.find(' ') + 1);
+        arg = s.substr(s.find(delim) + 1);
     } else {
         command = s;
     }
@@ -80,15 +81,28 @@ vector<pair<string, string> >bufferParser(const string& buffer) {
         pair<string, string> p(buffsplit[i], "");
         args.push_back(p);
     }
-    buffsplit = split(buffer.substr(buffer.find(':') + 1, buffer.size()), ' ');
-    if (buffsplit.size() == 1 && buffer != buffsplit[0]) {
-        for (vector<pair<string, string> >::iterator it = args.begin(); it != args.end(); it++) 
-            (*it).second = buffsplit[0];
+    if (buffer.find(':') != string::npos) {
+        pair<string, string> bufferpair = splitFirstOf(buffer, ':');
+        for (size_t i = 0; i < args.size(); i++)
+        {
+            args[i].second = ":" + bufferpair.second;
+        }
         return args;
     }
-    else if (buffsplit.size() > 1) {
-        for (size_t i = 0; i < buffsplit.size() && i < args.size(); i++)
-            args[i].second = buffsplit[i];  
+    else if (buffer.find(',') != string::npos)
+        buffsplit = split(buffer.substr(buffer.find(' ') + 1 ), ',');
+    else 
+        buffsplit = split(buffer.substr(buffer.find(' ') + 1 ), ' ');
+    if (buffsplit.empty() || buffsplit.front() == buffer)
+        return args;
+    if (buffsplit.size() == 1) {
+        for (size_t i = 0; i < args.size(); i++) {
+            args[i].second = buffsplit[0];
+        }
+    } else {
+        for (size_t i = 0; i < args.size() && i < buffsplit.size(); i++) {
+            args[i].second = buffsplit[i];
+        }
     }
     return args;
 }

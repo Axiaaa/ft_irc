@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:02:00 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/09 04:41:39 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/12 01:49:14 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,10 @@ _topic(Topic)
 
 // Constructor
 Channel::Channel(string Name) :
+    _userLimit(0),
     _name(Name),
-    _topic("")
+    _topic(""),
+    _key("")
 {
     _modstring.push_back("-k");
     _modstring.push_back("-l");
@@ -127,14 +129,27 @@ bool Channel::isInvited(Client &client)         {
     return false;
 }
 string  Channel::getModString(Client& client)                  {
-    string _modstring = " ";
-    for (std::vector<string>::iterator it = this->_modstring.begin(); it != this->_modstring.end(); it++)
+    string modstring = " ";
+    string s;
+    for  (vector<string>::iterator it = this->_modstring.begin(); it != this->_modstring.end(); it++)
     {
-        _modstring += *it;
+        if ((*it)[0] == '+' && this->isOperator(client))
+            modstring += (*it).substr(1);
     }
-    //Add operator status
-    (this->isOperator(client)) ? _modstring += "+o" : _modstring += "-o"; 
-    return _modstring;
+    for (string::iterator it = modstring.begin(); it != modstring.end(); it++)
+    {
+        switch (*it)
+        {
+            case 'k' :
+                s = " " + this->_key;
+                break;
+            case 'l' :
+                s = " " + intToString(this->_userLimit);
+                break;
+        }
+    }
+    modstring += s;
+    return modstring;
 }
 
 
