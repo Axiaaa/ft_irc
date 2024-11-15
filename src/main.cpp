@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 11:43:14 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/15 15:16:34 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/15 17:28:02 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,16 +26,13 @@ void	_stopServer(int sig)
 
 int main(int ac, char **av)
 {
-	// Arguments checking (port and password)
 	if (ac < 3)
 		return (std::cerr << "Usage: ./ircserv <port> [password]\n" << std::endl, 1);
 	if (isPortValid(av[1]) == false)
 		return (std::cerr << "Invalid port\n" << std::endl, 1);
 
-	// Initializating server
 	try {
 	Server server(av[1], av[2]);
-	// Starting server
 	server.startServer(av[1]);
 	
 	fd_set fdset;
@@ -46,12 +43,9 @@ int main(int ac, char **av)
 			FD_ZERO(&fdset);
 			FD_SET(server.getSocket(), &fdset);
 
-			// Adding new Clients to list
 			_addFdClient(server, max_sd, &fdset);
-			// Watching file descriptors
 			if (_watchFds(server, max_sd, &fdset))
 				break;
-			// New coming connections handling
 			if (_newConnections(server, &fdset))
 				break ;
 			_receivingServ(server, &fdset);

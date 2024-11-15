@@ -102,10 +102,10 @@ void mode_o(t_type add_or_del, Channel &chan, Server &server, Client &client, pa
 /// @param keys	The mode arguments
 void mode_l(t_type add_or_del, Channel &chan, Server &server, Client &client, pair<char, string>keys)
 {
-	unsigned long int limit = 0;
+	long int limit = 0;
 	if (!keys.second.empty())
-		limit = atoi(keys.second.c_str());
-	if (!limit || limit == ULLONG_MAX)
+		limit = strtol(keys.second.c_str(), 0, 10);
+	if (!limit || limit == LONG_MAX || limit < 0)
 	{
 		if (add_or_del == DELETE)
 			chan.setUserLimit(0) , limit = 0;
@@ -113,7 +113,7 @@ void mode_l(t_type add_or_del, Channel &chan, Server &server, Client &client, pa
 			chan.setUserLimit(chan.getMembers().size()), limit = chan.getMembers().size();
 	}
 	else {
-		if (limit < chan.getMembers().size())
+		if (limit < (long)chan.getMembers().size())
 			return ;
 		if (add_or_del == ADD)
 			chan.setUserLimit(limit);
