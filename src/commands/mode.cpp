@@ -104,7 +104,7 @@ void mode_l(t_type add_or_del, Channel &chan, Server &server, Client &client, pa
 {
 	long int limit = 0;
 	if (!keys.second.empty())
-		limit = strtol(keys.second.c_str(), 0, 10);
+		limit = std::strtol(keys.second.c_str(), 0, 10);
 	if (!limit || limit == LONG_MAX || limit < 0)
 	{
 		if (add_or_del == DELETE)
