@@ -15,6 +15,14 @@ void	join(Server &server, Client &client, const string &buffer)
 		server.sendData(client.getClientFd(), getNumericReply(client, 461, ""));
 		return ;
 	}
+	if (buffer == "0")
+	{
+		string channels;
+		vector<Channel*> chanlist = client.getJoinedChannels();
+		for (vector<Channel *>::iterator it = chanlist.begin(); it != chanlist.end(); ++it)
+			channels += (*it)->getName() += ',';
+		return part(server, client, channels);
+	}
 	vector<pair<string, string> > args = bufferParser(buffer);
 	for (vector<pair<string, string> >::iterator it = args.begin(); it != args.end(); it++)
 	{

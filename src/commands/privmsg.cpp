@@ -47,6 +47,7 @@ void privmsg(Server& server, Client& client, const string &buffer) {
 	{
 		string target = (*iterator).first;
 		string message = (*iterator).second;
+		bool found = false;
 		if (message.find("#*") != string::npos || message.find("$*") != string::npos) {
 			server.sendData(client.getClientFd(), getNumericReply(client, 407, "PRIVMSG")); 
 			break ;
@@ -62,6 +63,7 @@ void privmsg(Server& server, Client& client, const string &buffer) {
 				msg.append(" ");
 				msg.append(message);
 				server.sendData((*it)->getClientFd(), client.getHostname() + msg);
+				found = true;
 				break;
 			}
 		}
@@ -73,14 +75,17 @@ void privmsg(Server& server, Client& client, const string &buffer) {
 				msg.append(" ");
 				msg.append(message);
 				(*it)->broadcastMessage(msg, &client, &server);
+				found = true;
 				break;
 			}
 		}
-		// if (target[0] == '#')
-		// 	server.sendData(client.getClientFd(), getNumericReply(client, 403, target));
-		// else
-		// 	server.sendData(client.getClientFd(), getNumericReply(client, 401, target));
-		// }
+		if (!found)
+		{
+			if (target[0] == '#')
+				server.sendData(client.getClientFd(), getNumericReply(client, 403, target));
+			else
+				server.sendData(client.getClientFd(), getNumericReply(client, 401, target));
+		}
 		}
 	}
 }
