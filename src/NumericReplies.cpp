@@ -6,7 +6,7 @@
 /*   By: lcamerly <lcamerly@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 20:54:08 by ocyn              #+#    #+#             */
-/*   Updated: 2024/11/13 18:44:25 by lcamerly         ###   ########.fr       */
+/*   Updated: 2024/11/15 15:11:08 by lcamerly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ string RPL_WELCOME(const string &nick, const string &hostname) {
 // 002: RPL_YOURHOST - returns the name and software/version of the server the client is currently connected to
 string RPL_YOURHOST(const string &nick) {
 	std::stringstream ss;
-	ss << "002 " << nick << " :Your host is ircserv, running version 1.0.0";
+	ss << "002 " << nick << " :Your host is ircserv, running version 1.0.69";
 	return ss.str();
 }
 
@@ -50,14 +50,14 @@ string RPL_CREATED(const string &nick) {
 // 004: RPL_MYINFO - Clients SHOULD discover available features using RPL_ISUPPORT tokens rather than the mode letters listed in this reply.
 string RPL_MYINFO(const string &nick) {
 	std::stringstream ss;
-	ss << "004 " << nick << " ircserv 1.0.0 oilkt";
+	ss << "004 " << nick << " ircserv 1.0.69 (oilkt)";
 	return ss.str();
 }
 
 // 005: RPL_ISUPPORT
 string RPL_ISUPPORT(const string &nick) {
 	std::stringstream ss;
-	ss << "005 " << nick << " CHANMODES=,,klt,i :are supported by this server";
+	ss << "005 " << nick << " CHANMODES=klti :are supported by this server";
 	return ss.str();
 }
 
